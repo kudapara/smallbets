@@ -28,6 +28,9 @@ RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git
 
 # Copy application code
+RUN mkdir -p /home/campfire/storage
+RUN ln -s /home/campfire/storage /rails
+
 COPY . .
 
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
