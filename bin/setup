@@ -1,0 +1,43 @@
+#!/bin/bash
+set -eo pipefail
+
+app_root="$( cd "$(dirname "$0")/.."; pwd )"
+app_name=campfire
+
+# Use application binstubs
+export PATH="$app_root/bin:$PATH"
+
+announce() {
+  echo
+  echo "--- $@"
+}
+
+if [ "$RAILS_ENV" == "production" ]
+then
+  echo "RAILS_ENV is production; bailing out"
+  exit
+fi
+
+announce "Installing dependencies"
+gem install bundler --conservative && rbenv rehash
+bundle check || bundle install && rbenv rehash
+
+announce "Preparing database"
+if [[ $* == *--reset* ]]; then
+  rm -rf ./storage/{db,files}
+  rails db:migrate:reset
+else
+  rails db:prepare
+fi
+
+announce "Cleaning up old logs, caches, and temporary files"
+rails log:clear tmp:clear
+
+announce "Configuring puma-dev"
+ln -nfs "$app_root" "$HOME/.puma-dev/$app_name"
+
+announce "Restarting services"
+rails restart
+
+announce "Checking that https://$app_name.test/up is live: "
+curl -Is "https://$app_name.test/up" | head -n 1

@@ -1,0 +1,89 @@
+<% @page_title = "Search" %>
+<% @body_class = "sidebar searches" %>
+
+<% content_for :nav do %>
+  <% if @query %>
+    <div class="searches__query flex align-center gap pad-block-start-half">
+      <%= tag.div class: "btn btn--reversed btn--faux align-center gap txt-nowrap" do %>
+        <span class="overflow-ellipsis">“<%= @query %>”</span>
+        <span class="flex-item-no-shrink"><%= @messages.count %></span>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="searches__recents align-center gap pad-block-half overflow-y overflow-hide-scrollbar">
+    <% @recent_searches.each do |search| %>
+      <%= link_to searches_path(q: search.query), class: "align-center gap room btn txt-nowrap" do %>
+        <span class="overflow-ellipsis">“<%= search.query %>”</span>
+      <% end %>
+    <% end %>
+
+    <% if @recent_searches.any? %>
+      <%= button_to clear_searches_url, method: :delete, class: "btn searches__btn",
+              data: { turbo_confirm: "Are you sure you want to clear your recent searches?" } do %>
+        <%= image_tag "broom.svg", role: "presentation" %>
+        <span class="for-screen-reader">Clear recent searches</span>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<% content_for :sidebar do %>
+  <div class="rooms position-relative flex flex-column gap overflow-y overflow-hide-scrollbar">
+    <% @recent_searches.each do |search| %>
+      <%= link_to searches_path(q: search.query), class: "align-center gap room btn txt-nowrap" do %>
+        <span class="overflow-ellipsis">“<%= search.query %>”</span>
+      <% end %>
+    <% end %>
+
+    <% if @recent_searches.any? %>
+      <%= button_to clear_searches_url, method: :delete, class: "btn searches__btn",
+              data: { turbo_confirm: "Are you sure you want to clear your recent searches?" } do %>
+        <%= image_tag "broom.svg", role: "presentation" %>
+        <span class="for-screen-reader">Clear recent searches</span>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<div id="message-area" class="message-area">
+  <div class="message-area--empty min-width center">
+    <figure class="center pad">
+      <%= image_tag "search.svg", role: "presentation", class: "colorize--black translucent" %>
+    </figure>
+  </div>
+
+  <%= search_results_tag do %>
+    <%= render @messages %>
+  <% end %>
+</div>
+
+<% content_for :footer do %>
+  <div class="composer flex align-end gap">
+    <%= link_to room_path(@return_to_room),
+            class: "btn flex-item-no-shrink margin-block-end", style: "view-transition-name: input-switcher; --btn-border-radius: 0.5em" do %>
+      <%= image_tag "arrow-left.svg", role: "presentation" %>
+      <span class="for-screen-reader">Exit search </span>
+    <% end %>
+
+    <%= form_with url: searches_path, class: "margin-block flex-item-grow contain flex align-center gap",
+          data: { controller: "form", action: "keydown.enter->form#submit:prevent keydown.esc->form#cancel" } do |form| %>
+      <div class="composer__input flex align-center flex-item-grow gap full-width input input--actor min-width">
+        <%= image_tag "search.svg", size: 20, role: "presentation", class: "composer__input-hint colorize--black", style: "view-transition-name: input-btn;" %>
+
+        <div class="flex-item-grow">
+          <%= form.text_field :q, value: params[:q], class: "input", autofocus: true, required: true %>
+        </div>
+
+        <%= link_to searches_path, data: { form_target: "cancel" } do %>
+          <%= image_tag "remove.svg", role: "presentation", size: 14, class: "colorize--black" %>
+        <% end %>
+
+        <%= form.button type: "submit", class: "btn btn--reversed flex-item-no-shrink txt-small", style: "--btn-border-radius: 0.5em" do %>
+          <%= image_tag "arrow-up.svg" %>
+          <span class="for-screen-reader">Search</span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
