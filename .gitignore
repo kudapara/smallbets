@@ -9,3 +9,5 @@ tmp/
 
 # Ignore RVM-based gemset selection
 .ruby-gemset
+
+/config/master.key
