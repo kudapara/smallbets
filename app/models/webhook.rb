@@ -2,7 +2,7 @@ require "net/http"
 require "uri"
 
 class Webhook < ApplicationRecord
-  ENDPOINT_TIMEOUT = 7.seconds
+  ENDPOINT_TIMEOUT = 300.seconds
 
   belongs_to :user
 
