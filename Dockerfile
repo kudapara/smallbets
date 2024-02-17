@@ -9,10 +9,10 @@ WORKDIR /rails
 
 # Set production environment
 ENV RAILS_ENV="production" \
-    DISABLE_SSL=true \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development"
+    BUNDLE_WITHOUT="development" \
+    DISABLE_SSL=true
 
 
 # Throw-away build stage to reduce size of final image
@@ -29,7 +29,7 @@ RUN bundle install && \
 
 # Copy application code
 RUN mkdir -p /home/campfire/storage
-RUN ln -s /home/campfire/storage /rails
+RUN ln -s /home/campfire/storage/
 
 COPY . .
 
@@ -57,27 +57,13 @@ ENV HTTP_WRITE_TIMEOUT=300
 
 # Install packages needed to run the application
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y libsqlite3-0 libvips curl ffmpeg redis && \
+    apt-get install --no-install-recommends -y libsqlite3-0 libvips curl ffmpeg redis git openssh-server dialog && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
-
-# Start and enable SSH
-COPY entrypoint.sh ./
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends dialog \
-    && apt-get install -y --no-install-recommends openssh-server \
-    && echo "root:Docker!" | chpasswd \
-    && chmod u+x ./entrypoint.sh
-COPY sshd_config /etc/ssh/
-
-# Run and own the application files as a non-root user for security
-#RUN useradd rails
-#USER rails:rails
-
 # Copy built artifacts: gems, application
-COPY --from=build --chown=rails:rails /usr/local/bundle /usr/local/bundle
-COPY --from=build --chown=rails:rails /rails /rails
-COPY --from=thruster --chown=rails:rails /thruster/bin/thrust /rails/bin/thrust
+COPY --from=build /usr/local/bundle /usr/local/bundle
+COPY --from=build /rails /rails
+COPY --from=thruster /thruster/bin/thrust /rails/bin/thrust
 
 # Set version and revision
 ARG APP_VERSION
@@ -85,8 +71,13 @@ ENV APP_VERSION=$APP_VERSION
 ARG GIT_REVISION
 ENV GIT_REVISION=$GIT_REVISION
 
-# Expose ports for HTTP and SSH
+# Expose ports for HTTP and HTTPS
 EXPOSE 3000 2222
 
+COPY sshd_config /etc/ssh/
+RUN echo "root:Docker!" | chpasswd
+
+RUN mkdir -p /home/campfire/storage
+
 # Start the server by default, this can be overwritten at runtime
-ENTRYPOINT [ "./entrypoint.sh" ] 
+CMD service ssh start && bin/boot
