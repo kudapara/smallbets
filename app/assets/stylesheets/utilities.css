@@ -201,3 +201,16 @@
     }
   }
 }
+
+/* Screen sizes */
+.hide-on-mobile {
+  @media (max-width: 100ch) {
+    display: none;
+  }
+}
+
+.hide-on-desktop {
+  @media (min-width: 100ch) {
+    display: none;
+  }
+}

@@ -5,13 +5,18 @@ module RoomsHelper
     }.merge(attributes.delete(:data) || {}), &
   end
 
-  def link_to_edit_room(room, &)
+  def link_to_edit_room(room)
+    member_count = room.memberships.visible.count
+
     link_to \
       [ :edit, @room ],
       class: "btn",
       style: "view-transition-name: edit-room-#{@room.id}",
-      data: { room_id: @room.id },
-      &
+      data: { room_id: @room.id } do
+        image_tag("person.svg", role: "presentation") +
+        tag.span(number_with_delimiter(member_count), class: "hide-on-mobile") +
+        tag.span(round_for_mobile(member_count), class: "hide-on-desktop")
+    end
   end
 
   def link_back_to_last_room_visited
@@ -80,5 +85,17 @@ module RoomsHelper
         "typing-notifications#stop paste->composer#pasteFiles turbo:submit-end->composer#submitEnd refresh-room:offline@window->composer#offline"
 
       [ drop_target_actions, drag_and_drop_actions, trix_attachment_actions, remaining_actions ].join(" ")
+    end
+
+    # round_for_mobile(123)             # => "123"
+    # round_for_mobile(1234)            # => "1.2k"
+    # round_for_mobile(12345)           # => "12k"
+    # round_for_mobile(12345678)        # => "12M"
+    def round_for_mobile(number)
+      number_to_human(number,
+                      precision: number < 10_000 ? 1 : 0,
+                      significant: false,
+                      format: "%n%u",
+                      units: {thousand: "k", million: "M", billion: "B"})
     end
 end

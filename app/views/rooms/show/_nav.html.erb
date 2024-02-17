@@ -5,10 +5,7 @@
     <h1 class="room__contents txt-medium overflow-ellipsis"><%= room_display_name(room) %></h1>
   <% end %>
 
-  <%= link_to_edit_room(room) do %>
-    <%= image_tag "menu-dots-horizontal.svg", size: 20, role: "presentation" %>
-    <span class="for-screen-reader">Room settings</span>
-  <% end %>
+  <%= link_to_edit_room(room) %>
 
   <%= render "rooms/involvements/bell", room: room %>
 <% end %>
