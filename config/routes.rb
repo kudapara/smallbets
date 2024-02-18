@@ -9,6 +9,10 @@ Rails.application.routes.draw do
     end
   end
 
+  scope module: "sso" do
+    get "auth/:token", to: "sessions#new", as: :sso_auth, constraints: { token: /.+/ }
+  end
+
   resource :account do
     scope module: "accounts" do
       resources :users
@@ -29,18 +33,15 @@ Rails.application.routes.draw do
     route_for :account_logo, v: Current.account&.updated_at&.to_fs(:number)
   end
 
-  get "join/:join_code", to: "users#new", as: :join
-  post "join/:join_code", to: "users#create"
-
   resources :qr_code, only: :show
 
   resources :users, only: :show do
     scope module: "users" do
-      resource :avatar, only: %i[ show destroy ]
+      resource :avatar, only: %i[ show ]
 
       scope defaults: { user_id: "me" } do
         resource :sidebar, only: :show
-        resource :profile
+        resource :profile, except: :update
         resources :push_subscriptions do
           scope module: "push_subscriptions" do
             resources :test_notifications, only: :create

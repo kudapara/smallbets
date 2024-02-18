@@ -68,6 +68,8 @@ module Authentication
     end
 
     def authenticated_as(session)
+      return if session.user.member? && !session.user.sso_linked?
+      
       Current.user = session.user
       set_authenticated_by(:session)
       cookies.signed.permanent[:session_token] = { value: session.token, httponly: true, same_site: :lax }

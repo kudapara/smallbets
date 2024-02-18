@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  include Bot, Mentionable, Role, Transferable
+  include Bot, Mentionable, Role, Transferable, Sso
 
   has_many :memberships, dependent: :delete_all
   has_many :rooms, through: :memberships
@@ -23,6 +23,8 @@ class User < ApplicationRecord
 
   scope :ordered, -> { order("LOWER(name)") }
   scope :filtered_by, ->(query) { where("name like ?", "%#{query}%") }
+  
+  after_initialize :set_default_name
 
   def initials
     name.scan(/\b\w/).join
@@ -64,5 +66,9 @@ class User < ApplicationRecord
 
     def close_remote_connections(reconnect: false)
       ActionCable.server.remote_connections.where(current_user: self).disconnect reconnect: reconnect
+    end
+  
+    def set_default_name
+      self.name ||= "Small Better"
     end
 end

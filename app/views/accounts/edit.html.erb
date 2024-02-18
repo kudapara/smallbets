@@ -70,10 +70,6 @@
   <% end %>
 
   <div class="margin-block pad-inline pad-block-start fill-shade border-radius">
-    <%= render "accounts/invite" %>
-
-    <hr class="margin-block separator full-width" style="--border-style: solid">
-
     <menu class="flex flex-column gap margin-none pad">
       <turbo-frame id="account_users">
         <%= render partial: "accounts/users/user", collection: @page.records, as: :user %>

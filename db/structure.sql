@@ -66,11 +66,14 @@ FOREIGN KEY ("user_id")
   REFERENCES "users" ("id")
 );
 CREATE INDEX "index_webhooks_on_user_id" ON "webhooks" ("user_id");
-CREATE TABLE IF NOT EXISTS "users" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "role" integer DEFAULT 0 NOT NULL, "email_address" varchar DEFAULT NULL, "password_digest" varchar DEFAULT NULL, "active" boolean DEFAULT 1, "bio" text DEFAULT NULL, "bot_token" varchar DEFAULT NULL);
-CREATE UNIQUE INDEX "index_users_on_email_address" ON "users" ("email_address");
+CREATE TABLE IF NOT EXISTS "users" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "role" integer DEFAULT 0 NOT NULL, "email_address" varchar DEFAULT NULL, "password_digest" varchar DEFAULT NULL, "active" boolean DEFAULT 1, "bio" text DEFAULT NULL, "bot_token" varchar DEFAULT NULL, "sso_user_id" varchar, "sso_token" varchar, "sso_token_expires_at" datetime(6), "avatar_url" varchar, "twitter_username" varchar, "linkedin_username" varchar, "personal_url" varchar, "membership_started_at" datetime(6));
 CREATE UNIQUE INDEX "index_users_on_bot_token" ON "users" ("bot_token");
+CREATE UNIQUE INDEX "index_users_on_active_and_sso_user_id" ON "users" ("active", "sso_user_id");
+CREATE INDEX "index_users_on_email_address" ON "users" ("email_address");
 INSERT INTO "schema_migrations" (version) VALUES
+('20240218202254'),
 ('20240209110503'),
+('20240204114557'),
 ('20240131105830'),
 ('20240130213001'),
 ('20240130003150'),

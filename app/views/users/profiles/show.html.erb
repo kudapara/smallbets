@@ -20,78 +20,47 @@
 <section class="panel flex flex-column gap" style="view-transition-name: avatar-<%= @user.id %>">
   <%= render partial: "pwa/install_instructions" %>
 
-  <div class="align-center center avatar__form gap" data-controller="upload-preview">
-    <%= profile_form_with @user, class:"txt-medium" do |form| %>
-      <label class="btn input--file">
-        <%= image_tag "camera.svg", role: "presentation", size: 20 %>
-        <%= form.file_field :avatar, id: "file", class: "input", accept: "image/*",
-            data: { upload_preview_target: "input", action: "upload-preview#previewImage change->form#submit" } %>
-        <span class="for-screen-reader">Upload avatar</span>
-      </label>
-    <% end %>
-
-    <%= profile_form_with @user do |form| %>
-      <label class="btn avatar input--file txt-xx-large">
-        <%= image_tag fresh_user_avatar_path(@user), role: "presentation", size: 300, data: { upload_preview_target: "image" } %>
-        <%= form.file_field :avatar, id: "file", class: "input", accept: "image/*",
-            data: { upload_preview_target: "input", action: "upload-preview#previewImage change->form#submit" } %>
-        <span class="for-screen-reader">Avatar</span>
-      </label>
-    <% end %>
-
-    <% if @user.avatar.attached? %>
-      <%= button_to user_avatar_path(@user), method: :delete, class: "btn btn--negative txt-small avatar__delete-btn" do %>
-        <%= image_tag "minus.svg", role: "presentation", size: 20 %>
-        <span class="for-screen-reader">Delete avatar</span>
-      <% end %>
-    <% end %>
+  <div class="align-center center gap" data-controller="upload-preview">
+    <label class="btn avatar input--file txt-xx-large">
+      <%= image_tag fresh_user_avatar_path(@user), role: "presentation" %>
+      <span class="for-screen-reader">Avatar</span>
+    </label>
   </div>
 
-  <%= profile_form_with @user do |form| %>
-    <div class="flex flex-column gap">
+  <div class="flex flex-column gap">
+    <% if @user.name.present? %>
       <div class="flex align-center gap">
         <%= translation_button(:user_name) %>
 
-        <label class="flex align-center gap flex-item-grow input input--actor">
-          <%= form.text_field :name, class: "input txt-large ", autocomplete: "name", placeholder: "Enter your name",
-                autofocus: true, required: true,  data: { "1p-ignore": true } %>
-          <%= image_tag "person.svg", role: "presentation", size: 24, class: "colorize--black" %>
+        <label class="flex align-center gap flex-item-grow txt-large">
+          <%= @user.name %>
         </label>
       </div>
+    <% end %>
 
+    <div class="flex align-center gap">
+      <%= translation_button(:email_address) %>
+
+      <label class="flex align-center gap flex-item-grow txt-large">
+        <%= @user.email_address %>
+      </label>
+    </div>
+
+    <% if @user.bio.present? %>
       <div class="flex align-center gap">
-        <%= translation_button(:email_address) %>
-
-        <label class="flex align-center gap flex-item-grow input input--actor">
-          <%= form.email_field :email_address, class: "input txt-large", value: @user.email_address, autocomplete: "username",
-                placeholder: "Enter your email address", required: false %>
-          <%= image_tag "email.svg", role: "presentation", size: 24, class: "colorize--black" %>
-        </label>
-      </div>
-
-      <div class="flex align-center gap">
-        <%= translation_button(:update_password) %>
-
-        <label class="flex align-center gap flex-item-grow input input--actor">
-          <%= form.password_field :password, class: "input txt-large", autocomplete: "new-password", placeholder: "Change password",
-                required: false, maxlength: 72 %>
-          <%= image_tag "password.svg", role: "presentation", size: 24, class: "colorize--black" %>
-        </label>
-      </div>
-
-      <div class="flex align-start gap">
         <%= translation_button(:bio) %>
 
-        <label class="flex align--center gap flex-item--grow input input--actor">
-          <%= form.text_area :bio, class: "input txt-large", placeholder: "A few words about yourself…", maxlength: 200,
-                rows: 3, required: false %>
-          <%= image_tag "bio.svg", role: "presentation", size: 24, class: "colorize--black" %>
+        <label class="flex align--center gap flex-item--grow txt-large">
+          <%= @user.bio %>
         </label>
       </div>
+    <% end %>
 
-      <%= profile_form_submit_button %>
-    </div>
-  <% end %>
+    <%= link_to "https://smallbets.com/settings", class: "btn btn--reversed center txt-large", target: "_blank" do %>
+      <%= image_tag "pencil.svg" %>
+      <span class="for-screen-reader">Edit on smallbets.com</span>
+    <% end %>
+  </div>
 
   <div class="margin-block pad-inline pad-block fill-shade border-radius">
     <menu class="flex flex-column gap margin-none pad">

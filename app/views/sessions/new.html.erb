@@ -5,31 +5,19 @@
   <div class="panel <%= "shake" if flash[:alert] %>">
     <%= account_logo_tag style: "center margin-block-end txt-xx-large" %>
 
-    <%= form_with url: session_url, class: "flex flex-column gap" do |form| %>
-      <fieldset class="flex flex-column gap center-block upad">
-        <legend class="txt-large txt-align-center"><strong><%= Current.account.name %></strong></legend>
+    <fieldset class="flex flex-column gap center-block upad">
+      <legend class="txt-large txt-align-center"><strong><%= Current.account.name %></strong></legend>
+      <p style="color: var(--color-negative)">
+        We recently changed the way to log into Campfire.
+        If you have been unexpectedly logged out, it means we couldn't find your Campfire email in the Small Bets directory.
+        Follow the instructions below to create a new Campfire account or contact us to recover your existing login.</p>
+      <p class="txt-medium">To log in, please go to the Small Bets website and click the <i>Chat</i> link in the sidebar.</p>
+      
+    </fieldset>
 
-        <div class="flex align-center gap">
-          <%= translation_button(:email_address) %>
-          <label class="flex align-center gap input input--actor txt-large">
-            <%= form.email_field :email_address, required: true, class: "input", autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address] %>
-            <%= image_tag "email.svg", role: "presentation", size: 24, class: "colorize--black" %>
-          </label>
-        </div>
-
-        <div class="flex align-center gap">
-          <%= translation_button(:password) %>
-          <label class="flex align-center gap input input--actor txt-large">
-            <%= form.password_field :password, required: true, class: "input", autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72 %>
-            <%= image_tag "password.svg", role: "presentation", size: 24, class: "colorize--black" %>
-          </label>
-        </div>
-
-        <%= form.button class: "btn btn--reversed center txt-large", type: "submit", name: "log_in" do %>
-          <%= image_tag "arrow-right.svg", role: "presentation" %>
-          <span class="for-screen-reader">Go</span>
-        <% end %>
-      </fieldset>
+    <%= link_to "https://smallbets.com/", class: "btn btn--reversed center txt-large", title: "Login via smallbets.com" do %>
+      <%= image_tag "arrow-right.svg", role: "presentation" %>
+      <span>smallbets.com</span>
     <% end %>
   </div>
 
