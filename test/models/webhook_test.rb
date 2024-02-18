@@ -35,6 +35,6 @@ class WebhookTest < ActiveSupport::TestCase
     response = webhooks(:bender).deliver(messages(:first))
 
     reply_message = Message.last
-    assert_equal "Failed to respond within 7 seconds", reply_message.body.to_plain_text
+    assert_equal "Failed to respond within 300 seconds", reply_message.body.to_plain_text
   end
 end
