@@ -68,7 +68,7 @@ module Authentication
     end
 
     def authenticated_as(session)
-      return if session.user.member? && !session.user.sso_linked?
+      return if session.user.person? && !session.user.sso_linked?
       
       Current.user = session.user
       set_authenticated_by(:session)
