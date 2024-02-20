@@ -1,5 +1,10 @@
 #!/bin/bash -e
 
+if test -f /home/campfire/backup; then
+  tar -xvf /home/campfire/backup /home/campfire/storage/
+  rm /home/campfire/backup
+fi
+
 rm -f tmp/pids/server.pid
 ./bin/rails db:prepare
 ./bin/rails server
