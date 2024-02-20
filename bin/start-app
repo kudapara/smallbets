@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 if test -f /home/campfire/backup; then
-  tar -xvf /home/campfire/backup /home/campfire/storage/
+  tar -xvf /home/campfire/backup -C /home/campfire/storage/
   rm /home/campfire/backup
 fi
 
