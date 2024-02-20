@@ -6,10 +6,12 @@ class Users::AvatarsController < ApplicationController
 
     if @user.avatar_url.present?
       redirect_to @user.avatar_url, allow_other_host: true
-    elsif @user.bot?
-      render_default_bot
-    else
-      render_initials
+    elsif stale?(etag: @user)
+      if @user.bot?
+        render_bot
+      else
+        render_initials
+      end
     end
   end
 
@@ -23,6 +25,17 @@ class Users::AvatarsController < ApplicationController
 
     def send_webp_blob_file(key)
       send_file ActiveStorage::Blob.service.path_for(key), content_type: "image/webp", disposition: :inline
+    end
+  
+    def render_bot
+      if @user.avatar.attached?
+        expires_in 30.minutes, public: true, stale_while_revalidate: 1.week
+  
+        avatar_variant = @user.avatar.variant(SQUARE_WEBP_VARIANT).processed
+        send_webp_blob_file avatar_variant.key
+      else
+        render_default_bot
+      end
     end
 
     def render_default_bot
