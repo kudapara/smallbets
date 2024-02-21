@@ -238,7 +238,7 @@
       --num-buttons: 2;
     }
 
-    max-inline-size: calc(100dvw - (var(--btn-size) * var(--num-buttons)) - (var(--btn-size) + max(var(--inline-space), 1vw)) - ((var(--inline-space) + 1.8em) * 2) - var(--sidebar-width) - var(--inline-space) * var(--num-buttons));
+    max-inline-size: calc(100dvw - (var(--btn-size) * var(--num-buttons)) - (var(--btn-size) + max(var(--inline-space), 1vw)) - ((var(--inline-space) + 1.8em) * 2) - var(--sidebar-width) - var(--inline-space) * var(--num-buttons) - 1.2em);
 
     @media (max-width: 100ch) {
       --num-buttons: 2;
