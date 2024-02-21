@@ -47,7 +47,7 @@
 
     <span class="flex align-end sidebar__tools gap justify-end">
       <%= link_to user_profile_path, class: "btn avatar flex-item-no-shrink sidebar__tool" do %>
-        <%= image_tag fresh_user_avatar_path(Current.user), size: 48, role: "presentation", style: "view-transition-name: avatar-#{Current.user.id}" %>
+        <%= image_tag user_avatar_path(Current.user), size: 48, role: "presentation", style: "view-transition-name: avatar-#{Current.user.id}" %>
         <span class="for-screen-reader"><%= Current.user.name %></span>
       <% end %>
 

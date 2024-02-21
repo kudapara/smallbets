@@ -4,9 +4,9 @@ class Users::AvatarsController < ApplicationController
   def show
     @user = User.find(params[:user_id])
 
-    if @user.avatar_url.present?
-      redirect_to @user.avatar_url, allow_other_host: true
-    elsif stale?(etag: @user)
+    if stale?(etag: @user)
+      expires_in 10.minutes, public: true, stale_while_revalidate: 1.week
+
       if @user.bot?
         render_bot
       else
@@ -29,8 +29,6 @@ class Users::AvatarsController < ApplicationController
   
     def render_bot
       if @user.avatar.attached?
-        expires_in 30.minutes, public: true, stale_while_revalidate: 1.week
-  
         avatar_variant = @user.avatar.variant(SQUARE_WEBP_VARIANT).processed
         send_webp_blob_file avatar_variant.key
       else

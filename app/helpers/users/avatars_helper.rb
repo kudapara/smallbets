@@ -12,7 +12,11 @@ module Users::AvatarsHelper
 
   def avatar_tag(user, **options)
     link_to user_path(user), title: user.title, class: "btn avatar", data: { turbo_frame: "_top" } do
-      image_tag fresh_user_avatar_path(user), role: "presentation", size: 48, **options
+      image_tag user_avatar_path(user), role: "presentation", size: 48, **options
     end
+  end
+  
+  def user_avatar_path(user)
+    user.avatar_url.presence || fresh_user_avatar_path(user)
   end
 end
