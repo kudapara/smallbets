@@ -11,6 +11,7 @@
   opacity: 1;
   padding: 0.1em 0.2em 0.1em 0.1em;
   transition: opacity 100ms ease-in-out, box-shadow 150ms ease-in-out, transform 150ms ease-in-out;
+  cursor: pointer;
 
   .boost__action {
     margin-block-start: 0;
