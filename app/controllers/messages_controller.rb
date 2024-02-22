@@ -1,5 +1,5 @@
 class MessagesController < ApplicationController
-  include ActiveStorage::SetCurrent, RoomScoped
+  include ActiveStorage::SetCurrent, RoomScoped, NotifyBots
 
   before_action :set_room, except: :create
   before_action :set_message, only: %i[ show edit update destroy ]
@@ -22,7 +22,7 @@ class MessagesController < ApplicationController
     @message = @room.messages.create_with_attachment!(message_params)
 
     @message.broadcast_create
-    deliver_webhooks_to_bots
+    deliver_webhooks_to_bots(@message, :created)
   rescue ActiveRecord::RecordNotFound
     render action: :room_not_found
   end
@@ -37,12 +37,14 @@ class MessagesController < ApplicationController
     @message.update!(message_params)
 
     @message.broadcast_replace_to @room, :messages, target: [ @message, :presentation ], partial: "messages/presentation", attributes: { maintain_scroll: true }
+    deliver_webhooks_to_bots(@message, :updated)
     redirect_to room_message_url(@room, @message)
   end
 
   def destroy
     @message.destroy
     @message.broadcast_remove_to @room, :messages
+    deliver_webhooks_to_bots(@message, :deleted)
   end
 
   private
@@ -69,14 +71,5 @@ class MessagesController < ApplicationController
 
     def message_params
       params.require(:message).permit(:body, :attachment, :client_message_id)
-    end
-
-
-    def deliver_webhooks_to_bots
-      bots_eligible_for_webhook.each { |bot| bot.deliver_webhook_later(@message) }
-    end
-
-    def bots_eligible_for_webhook
-      @room.direct? ? @room.users.active_bots : @message.mentionees.active_bots
     end
 end

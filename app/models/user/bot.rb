@@ -4,16 +4,19 @@ module User::Bot
   included do
     scope :active_bots, -> { active.where(role: :bot) }
     scope :without_bots, -> { where.not(role: :bot) }
-    has_one :webhook, dependent: :delete
+    scope :observing_everything, -> { joins(:webhooks).where(webhooks: { receives: :everything }).distinct }
+    has_many :webhooks, dependent: :destroy
   end
 
   module ClassMethods
     def create_bot!(attributes)
       bot_token = generate_bot_token
-      webhook_url = attributes.delete(:webhook_url)
+      mentions_url = attributes.delete(:mentions_url)
+      everything_url = attributes.delete(:everything_url)
 
       User.create!(**attributes, bot_token: bot_token, role: :bot).tap do |user|
-        user.create_webhook!(url: webhook_url) if webhook_url
+        user.webhooks.create!(url: mentions_url, receives: :mentions) if mentions_url
+        user.webhooks.create!(url: everything_url, receives: :everything) if everything_url
       end
     end
 
@@ -29,7 +32,8 @@ module User::Bot
 
   def update_bot!(attributes)
     transaction do
-      update_webhook_url!(attributes.delete(:webhook_url))
+      update_webhook_url!(attributes.delete(:mentions_url), :mentions)
+      update_webhook_url!(attributes.delete(:everything_url), :everything)
       update!(attributes)
     end
   end
@@ -42,27 +46,35 @@ module User::Bot
   def reset_bot_key
     update! bot_token: self.class.generate_bot_token
   end
-
-
-  def webhook_url
-    webhook&.url
+  
+  def mentions_url
+    mentions_webhook&.url
   end
 
-  def deliver_webhook_later(message)
-    Bot::WebhookJob.perform_later(self, message) if webhook
+  def everything_url
+    everything_webhook&.url
   end
 
-  def deliver_webhook(message)
-    webhook.deliver(message)
+  def deliver_webhooks_later(item, event)
+    webhooks.each do |webhook|
+      webhook.deliver_later(item, event) if webhook.cares_about?(item, event)
+    end
   end
-
 
   private
-    def update_webhook_url!(url)
+    def mentions_webhook
+      webhooks.receiving_mentions.first
+    end
+  
+    def everything_webhook
+      webhooks.receiving_everything.first
+    end
+  
+    def update_webhook_url!(url, receives)
       if url.present?
-        webhook&.update!(url: url) || create_webhook!(url: url)
+        webhooks.where(receives: receives).first&.update!(url: url) || webhooks.create!(url: url, receives: receives)
       else
-        webhook&.destroy
+        webhooks.where(receives: receives).destroy_all
       end
     end
 end

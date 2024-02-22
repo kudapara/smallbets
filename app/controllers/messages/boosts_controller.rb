@@ -1,4 +1,6 @@
 class Messages::BoostsController < ApplicationController
+  include NotifyBots
+  
   before_action :set_message
 
   def index
@@ -11,6 +13,7 @@ class Messages::BoostsController < ApplicationController
     @boost = @message.boosts.create!(boost_params)
 
     broadcast_create
+    deliver_webhooks_to_bots(@boost, :created)
     redirect_to message_boosts_url(@message)
   end
 
@@ -19,6 +22,7 @@ class Messages::BoostsController < ApplicationController
     @boost.destroy!
 
     broadcast_remove
+    deliver_webhooks_to_bots(@boost, :deleted)
   end
 
   private

@@ -36,9 +36,14 @@ class Accounts::BotsControllerTest < ActionDispatch::IntegrationTest
     assert users(:bender).reload.deactivated?
   end
 
-  test "remove webhook" do
+  test "remove webhooks" do
     assert_difference -> { Webhook.count }, -1 do
-      put account_bot_url(users(:bender)), params: { user: { name: "Bender's New Friend", webook_url: "" } }
+      put account_bot_url(users(:bender)), params: { user: { name: "Bender's New Friend", mentions_url: "", everything_url: "" } }
+      assert_redirected_to account_bots_url
+    end
+
+    assert_difference -> { Webhook.count }, -1 do
+      put account_bot_url(users(:nsa)), params: { user: { name: "Bender's New Friend", everything_url: "" } }
       assert_redirected_to account_bots_url
     end
   end

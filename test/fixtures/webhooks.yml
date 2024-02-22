@@ -1,3 +1,9 @@
-bender:
+mentions:
   user: bender
+  receives: mentions
   url: http://example.com/bender
+
+everything:
+  user: nsa
+  receives: everything
+  url: http://example.com/nsa
