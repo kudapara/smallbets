@@ -5,7 +5,7 @@ class Users::AvatarsController < ApplicationController
     @user = User.find(params[:user_id])
 
     if stale?(etag: @user)
-      expires_in 10.minutes, public: true, stale_while_revalidate: 1.week
+      expires_in 30.minutes, public: true, stale_while_revalidate: 1.week
 
       if @user.bot?
         render_bot

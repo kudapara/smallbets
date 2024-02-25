@@ -12,11 +12,26 @@ module Users::AvatarsHelper
 
   def avatar_tag(user, **options)
     link_to user_path(user), title: user.title, class: "btn avatar", data: { turbo_frame: "_top" } do
-      image_tag user_avatar_path(user), role: "presentation", size: 48, **options
+      avatar_image_tag(user, size: 48, **options)
     end
   end
   
-  def user_avatar_path(user)
-    user.avatar_url.presence || fresh_user_avatar_path(user)
+  def avatar_image_tag(user, **options)
+    if user.avatar_url.present? || user.avatar.attached?
+      image_tag user.avatar_url.presence || fresh_user_avatar_path(user), role: "presentation", **options
+    elsif user.bot?
+      image_tag "default-bot-avatar.svg", role: "presentation", **options
+    else
+      initials = render template: "users/avatars/show", formats: [:svg], locals: { user: user, options: options }
+      image_tag "data:image/svg+xml,#{svg_to_uri(initials)}", role: "presentation", **options
+    end
+  end
+  
+  def svg_to_uri(svg)
+    # Remove comments, xml meta, and doctype
+    svg = svg.gsub(/<!--.*?-->|<\?.*?\?>|<!.*?>/m, '').gsub(/\s+/, ' ').gsub('> <', '><').gsub(/([\w:])="(.*?)"/, "\\1='\\2'").strip
+    svg = Rack::Utils.escape(svg)
+    # Un-escape characters in the given URI-escaped string that do not need escaping in "-quoted data URIs
+    svg = svg.gsub('%3D', '=').gsub('%3A', ':').gsub('%2F', '/').gsub('%27', "'").tr('+', ' ')
   end
 end

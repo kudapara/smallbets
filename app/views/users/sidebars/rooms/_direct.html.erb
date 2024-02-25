@@ -7,13 +7,13 @@
       <div class="avatar__group">
         <% members.first(4).each do |member| %>
           <span class="avatar">
-            <%= image_tag user_avatar_path(member), size: 20, role: "presentation" %>
+            <%= avatar_image_tag(member, size: 20) %>
           </span>
         <% end %>
       </div>
     <% else %>
       <span class="avatar">
-        <%= image_tag user_avatar_path(members.first), size: 48, role: "presentation" %>
+        <%= avatar_image_tag(members.first, size: 48) %>
       </span>
     <% end %>
 
