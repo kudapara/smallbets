@@ -1,10 +1,11 @@
 class Users::SidebarsController < ApplicationController
-  DIRECT_PLACEHOLDERS = 20
+  DIRECT_PLACEHOLDERS = 10
 
   def show
     all_memberships     = Current.user.memberships.visible.with_ordered_room
     @direct_memberships = extract_direct_memberships(all_memberships)
     @other_memberships  = all_memberships.without(@direct_memberships)
+    @direct_memberships.select! { |m| m.room.messages_count > 0 }
 
     @direct_placeholder_users = find_direct_placeholder_users
   end
