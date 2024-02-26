@@ -1,4 +1,6 @@
 class Sso::SessionsController < ApplicationController
+  include NotifyBots
+  
   allow_unauthenticated_access only: %i[ new ]
   rate_limit to: 10, within: 1.minute, only: :new, with: -> { render_rejection :too_many_requests }
 
@@ -10,6 +12,7 @@ class Sso::SessionsController < ApplicationController
       user.update(sso_attributes)
       
       start_new_session_for user
+      deliver_webhooks_to_bots(user, :created) if user.previously_new_record?
       redirect_to post_authenticating_url
     else
       render_rejection :unauthorized

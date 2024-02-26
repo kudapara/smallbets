@@ -80,36 +80,63 @@ class Webhook < ApplicationRecord
         message_payload(item, event)
       elsif item.is_a?(Boost)
         boost_payload(item, event)
+      elsif item.is_a?(User)
+        user_payload(item, event)
       else
-        {}
+        {}.to_json
       end
     end
 
     def message_payload(message, event)
       {
         event:   "message_#{event}", 
-        user:    { id: message.creator.id, sso_user_id: message.creator.sso_user_id, name: message.creator.name },
-        room:    { id: message.room.id, name: message.room.name, type: message.room.class.name.demodulize },
-        message: { 
-          id: message.id, 
-          body: { html: message.body.body, plain: message.plain_text_body },
-          mentionees: message.mentionees.map { |m| { name: m.name, sso_user_id: m.sso_user_id } }
-        }
+        user:    user_to_api(message.creator),
+        room:    room_to_api(message.room),
+        message: message_to_api(message)
       }.to_json
     end
 
     def boost_payload(boost, event)
       {
         event:   "boost_#{event}",
-        user:    { id: boost.booster.id, sso_user_id: boost.booster.sso_user_id, name: boost.booster.name },
-        room:    { id: boost.message.room.id, name: boost.message.room.name, type: boost.message.room.class.name.demodulize },
-        message: { 
-          id: boost.message.id, 
-          body: { html: boost.message.body.body, plain: boost.message.plain_text_body },
-          mentionees: boost.message.mentionees.map { |m| { name: m.name, sso_user_id: m.sso_user_id } }          
-        },
+        user:    user_to_api(boost.booster),
+        room:    room_to_api(boost.message.room),
+        message: message_to_api(boost.message),
         boost:   { id: boost.id, body: boost.content }
       }.to_json
+    end
+  
+    def user_payload(user, event)
+      {
+        event:   "user_#{event}",
+        user:    user_to_api(user)
+      }.to_json
+    end
+  
+    def room_to_api(room)
+      { 
+        id: room.id, 
+        name: room.name, 
+        type: room.class.name.demodulize ,
+        members: room.memberships.visible.count,
+        has_bot: Membership.visible.exists?(user_id: user_id, room_id: room.id)
+      }
+    end
+
+    def message_to_api(message)
+      {
+        id: message.id,
+        body: { html: message.body.body, plain: message.plain_text_body },
+        mentionees: message.mentionees.map { |m| { name: m.name, sso_user_id: m.sso_user_id } }
+      }
+    end
+  
+    def user_to_api(user)
+      { 
+        id: user.id, 
+        sso_user_id: user.sso_user_id, 
+        name: user.name 
+      }
     end
   
     def extract_text_from(response)

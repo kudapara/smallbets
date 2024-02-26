@@ -1,4 +1,6 @@
 class Accounts::UsersController < ApplicationController
+  include NotifyBots
+  
   before_action :ensure_can_administer, :set_user, only: %i[ update destroy ]
 
   def index
@@ -12,6 +14,7 @@ class Accounts::UsersController < ApplicationController
 
   def destroy
     @user.deactivate
+    deliver_webhooks_to_bots(@user, :deleted)
     redirect_to edit_account_url
   end
 

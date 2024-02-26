@@ -4,10 +4,10 @@ class Rooms::DirectsController < RoomsController
   end
 
   def create
-    room = Rooms::Direct.find_or_create_for(selected_users)
+    @room = Rooms::Direct.find_or_create_for(selected_users)
 
-    broadcast_create_room(room)
-    redirect_to room_url(room)
+    broadcast_create_room(@room)
+    redirect_to room_url(@room) if request.format.html?
   end
 
   def edit
