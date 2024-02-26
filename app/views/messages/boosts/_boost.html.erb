@@ -6,7 +6,7 @@
       data-boost-delete-booster-id-param="<%=boost.booster.id %>" data-boost-repeat-booster-id-param="<%=boost.booster.id %>">
     
     <figure class="avatar boost__avatar flex-item-no-shrink" data-stop-propagation="true">
-      <%= avatar_tag boost.booster %>
+      <%= avatar_tag boost.booster, loading: :lazy %>
       <span class="for-screen-reader"><%= boost.booster.name %></span>
     </figure>
 

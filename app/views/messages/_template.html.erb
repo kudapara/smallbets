@@ -8,7 +8,7 @@
     <div class="message__day-separator"><time class="message__timestamp" datetime="$messageDatetime$" data-local-time-target="date"></time></div>
 
     <figure class="avatar message__avatar">
-      <%= avatar_tag Current.user %>
+      <%= avatar_tag Current.user, loading: :lazy %>
     </figure>
 
     <div class="message__body">

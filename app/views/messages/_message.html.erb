@@ -5,7 +5,7 @@
     <div class="message__day-separator"><%= local_datetime_tag message.created_at, style: :date %></div>
 
     <figure class="avatar message__avatar">
-      <%= avatar_tag message.creator %>
+      <%= avatar_tag message.creator, loading: :lazy %>
     </figure>
 
     <turbo-frame id="<%= dom_id(message, :edit) %>">

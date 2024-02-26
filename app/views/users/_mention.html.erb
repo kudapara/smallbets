@@ -1,4 +1,4 @@
 <div class="mention" sgid="<%= user.attachable_sgid %>">
-  <%= avatar_tag user %>
+  <%= avatar_tag user, loading: :lazy %>
   <%= user.name %>
 </div>
