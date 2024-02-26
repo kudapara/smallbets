@@ -17,14 +17,14 @@ module Users::AvatarsHelper
   end
   
   def avatar_image_tag(user, **options)
-    image_tag user_image_url(user), role: "presentation", **options
+    image_tag user_image_path(user), role: "presentation", **options
   end
   
-  def user_image_url(user)
+  def user_image_path(user)
     if user.avatar_url.present? || user.avatar.attached?
-      user.avatar_url.presence || fresh_user_avatar_url(user)
+      user.avatar_url.presence || fresh_user_avatar_path(user)
     elsif user.bot?
-      asset_url("default-bot-avatar.svg")
+      asset_path("default-bot-avatar.svg")
     else
       initials = render template: "users/avatars/show", formats: [:svg], locals: { user: user }
       "data:image/svg+xml,#{svg_to_uri(initials)}"
