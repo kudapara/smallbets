@@ -10,7 +10,7 @@ CREATE INDEX "index_memberships_on_room_id_and_created_at" ON "memberships" ("ro
 CREATE UNIQUE INDEX "index_memberships_on_room_id_and_user_id" ON "memberships" ("room_id", "user_id");
 CREATE INDEX "index_memberships_on_room_id" ON "memberships" ("room_id");
 CREATE INDEX "index_memberships_on_user_id" ON "memberships" ("user_id");
-CREATE TABLE IF NOT EXISTS "rooms" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "type" varchar NOT NULL, "creator_id" bigint NOT NULL);
+CREATE TABLE IF NOT EXISTS "rooms" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "type" varchar NOT NULL, "creator_id" bigint NOT NULL, "messages_count" integer DEFAULT 0);
 CREATE TABLE IF NOT EXISTS "active_storage_attachments" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "record_type" varchar NOT NULL, "record_id" bigint NOT NULL, "blob_id" bigint NOT NULL, "created_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_c3b3935057"
 FOREIGN KEY ("blob_id")
   REFERENCES "active_storage_blobs" ("id")
@@ -71,6 +71,7 @@ FOREIGN KEY ("user_id")
 );
 CREATE INDEX "index_webhooks_on_user_id" ON "webhooks" ("user_id");
 INSERT INTO "schema_migrations" (version) VALUES
+('20240226155214'),
 ('20240220160705'),
 ('20240218202254'),
 ('20240209110503'),
