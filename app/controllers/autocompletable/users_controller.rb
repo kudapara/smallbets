@@ -5,7 +5,7 @@ class Autocompletable::UsersController < ApplicationController
 
   private
     def find_autocompletable_users
-      params[:query].present? ? users_scope.active.filtered_by(params[:query]) : users_scope.active
+      users_scope.active.without_default_names.filtered_by(params[:query])
     end
 
     def users_scope

@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  DEFAULT_NAME = "Small Better"
+  
   include Bot, Mentionable, Role, Transferable, Sso
 
   has_many :memberships, dependent: :delete_all
@@ -15,6 +17,8 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
 
   scope :active, -> { where(active: true) }
+  
+  scope :without_default_names, -> { where.not(name: DEFAULT_NAME) }
 
   has_one_attached :avatar
   has_secure_password validations: false
@@ -22,7 +26,7 @@ class User < ApplicationRecord
   after_create_commit :grant_membership_to_open_rooms
 
   scope :ordered, -> { order("LOWER(name)") }
-  scope :filtered_by, ->(query) { where("name like ?", "%#{query}%") }
+  scope :filtered_by, ->(query) { where("name like ?", "%#{query}%") if query.present? }
   
   after_initialize :set_default_name
 
@@ -69,6 +73,6 @@ class User < ApplicationRecord
     end
   
     def set_default_name
-      self.name ||= "Small Better"
+      self.name ||= DEFAULT_NAME
     end
 end
