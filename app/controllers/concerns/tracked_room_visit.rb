@@ -12,7 +12,7 @@ module TrackedRoomVisit
   
   def landing_room
     original_open_room = Room.opens.order(:created_at).first
-    Current.user.member_of?(original_open_room) ? original_open_room : Current.user.memberships.visible.without_directs.with_ordered_room.first.room 
+    Current.user.member_of?(original_open_room) ? original_open_room : Current.user.memberships.visible.without_direct_rooms.with_ordered_room.first.room 
   end
 
   def last_room_visited
