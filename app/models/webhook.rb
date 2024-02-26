@@ -119,7 +119,7 @@ class Webhook < ApplicationRecord
         name: room.name, 
         type: room.class.name.demodulize ,
         members: room.memberships.visible.count,
-        has_bot: Membership.visible.exists?(user_id: user_id, room_id: room.id)
+        has_bot: user.member_of?(room)
       }
     end
 

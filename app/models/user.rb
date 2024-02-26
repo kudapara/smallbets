@@ -58,6 +58,10 @@ class User < ApplicationRecord
   def reset_remote_connections
     close_remote_connections reconnect: true
   end
+  
+  def member_of?(room)
+    Membership.visible.exists?(room_id: room.id, user_id: id)
+  end
 
   private
     def grant_membership_to_open_rooms

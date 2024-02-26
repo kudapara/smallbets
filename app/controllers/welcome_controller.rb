@@ -1,7 +1,7 @@
 class WelcomeController < ApplicationController
   def show
     if Current.user.rooms.any?
-      redirect_to room_url(last_room_visited)
+      redirect_to room_url(landing_room)
     else
       render
     end
