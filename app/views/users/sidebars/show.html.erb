@@ -29,7 +29,7 @@
     </turbo-frame>
 
     <div class="rooms position-relative flex flex-column gap overflow-y overflow-hide-scrollbar">
-      <div id="shared_rooms" contents data-controller="sorted-list">
+      <div id="shared_rooms" contents>
         <% @other_memberships.each do |membership| %>
           <%= render "users/sidebars/rooms/shared", room: membership.room, unread: membership.unread? %>
         <% end %>
