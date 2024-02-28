@@ -18,7 +18,7 @@ class Room < ApplicationRecord
   end
 
   has_many :users, through: :memberships
-  has_many :messages, dependent: :destroy, counter_cache: true
+  has_many :messages, dependent: :destroy
 
   belongs_to :creator, class_name: "User", default: -> { Current.user }
 
