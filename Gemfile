@@ -58,3 +58,5 @@ group :test do
   gem "selenium-webdriver"
   gem "webmock", require: false
 end
+
+gem 'dotenv', groups: [:development, :test]
