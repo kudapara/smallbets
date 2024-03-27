@@ -9,12 +9,12 @@ class Opengraph::Fetch
   class TooManyRedirectsError < StandardError; end
   class RedirectDeniedError < StandardError; end
 
-  def fetch(url)
+  def fetch(url, ip: RestrictedHTTP::PrivateNetworkGuard.resolve(url.host))
     MAX_REDIRECTS.times do
-      Net::HTTP.start(url.host, url.port, use_ssl: url.scheme == "https") do |http|
+      Net::HTTP.start(url.host, url.port, ipaddr: ip, use_ssl: url.scheme == "https") do |http|
         http.request Net::HTTP::Get.new(url) do |response|
           if response.is_a?(Net::HTTPRedirection)
-            url = follow_redirect(response)
+            url, ip = resolve_redirect(response["location"])
           else
             return body_if_acceptable(response)
           end
@@ -26,10 +26,10 @@ class Opengraph::Fetch
   end
 
   private
-    def follow_redirect(response)
-      URI.parse(response["location"]).tap do |url|
-        raise RedirectDeniedError unless url.is_a?(URI::HTTP) && RestrictedHTTP::PrivateNetworkGuard.resolvable_public_ip?(url.to_s)
-      end
+    def resolve_redirect(location)
+      url = URI.parse(location)
+      raise RedirectDeniedError unless url.is_a?(URI::HTTP)
+      [ url, RestrictedHTTP::PrivateNetworkGuard.resolve(url.host) ]
     end
 
     def body_if_acceptable(response)

@@ -63,7 +63,7 @@ module MessagesHelper
 
   private
     def messages_actions
-      "turbo:before-stream-render@document->messages#beforeStreamRender"
+      "turbo:before-stream-render@document->messages#beforeStreamRender keydown.up@document->messages#editMyLastMessage"
     end
 
     def maintain_scroll_actions

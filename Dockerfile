@@ -37,15 +37,6 @@ COPY . .
 RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 
 
-# Build stage for Thruster
-FROM --platform=$BUILDPLATFORM golang:1.21 as thruster
-ARG TARGETARCH
-WORKDIR /thruster
-COPY packaging/thruster ./
-# Cross compile for target architecture
-RUN GOOS=linux GOARCH=$TARGETARCH go build -o bin/ ./cmd/...
-
-
 # Final stage for app image
 FROM base
 
@@ -62,7 +53,6 @@ RUN apt-get update -qq && \
 # Copy built artifacts: gems, application
 COPY --from=build /usr/local/bundle /usr/local/bundle
 COPY --from=build /rails /rails
-COPY --from=thruster /thruster/bin/thrust /rails/bin/thrust
 
 # Set version and revision
 ARG APP_VERSION

@@ -30,7 +30,7 @@ Rails.application.routes.draw do
   end
 
   direct :fresh_account_logo do |options|
-    route_for :account_logo, v: Current.account&.updated_at&.to_fs(:number)
+    route_for :account_logo, v: Current.account&.updated_at&.to_fs(:number), size: options[:size]
   end
 
   resources :qr_code, only: :show
@@ -56,7 +56,7 @@ Rails.application.routes.draw do
   end
 
   direct :fresh_user_avatar do |user, options|
-    route_for :user_avatar, user, v: user.updated_at.to_fs(:number)
+    route_for :user_avatar, user.avatar_token, v: user.updated_at.to_fs(:number)
   end
 
   resources :rooms do

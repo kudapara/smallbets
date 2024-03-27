@@ -65,11 +65,12 @@ export default class extends Controller {
   }
 
   #startRefreshTimer = () => {
-    this.refreshTimer = setInterval(this.#refresh, REFRESH_INTERVAL)
+    this.refreshTimer ??= setInterval(this.#refresh, REFRESH_INTERVAL)
   }
 
   #stopRefreshTimer = () => {
     clearInterval(this.refreshTimer)
+    this.refreshTimer = null
   }
 
   #refresh = () => {

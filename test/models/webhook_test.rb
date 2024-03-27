@@ -1,6 +1,24 @@
 require "test_helper"
 
 class WebhookTest < ActiveSupport::TestCase
+  test "payload" do
+    message = messages(:first)
+    message_path = Rails.application.routes.url_helpers.room_at_message_path(message.room, message)
+    bot_messages_path = Rails.application.routes.url_helpers.room_bot_messages_path(message.room, users(:bender).bot_key)
+    user_path = Rails.application.routes.url_helpers.user_path(message.creator)
+
+    WebMock.stub_request(:post, webhooks(:bender).url).
+      with(
+        body: hash_including(
+        user: { id: message.creator.id, name: message.creator.name, sso_user_id: message.creator.sso_user_id, path: user_path },
+        room: { id: message.room.id, name: message.room.name, type: "Closed", members: 4, has_bot: false, path: bot_messages_path },
+        message: { id: message.id, body: { html: "First post!", plain: "First post!" }, mentionees: [], path: message_path },
+      ))
+
+    response = webhooks(:bender).deliver_now(messages(:first), :created)
+    assert_equal 200, response.code.to_i
+  end
+
   test "delivery" do
     WebMock.stub_request(:post, webhooks(:mentions).url).to_return(status: 200, body: "", headers: {})
     response = webhooks(:mentions).deliver_now(messages(:first), :created)

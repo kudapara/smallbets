@@ -85,6 +85,14 @@ export default class extends Controller {
     this.#scrollManager.autoscroll(true)
   }
 
+  async editMyLastMessage() {
+    const editorEmpty = document.querySelector("#composer trix-editor").matches(":empty")
+
+    if (editorEmpty && this.#paginator.upToDate) {
+      this.#myLastMessage?.querySelector(".message__edit-btn")?.click()
+    }
+  }
+
 
   // Outlet actions
 
@@ -137,6 +145,11 @@ export default class extends Controller {
 
   get #lastMessage() {
     return this.messagesTarget.children[this.messagesTarget.children.length - 1]
+  }
+
+  get #myLastMessage() {
+    const myMessages = this.messagesTarget.querySelectorAll(`.${this.meClass}`)
+    return myMessages[myMessages.length - 1]
   }
 
   #positionLastMessage() {

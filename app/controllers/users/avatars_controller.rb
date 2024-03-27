@@ -1,8 +1,10 @@
 class Users::AvatarsController < ApplicationController
   include ActiveStorage::Streaming
 
+  rescue_from(ActiveSupport::MessageVerifier::InvalidSignature) { head :not_found }
+
   def show
-    @user = User.find(params[:user_id])
+    @user = User.from_avatar_token(params[:user_id])
 
     if stale?(etag: @user)
       expires_in 30.minutes, public: true, stale_while_revalidate: 1.week

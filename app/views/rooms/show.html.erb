@@ -1,4 +1,4 @@
-<% @page_title = @room.name %>
+<% @page_title = room_display_name(@room) %>
 <% @body_class = "sidebar" %>
 <% content_for :head do %>
   <%= turbo_exempts_page_from_preview %>

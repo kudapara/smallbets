@@ -1,14 +1,14 @@
+<h1 class="for-screen-reader">Chat Bot Setup</h1>
 <label class="align-center center avatar__form gap" data-controller="upload-preview">
   <div class="btn input--file">
-    <%= image_tag "camera.svg", role: "presentation", size: 20 %>
+    <%= image_tag "camera.svg", aria: { hidden: "true" }, size: 20 %>
     <%= form.file_field :avatar, class: "input", accept: "image/*",
           data: { upload_preview_target: "input", action: "upload-preview#previewImage" } %>
-    <span class="for-screen-reader">Upload avatar</span>
+    <span class="for-screen-reader">Upload bot avatar</span>
   </div>
 
-  <div class="btn avatar input--file txt-xx-large">
-    <%= image_tag bot.avatar.attached? ? bot.avatar : "default-bot-avatar.svg", role: "presentation", size: 300, data: { upload_preview_target: "image" } %>
-    <span class="for-screen-reader">Avatar</span>
+  <div class="avatar input--file txt-xx-large" style="--avatar-size: var(--btn-size);">
+    <%= image_tag bot.avatar.attached? ? bot.avatar : "default-bot-avatar.svg", alt: "Bot avatar", size: 48, data: { upload_preview_target: "image" } %>
   </div>
 </label>
 
@@ -17,7 +17,7 @@
   <label class="flex align-center gap flex-item-grow txt-large input input--actor">
     <%= form.text_field :name, class: "input", autocomplete: "name", placeholder: "Name the bot", autofocus: true, required: true,
           data: { "1p-ignore": true } %>
-    <%= image_tag "bot.svg", role: "presentation", size: 24, class: "colorize--black" %>
+    <%= image_tag "bot.svg", aria: { hidden: "true" }, size: 24, class: "colorize--black" %>
   </label>
 </div>
 
@@ -25,7 +25,7 @@
   <%= translation_button(:mentions_webhook_url) %>
   <label class="flex align-center gap flex-item-grow txt-large input input--actor">
     <%= form.url_field :mentions_url, class: "input", placeholder: "Mentions URL" %>
-    <%= image_tag "web.svg", role: "presentation", size: 24, class: "colorize--black" %>
+    <%= image_tag "web.svg", aria: { hidden: "true" }, size: 24, class: "colorize--black" %>
   </label>
 </div>
 

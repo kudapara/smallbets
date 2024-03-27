@@ -4,6 +4,12 @@ export function scrollToBottom(container) {
   container.scrollTop = container.scrollHeight
 }
 
+export function escapeHTML(html) {
+  const div = document.createElement("div")
+  div.textContent = html
+  return div.innerHTML
+}
+
 export function parseHTMLFragment(html) {
   const template = document.createElement("template")
   template.innerHTML = html

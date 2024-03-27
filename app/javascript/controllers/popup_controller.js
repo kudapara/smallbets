@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 const BOTTOM_THRESHOLD = 90
 
 export default class extends Controller {
-  static targets = [ "button", "menu" ]
+  static targets = [ "menu" ]
   static classes = [ "orientationTop" ]
 
   close() {
