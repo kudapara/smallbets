@@ -335,7 +335,7 @@ img.message__attachment {
   --btn-background: transparent;
   --btn-border-color: transparent;
   --outline-offset: 0;
-  --width: 33%;
+  --width: 25%;
 
   flex-basis: var(--width);
   font-size: 0.8rem;

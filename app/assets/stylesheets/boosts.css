@@ -99,7 +99,7 @@
 /* Reactions */
 .quick-boosts {
   display: grid;
-  grid-template-columns: repeat(3, 2em);
+  grid-template-columns: repeat(4, 2em);
 }
 
 .boost-character {

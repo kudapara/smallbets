@@ -4,17 +4,23 @@ module EmojiHelper
     "👏" => "Clapping",
     "👋" => "Waving hand",
     "💪" => "Muscle",
+
     "❤️" => "Red heart",
-    "😂" => "Face with tears of joy",
-    "🎉" => "Party popper",
     "🔥" => "Fire",
-    "💯" => "Hundred",
     "🌶️" => "Pepper",
+    "🎉" => "Party popper",
+
+    "😂" => "Face with tears of joy",
     "😅" => "Sweat",
     "🤯" => "Exploding brain",
     "🤔" => "Thinking",
-    "🙏" => "Pray",
+
     "😱" => "Scream",
+    "😬" => "Grimacing Face",
+    "😝" => "Tongue",
+    "🙏" => "Pray",
+
+    "💯" => "Hundred",
     "💥" => "Boom",
     "🚀" => "Rocket"
   }
