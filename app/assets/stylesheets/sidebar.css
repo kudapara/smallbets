@@ -326,3 +326,10 @@
 .searches__results {
   padding-block-start: var(--navbar-height);
 }
+
+.searches__input:required:invalid {
+  ~ .searches__reset {
+    display: none;
+    visibility: hidden;
+  }
+}

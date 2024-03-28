@@ -5,17 +5,17 @@ class WelcomeControllerTest < ActionDispatch::IntegrationTest
     sign_in :david
   end
 
-  test "redirects to the first created visible room the user has access to" do
+  test "redirects to the first created open room" do
     get root_url
 
-    assert_redirected_to room_url(users(:david).rooms.original)
+    assert_redirected_to room_url(Room.opens.order(:created_at).first)
   end
 
-  test "redirects to the last room visited, if we have one" do
+  test "redirects to the first created open room, no matter what the last visited room was" do
     cookies[:last_room] = rooms(:watercooler).id
 
     get root_url
 
-    assert_redirected_to room_url(rooms(:watercooler))
+    assert_redirected_to room_url(Room.opens.order(:created_at).first)
   end
 end

@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 import FileUploader from "models/file_uploader"
 import { onNextEventLoopTick, nextFrame } from "helpers/timing_helpers"
+import { escapeHTML } from "helpers/dom_helpers"
 
 export default class extends Controller {
   static classes = ["toolbar"]
@@ -164,6 +165,9 @@ export default class extends Controller {
     this.#files.sort((a, b) => a.name.localeCompare(b.name))
 
     const fileNodes = this.#files.map((file, index) => {
+      const filename = file.name.split(".").slice(0, -1).join(".")
+      const extension = file.name.split(".").pop()
+
       const node = document.createElement("button")
       node.setAttribute("type","button")
       node.setAttribute("style","gap: 0")
@@ -171,7 +175,7 @@ export default class extends Controller {
       node.dataset.composerIndexParam = index
       node.className = "btn btn--plain composer__file txt-normal position-relative unpad flex-column"
       node.innerHTML = file.type.match(/^image\/.*/) ? `<img role="presentation" class="flex-item-no-shrink composer__file-thumbnail" src="${URL.createObjectURL(file)}">` : `<span class="composer__file-thumbnail composer__file-thumbnail--common colorize--black"></span>`
-      node.innerHTML += `<span class="pad-inline txt-small flex align-center max-width composer__file-caption"><span class="overflow-ellipsis">${file.name.split('.').slice(0, -1).join('.')}.</span><span class="flex-item-no-shrink">${file.name.split('.').pop()}</span></span>`
+      node.innerHTML += `<span class="pad-inline txt-small flex align-center max-width composer__file-caption"><span class="overflow-ellipsis">${escapeHTML(filename)}.</span><span class="flex-item-no-shrink">${escapeHTML(extension)}</span></span>`
 
       return node
     })
@@ -183,7 +187,7 @@ export default class extends Controller {
     return `
       <div class="message__pending-upload flex align-center gap" style="--percentage: ${percent}%">
         <div class="composer__file-thumbnail composer__file-thumbnail--common colorize--black borderless flex-item-no-shrink"></div>
-        <div>${filename} - <span>${percent}%</span></div>
+        <div>${escapeHTML(filename)} - <span>${percent}%</span></div>
       </div>
     `
   }

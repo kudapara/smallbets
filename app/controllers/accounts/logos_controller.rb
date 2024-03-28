@@ -9,8 +9,8 @@ class Accounts::LogosController < ApplicationController
       expires_in 5.minutes, public: true, stale_while_revalidate: 1.week
 
       if Current.account&.logo&.attached?
-        logo_variant = Current.account.logo.variant(SQUARE_PNG_VARIANT).processed
-        send_png_file ActiveStorage::Blob.service.path_for(logo_variant.key)
+        logo = Current.account.logo.variant(logo_variant).processed
+        send_png_file ActiveStorage::Blob.service.path_for(logo.key)
       else
         send_stock_icon
       end
@@ -23,21 +23,27 @@ class Accounts::LogosController < ApplicationController
   end
 
   private
-    SQUARE_PNG_VARIANT = { resize_to_limit: [ 512, 512 ], format: :png }
+    LARGE_SQUARE_PNG_VARIANT = { resize_to_limit: [ 512, 512 ], format: :png }
+    SMALL_SQUARE_PNG_VARIANT = { resize_to_limit: [ 192, 192 ], format: :png }
 
     def send_png_file(path)
       send_file path, content_type: "image/png", disposition: :inline
     end
 
     def send_stock_icon
-      case params[:type]
-      when "favicon"
-        send_png_file logo_path("favicon.png")
-      when "apple-touch"
-        send_png_file logo_path("apple-touch-icon.png")
+      if small_logo?
+        send_png_file logo_path("app-icon-192.png")
       else
         send_png_file logo_path("app-icon.png")
       end
+    end
+
+    def logo_variant
+      small_logo? ? SMALL_SQUARE_PNG_VARIANT : LARGE_SQUARE_PNG_VARIANT
+    end
+
+    def small_logo?
+      params[:size] == "small"
     end
 
     def logo_path(filename)

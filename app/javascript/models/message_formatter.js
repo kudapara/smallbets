@@ -1,3 +1,5 @@
+import { onNextEventLoopTick } from "helpers/timing_helpers"
+
 const THREADING_TIME_WINDOW_MILLISECONDS = 5 * 60 * 1000 // 5 minutes
 
 export const ThreadStyle = {
@@ -18,6 +20,7 @@ export default class MessageFormatter {
   format(message, threadstyle) {
     this.#setMeClass(message)
     this.#highlightMentions(message)
+    this.#highlightCode(message)
 
     if (threadstyle != ThreadStyle.none) {
       this.#threadMessage(message)
@@ -61,6 +64,20 @@ export default class MessageFormatter {
   #highlightMentions(message) {
     const mentionsCurrentUser = message.querySelector(this.#selectorForCurrentUser) !== null
     message.classList.toggle(this.#classes.mentioned, mentionsCurrentUser)
+  }
+
+  #highlightCode(message) {
+    message.querySelectorAll("pre").forEach((block) => {
+      onNextEventLoopTick(() => this.#highlightCodeBlock(block))
+    })
+  }
+
+  #highlightCodeBlock(block) {
+    if (this.#isPlainText(block)) window.hljs.highlightElement(block)
+  }
+
+  #isPlainText(element) {
+    return Array.from(element.childNodes).every(node => node.nodeType === Node.TEXT_NODE)
   }
 
   #previousMessageIsRecent(message) {

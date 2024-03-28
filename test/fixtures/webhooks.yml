@@ -1,5 +1,10 @@
-mentions:
+bender:
   user: bender
+  receives: mentions
+  url: http://example.com/bender
+
+mentions:
+  user: betty
   receives: mentions
   url: http://example.com/bender
 

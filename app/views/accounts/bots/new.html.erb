@@ -6,7 +6,7 @@
   </div>
 <% end %>
 
-<section class="panel" style="view-transition-name: new-chat-bot">
+<section class="panel">
   <%= form_with model: @bot, url: account_bots_path, class: "flex flex-column gap" do |form| %>
     <%= render "accounts/bots/form", form: form, bot: @bot %>
   <% end %>

@@ -11,14 +11,13 @@
 .flash__inner {
   animation: appear-then-fade 3s 300ms both;
   aspect-ratio: 1;
-  background-color: var(--color-text);
+  background-color: var(--flash-background, var(--color-positive));
   border-radius: 50%;
   display: grid;
-  inline-size: 24dvh;
+  padding: var(--block-space);
   place-items: center;
 
-  svg {
+  img {
     grid-area: 1/1;
-    max-inline-size: 66%;
   }
 }

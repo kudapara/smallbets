@@ -37,11 +37,40 @@ class Opengraph::FetchTest < ActiveSupport::TestCase
 
     WebMock.stub_request(:get, "https://www.other.com/")
       .to_return(status: 200, body: "<body>ok<body>", headers: { content_type: "text/html" })
+    Resolv.stubs(:getaddress).with("www.other.com").returns("127.0.0.1")
 
-    RestrictedHTTP::PrivateNetworkGuard.stubs(:resolvable_public_ip?).with("https://www.other.com/").returns(false)
+    assert_raises RestrictedHTTP::Violation do
+      @fetch.fetch(@url, ip: "1.2.3.4")
+    end
+  end
 
-    assert_raises Opengraph::Fetch::RedirectDeniedError do
+  test "#fetch resolves hostnames once to avoid DNS rebinding" do
+    # Allow but interrupt a real connection to demonstrate that we connect
+    # to a resolved IP, not a hostname to re-resolve.
+    WebMock.disable_net_connect! allow: [ @url.host ]
+    Resolv.stubs(:getaddress).with(@url.host).returns("1.2.3.4", "127.0.0.1")
+    TCPSocket.expects(:open).with(@url.host, 443, nil, nil).never
+    TCPSocket.expects(:open).with("1.2.3.4", 443, nil, nil).throws(:dns_not_rebound)
+
+    assert_throws :dns_not_rebound do
       @fetch.fetch(@url)
+    end
+  end
+
+  test "#fetch resolves redirect location hostnames once to avoid DNS rebinding" do
+    # Stub the initial URL to redirect to a DNS-rebound location
+    WebMock.stub_request(:get, "https://www.other.com/")
+      .to_return(status: 302, headers: { location: @url.to_s })
+
+    # Allow but interrupt a real connection to demonstrate that we connect
+    # to a resolved IP, not a hostname to re-resolve.
+    WebMock.disable_net_connect! allow: [ @url.host ]
+    Resolv.stubs(:getaddress).with(@url.host).returns("1.2.3.4", "127.0.0.1")
+    TCPSocket.expects(:open).with(@url.host, 443, nil, nil).never
+    TCPSocket.expects(:open).with("1.2.3.4", 443, nil, nil).throws(:dns_not_rebound)
+
+    assert_throws :dns_not_rebound do
+      @fetch.fetch(URI.parse("https://www.other.com/"), ip: "1.2.3.4")
     end
   end
 

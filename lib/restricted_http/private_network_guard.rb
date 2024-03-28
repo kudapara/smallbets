@@ -6,26 +6,20 @@ module RestrictedHTTP
   module PrivateNetworkGuard
     extend self
 
-    def enforce_public_ip(url)
-      if private_ip?(url)
-        raise Violation.new("Attempt to access private IP #{url}")
+    LOCAL_IP = IPAddr.new("0.0.0.0/8") # "This" network
+
+    def resolve(hostname)
+      Resolv.getaddress(hostname).tap do |ip|
+        raise Violation.new("Attempt to access private IP via #{hostname}") if ip && private_ip?(ip)
       end
     end
 
-    def resolvable_public_ip?(url)
-      !private_ip?(url)
-    rescue Resolv::ResolvError
-      false
-    end
-
-    private
-      LOCAL_IP = IPAddr.new("0.0.0.0/8") # "This" network
-
-      def private_ip?(url)
-        ip = IPAddr.new(Resolv.getaddress(URI.parse(url).host))
-        ip.private? || ip.loopback? || LOCAL_IP.include?(ip)
-      rescue URI::InvalidURIError, IPAddr::InvalidAddressError, ArgumentError
-        true
+    def private_ip?(ip)
+      IPAddr.new(ip).then do |ipaddr|
+        ipaddr.private? || ipaddr.loopback? || LOCAL_IP.include?(ipaddr)
       end
+    rescue IPAddr::InvalidAddressError
+      true
+    end
   end
 end

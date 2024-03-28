@@ -37,11 +37,12 @@
 
     <% if notice = flash[:notice] || flash[:alert] %>
       <div class="flash" data-controller="element-removal" data-action="animationend->element-removal#remove">
-        <div class="flash__inner">
-          <svg viewBox="0 0 24 22" aria-hidden="true">
-            <path fill="var(--color-bg)" d="M16.4 9.9c.2-.2.2-.6 0-.9l-.9-.9c-.2-.2-.6-.2-.9 0L12 10.7h-.1L9.4 8.1c-.2-.2-.6-.2-.9 0l-.9.9c-.2.2-.2.6 0 .9l2.6 2.6v.1l-2.6 2.6c-.2.2-.2.6 0 .9l.9.9c.2.2.6.2.9 0l2.6-2.6h.1l2.6 2.6c.2.2.6.2.9 0l.9-.9c.2-.2.2-.6 0-.9l-2.6-2.6v-.1l2.5-2.6Z"/>
-            <path fill="var(--color-bg)" fill-rule="evenodd" d="M21 .8c1.7 0 3 1.3 3 3v14.5c0 1.7-1.3 3-3 3H3c-1.7 0-3-1.3-3-3V3.8c0-1.7 1.3-3 3-3h18Zm0 18.4c.6 0 1-.4 1-1V6c0-.1-.1-.2-.3-.2H2.2c-.1 0-.2.1-.2.2v12.2c0 .6.4 1 1 1h18ZM3.494 4.303a1.091 1.091 0 1 0 0-2.182 1.091 1.091 0 0 0 0 2.182Zm4.174-1.091a1.091 1.091 0 1 1-2.183 0 1.091 1.091 0 0 1 2.183 0Zm1.99 1.09a1.091 1.091 0 1 0 0-2.181 1.091 1.091 0 0 0 0 2.182Z" clip-rule="evenodd"/>
-          </svg>
+        <div class="flash__inner shadow" style="<%= "--flash-background: var(--color-negative)" if flash[:alert] %>">
+          <% if flash[:alert] %>
+            <%= image_tag "alert.svg", aria: { hidden: true }, size: 24, class: "colorize--white" %></span>
+          <% else %>
+            <%= image_tag "check.svg", aria: { hidden: true }, size: 24, class: "colorize--white" %></span>
+          <% end %>
         </div>
         <span class="for-screen-reader" role="alert" aria-atomic="true"><%= notice %></span>
       </div>

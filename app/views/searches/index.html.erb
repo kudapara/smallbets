@@ -67,16 +67,15 @@
     <% end %>
 
     <%= form_with url: searches_path, class: "margin-block flex-item-grow contain flex align-center gap",
-          data: { controller: "form", action: "keydown.enter->form#submit:prevent keydown.esc->form#cancel" } do |form| %>
+          data: { controller: "form", action: "keydown.esc->form#cancel" } do |form| %>
       <div class="composer__input flex align-center flex-item-grow gap full-width input input--actor min-width">
         <%= image_tag "search.svg", size: 20, role: "presentation", class: "composer__input-hint colorize--black", style: "view-transition-name: input-btn;" %>
 
-        <div class="flex-item-grow">
-          <%= form.text_field :q, value: params[:q], class: "input", autofocus: true, required: true %>
-        </div>
+        <%= form.text_field :q, value: params[:q], class: "searches__input input flex-item-grow", role: "searchbox", aria: { label: "search" }, autofocus: true, required: true %>
 
-        <%= link_to searches_path, data: { form_target: "cancel" } do %>
-          <%= image_tag "remove.svg", role: "presentation", size: 14, class: "colorize--black" %>
+        <%= link_to searches_path, data: { form_target: "cancel" }, role: "button", class: "searches__reset" do %>
+          <%= image_tag "remove.svg", aria: { hidden: "true" }, size: 14, class: "colorize--black" %>
+          <span class="for-screen-reader">Clear search field</span>
         <% end %>
 
         <%= form.button type: "submit", class: "btn btn--reversed flex-item-no-shrink txt-small", style: "--btn-border-radius: 0.5em" do %>

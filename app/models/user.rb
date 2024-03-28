@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   DEFAULT_NAME = "Small Better"
   
-  include Bot, Mentionable, Role, Transferable, Sso
+  include Avatar, Bot, Mentionable, Role, Transferable, Sso
 
   has_many :memberships, dependent: :delete_all
   has_many :rooms, through: :memberships
@@ -20,7 +20,6 @@ class User < ApplicationRecord
   
   scope :without_default_names, -> { where.not(name: DEFAULT_NAME) }
 
-  has_one_attached :avatar
   has_secure_password validations: false
 
   after_create_commit :grant_membership_to_open_rooms

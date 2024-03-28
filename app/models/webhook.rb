@@ -119,7 +119,8 @@ class Webhook < ApplicationRecord
         name: room.name, 
         type: room.class.name.demodulize ,
         members: room.memberships.visible.count,
-        has_bot: user.member_of?(room)
+        has_bot: user.member_of?(room),
+        path: room_bot_messages_path(room)
       }
     end
 
@@ -127,7 +128,8 @@ class Webhook < ApplicationRecord
       {
         id: message.id,
         body: { html: message.body.body, plain: message.plain_text_body },
-        mentionees: message.mentionees.map { |m| { name: m.name, sso_user_id: m.sso_user_id } }
+        mentionees: message.mentionees.map { |m| { name: m.name, sso_user_id: m.sso_user_id } },
+        path: message_path(message)
       }
     end
   
@@ -135,8 +137,21 @@ class Webhook < ApplicationRecord
       { 
         id: user.id, 
         sso_user_id: user.sso_user_id, 
-        name: user.name 
+        name: user.name ,
+        path: user_path(user)
       }
+    end
+
+    def message_path(message)
+      Rails.application.routes.url_helpers.room_at_message_path(message.room, message)
+    end
+  
+    def room_bot_messages_path(room)
+      Rails.application.routes.url_helpers.room_bot_messages_path(room, user.bot_key)
+    end
+
+    def user_path(user)
+      Rails.application.routes.url_helpers.user_path(user)
     end
   
     def extract_text_from(response)

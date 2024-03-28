@@ -37,6 +37,11 @@ bender:
   bot_token: <%= User.generate_bot_token %>
   role: bot
 
+betty:
+  name: Betty Bot
+  bot_token: <%= User.generate_bot_token %>
+  role: bot
+
 nsa:
   name: NSA Bot
   bot_token: <%= User.generate_bot_token %>
