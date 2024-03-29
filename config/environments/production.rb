@@ -70,5 +70,5 @@ Rails.application.configure do
 
   config.active_job.queue_adapter = :resque
 
-  config.action_controller.default_url_options = { host: "smallbets.com" }
+  config.action_controller.default_url_options = { host: "chat.smallbets.com" }
 end
