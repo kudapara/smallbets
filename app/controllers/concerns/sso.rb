@@ -3,7 +3,7 @@ module Sso
   SSO_REFRESH_DELAY = 5.seconds
 
   included do
-    before_action :refresh_user_from_sso, if: -> { signed_in? && full_refresh? }
+    before_action :refresh_user_from_sso, if: -> { !ENV["DISABLE_SSO_REFRESH"] && signed_in? && full_refresh? }
   end
   
   def refresh_user_from_sso
