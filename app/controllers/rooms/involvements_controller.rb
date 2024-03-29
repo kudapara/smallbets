@@ -20,7 +20,7 @@ class Rooms::InvolvementsController < ApplicationController
       when @membership.involved_in_invisible?
         broadcast_remove_to @membership.user, :rooms, target: [ @room, :list ]
       when @membership.involvement_previously_was.inquiry.invisible?
-        broadcast_prepend_to @membership.user, :rooms, target: :shared_rooms, partial: "users/sidebars/rooms/shared", locals: { room: @room }
+        broadcast_append_to @membership.user, :rooms, target: :shared_rooms, partial: "users/sidebars/rooms/shared", locals: { room: @room }
       end
     end
 end

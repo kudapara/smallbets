@@ -48,7 +48,7 @@
           <%= image_tag "link.svg", class: "colorize--black", size: 20, role: "presentation" %>
         <% end %>
 
-        <%= link_to edit_room_message_path(message.room, message), class: "btn message__action-btn center full-width message__edit-btn",
+        <%= link_to edit_room_message_path(room, message), class: "btn message__action-btn center full-width message__edit-btn",
               data: { turbo_frame: dom_id(message, :edit) }, title: "Edit", aria: { label: "Edit"} do %>
           <%= image_tag "pencil.svg", class: "colorize--black", size: 20, role: "presentation" %>
         <% end %>

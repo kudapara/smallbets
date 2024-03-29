@@ -6,6 +6,8 @@ class Message < ApplicationRecord
 
   has_many :boosts, dependent: :destroy
 
+  has_many :threads, class_name: "Rooms::Thread", foreign_key: :parent_message_id, dependent: :destroy
+
   has_rich_text :body
 
   before_create -> { self.client_message_id ||= Random.uuid } # Bots don't care
@@ -13,7 +15,12 @@ class Message < ApplicationRecord
 
   scope :ordered, -> { order(:created_at) }
   scope :with_creator, -> { includes(:creator) }
+  scope :with_threads, -> { includes(:threads) }
 
+  def containing_rooms
+    Room.where(id: room_id).or(Room.where(parent_message_id: id))
+  end
+  
   def plain_text_body
     body.to_plain_text.presence || attachment&.filename&.to_s || ""
   end

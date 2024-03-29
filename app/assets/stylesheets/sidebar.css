@@ -263,27 +263,8 @@
   }
 
   .message--formatted .message__room {
-    display: block;
-    font-size: 0.8rem;
-    font-weight: 400;
-    overflow: hidden;
-    text-overflow: ellipsis;
     visibility: visible;
-    white-space: nowrap;
-
-    &::before {
-      content: "→";
-    }
-
-    .message--me & {
-      &::after {
-        content: "←";
-      }
-
-      &::before {
-        content: "";
-      }
-    }
+    display: inline-block;
   }
 
   .message__actions {

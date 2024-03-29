@@ -65,6 +65,9 @@ class User < ApplicationRecord
   private
     def grant_membership_to_open_rooms
       Membership.insert_all(Rooms::Open.pluck(:id).collect { |room_id| { room_id: room_id, user_id: id } })
+      Rooms::Thread.joins(:parent_room).where(parent_room: { type: "Rooms::Open" }).find_each do |thread|
+        thread.memberships.grant_to(self)
+      end
     end
 
     def deactived_email_address

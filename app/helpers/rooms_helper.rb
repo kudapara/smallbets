@@ -60,6 +60,8 @@ module RoomsHelper
   def room_display_name(room, for_user: Current.user)
     if room.direct?
       room.users.without(for_user).pluck(:name).to_sentence.presence || for_user&.name
+    elsif room.thread?
+      "🧵 #{room.name}..."
     else
       room.name
     end

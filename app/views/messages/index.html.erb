@@ -1,1 +1,1 @@
-<%= render partial: "messages/message", collection: @messages, cached: true %>
+<%= render partial: "messages/message", collection: @messages, cached: -> message { [ message, @room&.id || message.room_id ] }, locals: { current_room: @room } %>

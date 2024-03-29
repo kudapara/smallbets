@@ -16,7 +16,7 @@ class Rooms::Direct < Room
       end
   end
 
-  def default_involvement
+  def default_involvement(user: nil)
     "everything"
   end
 end

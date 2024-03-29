@@ -1,0 +1,7 @@
+<div id="<%= dom_id(message, :threads) %>">
+  <% message.threads.each do |thread| %>
+    <%= link_to room_url(thread), class: "thread__link", target: "_top" do %>
+      🧵 <span><%= thread.name %>...</span>
+    <% end %>
+  <% end %>
+</div>

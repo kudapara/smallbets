@@ -36,12 +36,17 @@ class MessagesController < ApplicationController
   def update
     @message.update!(message_params)
 
-    @message.broadcast_replace_to @room, :messages, target: [ @message, :presentation ], partial: "messages/presentation", attributes: { maintain_scroll: true }
+    @message.containing_rooms.each do |room|
+      @message.broadcast_replace_to room, :messages, target: [ @message, :presentation ], partial: "messages/presentation", attributes: { maintain_scroll: true }
+    end
     deliver_webhooks_to_bots(@message, :updated)
     redirect_to room_message_url(@room, @message)
   end
 
   def destroy
+    @message.threads.each do |thread|
+      broadcast_remove_to :rooms, target: [ thread, :list ]
+    end
     @message.destroy
     @message.broadcast_remove_to @room, :messages
     deliver_webhooks_to_bots(@message, :deleted)
@@ -49,7 +54,7 @@ class MessagesController < ApplicationController
 
   private
     def set_message
-      @message = @room.messages.find(params[:id])
+      @message = @room.messages_with_parent.find(params[:id])
     end
 
     def ensure_can_administer
@@ -60,11 +65,11 @@ class MessagesController < ApplicationController
     def find_paged_messages
       case
       when params[:before].present?
-        @room.messages.with_creator.page_before(@room.messages.find(params[:before]))
+        @room.messages_with_parent.with_threads.with_creator.page_before(@room.messages_with_parent.find(params[:before]))
       when params[:after].present?
-        @room.messages.with_creator.page_after(@room.messages.find(params[:after]))
+        @room.messages_with_parent.with_threads.with_creator.page_after(@room.messages_with_parent.find(params[:after]))
       else
-        @room.messages.with_creator.last_page
+        @room.messages_with_parent.with_threads.with_creator.last_page
       end
     end
 

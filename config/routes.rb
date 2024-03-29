@@ -77,8 +77,10 @@ Rails.application.routes.draw do
     resources :opens
     resources :closeds
     resources :directs
+    resources :threads
 
     post ":bot_key/directs", to: "directs/by_bots#create", as: :bot_directs
+    post ":bot_key/threads", to: "threads/by_bots#create", as: :bot_threads
   end
 
   resources :messages do
