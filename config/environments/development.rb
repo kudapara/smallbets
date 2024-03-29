@@ -68,6 +68,4 @@ Rails.application.configure do
 
   # Visit /rails/locks to see the locks
   config.middleware.insert_before Rack::Sendfile, ActionDispatch::DebugLocks
-
-  config.action_controller.default_url_options = { host: ENV["DEV_HOST"] || "localhost", port: ENV["DEV_HOST"] ? ENV["DEV_PORT"].presence : "3000" }
 end
