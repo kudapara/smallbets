@@ -36,7 +36,7 @@ class Sso::Fetch
   private
     def transform_keys(response)
       response.symbolize_keys
-              .slice(:name, :email, :joinDate, :userId, :twitter, :linkedin, :personalUrl, :profilePic, :tokenExpiry)
+              .slice(:name, :email, :joinDate, :userId, :twitter, :linkedIn, :personalUrl, :profilePic, :tokenExpiry)
               .tap { |h| h.delete(:name) if h[:name].blank? }
               .transform_keys({
                 email: :email_address,
