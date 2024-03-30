@@ -8,6 +8,7 @@ class Rooms::ThreadsController < RoomsController
     @room.update(name: room_params[:name])
 
     broadcast_create_room
+    broadcast_update_parent_message
     redirect_to room_url(@room) if request.format.html?
   end
 
@@ -18,6 +19,7 @@ class Rooms::ThreadsController < RoomsController
     @room.update! room_params
 
     broadcast_update_room
+    broadcast_update_parent_message
     redirect_to room_url(@room)
   end
   
@@ -42,20 +44,21 @@ class Rooms::ThreadsController < RoomsController
     each_user_and_html_for(@room) do |user, html|
       broadcast_append_to user, :rooms, target: :shared_rooms, html: html
     end
-    @room.parent_message.broadcast_replace_to @room.parent_message.room, :messages, target: [@room.parent_message, :threads], partial: "messages/threads", attributes: { maintain_scroll: true }
   end
 
   def broadcast_update_room
     each_user_and_html_for(@room) do |user, html|
       broadcast_replace_to user, :rooms, target: [ @room, :list ], html: html
     end
-    @room.parent_message.broadcast_replace_to @room.parent_message.room, :messages, target: [@room.parent_message, :threads], partial: "messages/threads", attributes: { maintain_scroll: true }
   end
 
   def each_user_and_html_for(room)
     # Optimization to avoid rendering the same partial for every user
-    html = render_to_string(partial: "users/sidebars/rooms/shared", locals: { room: room })
+    unread_html = render_to_string(partial: "users/sidebars/rooms/shared", locals: { room: room, unread: true })
+    read_html = render_to_string(partial: "users/sidebars/rooms/shared", locals: { room: room, unread: false })
 
-    room.visible_users.each { |user| yield user, html }
+    room.memberships.visible.each do |membership|
+      yield membership.user, membership.unread? ? unread_html : read_html
+    end
   end
 end

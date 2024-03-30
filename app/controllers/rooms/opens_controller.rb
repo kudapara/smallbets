@@ -13,10 +13,10 @@ class Rooms::OpensController < RoomsController
   end
 
   def create
-    room = Rooms::Open.create_for(room_params, users: Current.user)
+    @room = Rooms::Open.create_for(room_params, users: Current.user)
 
-    broadcast_create_room(room)
-    redirect_to room_url(room)
+    broadcast_create_room
+    redirect_to room_url(@room)
   end
 
   def edit
@@ -36,11 +36,23 @@ class Rooms::OpensController < RoomsController
       @room = @room.becomes!(Rooms::Open)
     end
 
-    def broadcast_create_room(room)
-      broadcast_append_to :rooms, target: :shared_rooms, partial: "users/sidebars/rooms/shared", locals: { room: room }
+    def broadcast_create_room
+      broadcast_append_to :rooms, target: :shared_rooms, partial: "users/sidebars/rooms/shared", locals: { room: @room }
     end
 
     def broadcast_update_room
-      broadcast_replace_to :rooms, target: [ @room, :list ], partial: "users/sidebars/rooms/shared", locals: { room: @room }
+      each_user_and_html_for(@room) do | user, html |
+        broadcast_replace_to user, :rooms, target: [ @room, :list ], html: html 
+      end
+    end
+
+    def each_user_and_html_for(room)
+      # Optimization to avoid rendering the same partial for every user
+      unread_html = render_to_string(partial: "users/sidebars/rooms/shared", locals: { room: room, unread: true })
+      read_html = render_to_string(partial: "users/sidebars/rooms/shared", locals: { room: room, unread: false })
+      
+      room.memberships.visible.each do |membership|
+        yield membership.user, membership.unread? ? unread_html : read_html
+      end
     end
 end

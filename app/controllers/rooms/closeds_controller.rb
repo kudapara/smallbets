@@ -64,8 +64,11 @@ class Rooms::ClosedsController < RoomsController
 
     def each_user_and_html_for(room)
       # Optimization to avoid rendering the same partial for every user
-      html = render_to_string(partial: "users/sidebars/rooms/shared", locals: { room: room })
-
-      room.users.each { |user| yield user, html }
+      unread_html = render_to_string(partial: "users/sidebars/rooms/shared", locals: { room: room, unread: true })
+      read_html = render_to_string(partial: "users/sidebars/rooms/shared", locals: { room: room, unread: false })
+  
+      room.memberships.visible.each do |membership|
+        yield membership.user, membership.unread? ? unread_html : read_html
+      end
     end
 end
