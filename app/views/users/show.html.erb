@@ -40,6 +40,20 @@
             <div><%= mail_to @user.email_address %></div>
           <% end %>
           <div><%= @user.bio %></div>
+          <div class="flex gap justify-center margin-block-start" style="--column-gap: calc(var(--block-space) / 3)">
+            <%= link_to @user.twitter_url, target: "_blank" do %>
+              <%= image_tag "social/twitter.svg", size: 20 %>
+            <% end if @user.twitter_url.present? %>
+            <%= link_to @user.linkedin_url, target: "_blank" do %>
+              <%= image_tag "social/linkedin.svg", size: 20 %>
+            <% end if @user.linkedin_url.present? %>
+          </div>  
+          <% if @user.personal_url.present? %>
+            <div>
+              <%= link_to friendly_domain(@user.personal_url), with_protocol(@user.personal_url), 
+                          target: "_blank", class: "txt-medium", style: "color: var(--lch-black)" %>
+            </div>
+          <% end %>
         </div>
 
         <div class="pad-inline-double margin-inline margin-block-start">

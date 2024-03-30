@@ -37,6 +37,18 @@ class User < ApplicationRecord
     [ name, bio ].compact_blank.join(" – ")
   end
 
+  def twitter_url
+    return unless twitter_username.present?
+
+    "https://x.com/#{twitter_username}"
+  end
+  
+  def linkedin_url
+    return unless linkedin_username.present?
+    
+    "https://linkedin.com/in/#{linkedin_username}"
+  end
+
   def deactivate
     transaction do
       close_remote_connections

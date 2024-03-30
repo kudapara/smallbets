@@ -26,6 +26,7 @@
 .txt-undecorated { text-decoration: none; }
 .txt-tight-lines { line-height: 1.2; }
 .txt-normal { font-weight: 400; font-style: normal; }
+.txt-medium { font-weight: 500; }
 .txt-nowrap { white-space: nowrap; }
 
 /* Flexbox and Grid */
