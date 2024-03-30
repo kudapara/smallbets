@@ -1,4 +1,6 @@
 class Rooms::ThreadsController < RoomsController
+  include Threads::Broadcasts
+  
   before_action :set_parent_message, only: %i[ create ]
   
   DEFAULT_ROOM_NAME = "New thread"
@@ -41,8 +43,8 @@ class Rooms::ThreadsController < RoomsController
   end
 
   def broadcast_create_room
-    each_user_and_html_for(@room) do |user, html|
-      broadcast_append_to user, :rooms, target: :shared_rooms, html: html
+    @room.memberships.visible.each do |membership|
+      broadcast_update_parent_room(membership)
     end
   end
 

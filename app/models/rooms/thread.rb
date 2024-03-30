@@ -10,4 +10,13 @@ class Rooms::Thread < Room
       "invisible"
     end
   end
+  
+  def top_level_parent_room
+    return @top_level_parent_room if defined?(@top_level_parent_room)
+
+    node = self
+    node = node.parent_room while node.parent_room.present? 
+
+    @top_level_parent_room = node
+  end
 end

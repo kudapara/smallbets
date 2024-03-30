@@ -1,0 +1,11 @@
+<% indent = local_assigns[:indent].to_i %>
+<div id="<%= dom_id(membership.room, :list_node) %>" class="flex flex-column gap" style="<%= "margin-left: var(--block-space);" if indent.between?(1, 3) %>">
+  <%= render "users/sidebars/rooms/shared", room: membership.room, unread: membership.unread? %>
+
+  <% (local_assigns[:thread_memberships] || []).each do |thread_membership| %>
+    <% if thread_membership.room.parent_room == membership.room %>
+      <%= render "users/sidebars/rooms/shared_with_threads", membership: thread_membership, 
+                 thread_memberships: local_assigns[:thread_memberships], indent: indent + 1 %>
+    <% end %>
+  <% end %>
+</div>

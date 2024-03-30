@@ -48,7 +48,7 @@ class RoomsController < ApplicationController
     end
 
     def broadcast_remove_room
-      broadcast_remove_to :rooms, target: [ @room, :list ]
+      broadcast_remove_to :rooms, target: [ @room, :list_node ]
     end
   
     def broadcast_update_parent_message

@@ -4,7 +4,8 @@ class Users::SidebarsController < ApplicationController
   def show
     all_memberships     = Current.user.memberships.visible.with_ordered_room
     @direct_memberships = extract_direct_memberships(all_memberships)
-    @other_memberships  = all_memberships.without(@direct_memberships)
+    @thread_memberships = extract_thread_memberships(all_memberships)
+    @other_memberships  = all_memberships.without(@direct_memberships).without(@thread_memberships)
     @direct_memberships.select! { |m| m.room.messages_count > 0 }
 
     @direct_placeholder_users = find_direct_placeholder_users
@@ -13,6 +14,10 @@ class Users::SidebarsController < ApplicationController
   private
     def extract_direct_memberships(all_memberships)
       all_memberships.select { |m| m.room.direct? }.sort_by { |m| m.room.updated_at }.reverse
+    end
+  
+    def extract_thread_memberships(all_memberships)
+      all_memberships.select { |m| m.room.thread? }
     end
 
     def find_direct_placeholder_users

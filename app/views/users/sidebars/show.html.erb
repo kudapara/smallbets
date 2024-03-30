@@ -31,7 +31,7 @@
     <div class="rooms position-relative flex flex-column gap overflow-y overflow-hide-scrollbar">
       <div id="shared_rooms" contents>
         <% @other_memberships.each do |membership| %>
-          <%= render "users/sidebars/rooms/shared", room: membership.room, unread: membership.unread? %>
+          <%= render "users/sidebars/rooms/shared_with_threads", membership: membership, thread_memberships: @thread_memberships %>
         <% end %>
       </div>
 

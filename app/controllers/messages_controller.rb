@@ -45,7 +45,7 @@ class MessagesController < ApplicationController
 
   def destroy
     @message.threads.each do |thread|
-      broadcast_remove_to :rooms, target: [ thread, :list ]
+      broadcast_remove_to :rooms, target: [ thread, :list_node ]
     end
     @message.destroy
     @message.broadcast_remove_to @room, :messages

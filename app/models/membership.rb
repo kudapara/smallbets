@@ -10,6 +10,7 @@ class Membership < ApplicationRecord
 
   scope :with_ordered_room, -> { includes(:room).joins(:room).order("messages_count DESC, rooms.created_at ASC") }
   scope :without_direct_rooms, -> { joins(:room).where.not(room: { type: "Rooms::Direct" }) }
+  scope :thread_rooms, -> { joins(:room).where(room: { type: "Rooms::Thread" }) }
 
   scope :visible, -> { where.not(involvement: :invisible) }
   scope :unread,  -> { where.not(unread_at: nil) }
