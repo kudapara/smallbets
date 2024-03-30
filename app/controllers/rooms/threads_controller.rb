@@ -6,12 +6,8 @@ class Rooms::ThreadsController < RoomsController
   DEFAULT_ROOM_NAME = "New thread"
 
   def create
-    @room = Rooms::Thread.create_for(room_params, users: parent_room.users)
-    @room.update(name: room_params[:name])
-
-    broadcast_create_room
-    broadcast_update_parent_message
-    redirect_to room_url(@room) if request.format.html?
+    create_room
+    redirect_to room_url(@room)
   end
 
   def edit
@@ -26,6 +22,14 @@ class Rooms::ThreadsController < RoomsController
   end
   
   private
+  def create_room
+    @room = Rooms::Thread.create_for(room_params, users: parent_room.users)
+    @room.update(name: room_params[:name])
+
+    broadcast_create_room
+    broadcast_update_parent_message
+  end
+  
   def set_parent_message
     if message = Current.user.reachable_messages.joins(:room).where.not(room: { type: "Rooms::Direct" }).find_by(id: params[:parent_message_id])
       @parent_message = message

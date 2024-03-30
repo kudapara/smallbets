@@ -3,7 +3,7 @@ class Rooms::Threads::ByBotsController < Rooms::ThreadsController
   allow_bot_access only: :create
 
   def create
-    super
+    create_room
     render json: { room: { id: @room.id } }, status: :ok
   end
 

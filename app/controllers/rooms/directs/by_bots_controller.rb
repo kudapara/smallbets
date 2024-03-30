@@ -3,7 +3,7 @@ class Rooms::Directs::ByBotsController < Rooms::DirectsController
   allow_bot_access only: :create
 
   def create
-    super
+    create_room
     render json: { room: { id: @room.id } }, status: (@room.previously_new_record? ? :created : :ok)
   end
 
