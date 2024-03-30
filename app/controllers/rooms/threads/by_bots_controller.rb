@@ -13,7 +13,7 @@ class Rooms::Threads::ByBotsController < Rooms::ThreadsController
   end
 
   def set_parent_message
-    @parent_message = Message.find(params[:parent_message_id])
+    @parent_message = Message.joins(:room).where.not(room: { type: "Rooms::Direct" }).find(params[:parent_message_id])
   end
   
   def respond_with_error(error)
