@@ -9,6 +9,7 @@ class Membership < ApplicationRecord
   enum involvement: %w[ invisible nothing mentions everything ].index_by(&:itself), _prefix: :involved_in
 
   after_update :make_parent_involvements_visible, if: -> { saved_change_to_involvement? && involvement_before_last_save.inquiry.invisible? }
+  after_update :set_nested_involvements_to_mentions, if: -> { saved_change_to_involvement? && involved_in_invisible? }
 
   scope :with_ordered_room, -> { includes(:room).joins(:room).order("messages_count DESC") }
   scope :without_direct_rooms, -> { joins(:room).where.not(room: { type: "Rooms::Direct" }) }
@@ -47,6 +48,14 @@ class Membership < ApplicationRecord
     return unless room.parent_room
 
     room.parent_room.memberships.create_with(involvement: "invisible").find_or_create_by(user: user)
+  end
+
+  def set_nested_involvements_to_mentions
+    room.threads.each do |thread|
+      thread_membership = thread.memberships.find_by(user: user)
+      thread_membership.update(involvement: :mentions) if thread_membership.involved_in_everything?
+      thread_membership.set_nested_involvements_to_mentions
+    end
   end
   
   private
