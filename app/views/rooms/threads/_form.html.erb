@@ -1,2 +1,3 @@
-<%= render layout: "rooms/layouts/form", locals: { room: room } do %>
+<%= render layout: "rooms/layouts/form", locals: { room: room } do |form| %>
+  <%= form.hidden_field :parent_message_id, name: "parent_message_id" %>
 <% end %>

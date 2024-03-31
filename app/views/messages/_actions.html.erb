@@ -44,6 +44,13 @@
           <% end %>
         <% end %>
 
+        <% unless message.room.direct? %>
+          <%= link_to new_rooms_thread_path(parent_message_id: message.id), class: "btn message__action-btn center full-width",
+                      target: "_top", title: "Start a thread", aria: { label: "Start a thread"}, style: "view-transition-name: new-room" do %>
+            <%= image_tag "thread.svg", class: "colorize--black", size: 20, role: "presentation" %>
+          <% end %>
+        <% end %>
+        
         <%= tag.button class: "btn message__action-btn center full-width", title: "Copy link", aria: { label: "Copy link" }, data: { controller: "copy-to-clipboard", action: "copy-to-clipboard#copy", copy_to_clipboard_success_class: "btn--success", copy_to_clipboard_content_value: url } do %>
           <%= image_tag "link.svg", class: "colorize--black", size: 20, role: "presentation" %>
         <% end %>

@@ -19,7 +19,7 @@
   <hr class="margin-block borderless">
 
   <section class="room-access margin-block pad-inline fill-shade border-radius">
-    <%= yield %>
+    <%= yield form %>
   </section>
 
   <%= submit_room_button_tag if Current.user.can_administer?(room) %>

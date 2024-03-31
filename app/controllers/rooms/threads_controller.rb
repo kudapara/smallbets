@@ -1,10 +1,14 @@
 class Rooms::ThreadsController < RoomsController
   include Threads::Broadcasts
   
-  before_action :set_parent_message, only: %i[ create ]
+  before_action :set_parent_message, only: %i[ new create ]
   
   DEFAULT_ROOM_NAME = "New thread"
 
+  def new
+    @room = @parent_message.threads.new(name: DEFAULT_ROOM_NAME)
+  end
+  
   def create
     create_room
     redirect_to room_url(@room)
@@ -23,8 +27,7 @@ class Rooms::ThreadsController < RoomsController
   
   private
   def create_room
-    @room = Rooms::Thread.create_for(room_params, users: parent_room.users)
-    @room.update(name: room_params[:name])
+    @room = Rooms::Thread.create_for(room_params.merge(parent_message_id: @parent_message&.id), users: parent_room.users)
 
     broadcast_create_room
     broadcast_update_parent_message
