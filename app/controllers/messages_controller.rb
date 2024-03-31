@@ -1,5 +1,5 @@
 class MessagesController < ApplicationController
-  include ActiveStorage::SetCurrent, RoomScoped, NotifyBots
+  include ActiveStorage::SetCurrent, RoomScoped, NotifyBots, Threads::Broadcasts
 
   before_action :set_room, except: :create
   before_action :set_message, only: %i[ show edit update destroy ]
@@ -22,6 +22,7 @@ class MessagesController < ApplicationController
     @message = @room.messages.create_with_attachment!(message_params)
 
     @message.broadcast_create
+    broadcast_update_message_involvements(@message)
     deliver_webhooks_to_bots(@message, :created)
   rescue ActiveRecord::RecordNotFound
     render action: :room_not_found
@@ -39,6 +40,7 @@ class MessagesController < ApplicationController
     @message.containing_rooms.each do |room|
       @message.broadcast_replace_to room, :messages, target: [ @message, :presentation ], partial: "messages/presentation", attributes: { maintain_scroll: true }
     end
+    broadcast_update_message_involvements(@message)
     deliver_webhooks_to_bots(@message, :updated)
     redirect_to room_message_url(@room, @message)
   end

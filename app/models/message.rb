@@ -13,6 +13,9 @@ class Message < ApplicationRecord
   before_create -> { self.client_message_id ||= Random.uuid } # Bots don't care
   after_create_commit -> { room.receive(self) }
 
+  after_save -> { involve_mentionees_in_room }
+  after_save -> { involve_author_in_thread }, if: -> { room.thread? }
+
   scope :ordered, -> { order(:created_at) }
   scope :with_creator, -> { includes(:creator) }
   scope :with_threads, -> { includes(:threads) }
@@ -41,5 +44,15 @@ class Message < ApplicationRecord
     plain_text_body.match(/\A\/play (?<name>\w+)\z/) do |match|
       Sound.find_by_name match[:name]
     end
+  end
+  
+  private
+
+  def involve_mentionees_in_room
+    mentionees.each { |user| room.involve_user(user) }
+  end
+
+  def involve_author_in_thread
+    room.involve_user(creator)
   end
 end

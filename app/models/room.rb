@@ -56,6 +56,12 @@ class Room < ApplicationRecord
     unread_memberships(message)
     push_later(message)
   end
+  
+  def involve_user(user)
+    membership = memberships.create_with(involvement: "mentions", unread: true).find_or_create_by(user: user)
+    membership.update(unread_at: messages.last&.created_at || Time.current)
+    membership.ensure_receives_mentions!
+  end
 
   def open?
     is_a?(Rooms::Open)
@@ -79,6 +85,15 @@ class Room < ApplicationRecord
   
   def messages_with_parent
     Message.where(room_id: id).or(Message.where(id: parent_message_id))
+  end
+
+  def top_level_parent_room
+    return @top_level_parent_room if defined?(@top_level_parent_room)
+
+    node = self
+    node = node.parent_room while node.parent_room.present?
+
+    @top_level_parent_room = node
   end
 
   private

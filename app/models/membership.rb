@@ -25,15 +25,30 @@ class Membership < ApplicationRecord
     unread_at.present?
   end
   
-  private
+  def receives_mentions?
+    involved_in_mentions? || involved_in_everything?
+  end
   
-  def parent_membership
-    return unless room.parent_room
-    
-    room.parent_room.memberships.find_by(user: user)
+  def ensure_receives_mentions!
+    current_membership = self
+    while current_membership.present?
+      current_membership.update(involvement: :mentions) unless current_membership.receives_mentions?
+      current_membership = current_membership.parent_membership
+    end
   end
 
+  def parent_membership
+    return unless room.parent_room
+
+    room.parent_room.memberships.create_with(involvement: "invisible").find_or_create_by(user: user)
+  end
+  
+  private
+  
   def make_parent_involvements_visible
-    parent_membership.update(involvement: :mentions) if parent_membership&.involved_in_invisible? 
+    current_membership = self
+    while (current_membership = current_membership.parent_membership).present?
+      current_membership.update(involvement: :mentions) if current_membership.involved_in_invisible?  
+    end
   end
 end

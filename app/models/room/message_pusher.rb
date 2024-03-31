@@ -50,13 +50,13 @@ class Room::MessagePusher
     end
 
     def push_subscriptions_for_mentionable_users(mentionees)
-      relevant_subscriptions.merge(Membership.involved_in_mentions).where(user_id: mentionees.ids)
+      relevant_subscriptions.where(user_id: mentionees.ids)
     end
 
     def relevant_subscriptions
       Push::Subscription
         .joins(user: :memberships)
-        .merge(Membership.visible.disconnected.where(room: room).where.not(user: message.creator))
+        .merge(Membership.disconnected.where(room: room).where.not(user: message.creator))
     end
 
     def enqueue_payload_for_delivery(payload, subscriptions)
