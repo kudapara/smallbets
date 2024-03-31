@@ -23,6 +23,7 @@ class MessagesController < ApplicationController
 
     @message.broadcast_create
     broadcast_update_message_involvements(@message)
+    broadcast_unexpire_thread if @room.expired?
     deliver_webhooks_to_bots(@message, :created)
   rescue ActiveRecord::RecordNotFound
     render action: :room_not_found
@@ -75,6 +76,11 @@ class MessagesController < ApplicationController
       end
     end
 
+    def broadcast_unexpire_thread
+      @room.memberships.visible.each do |membership|
+        refresh_shared_rooms(membership.user)
+      end
+    end
 
     def message_params
       params.require(:message).permit(:body, :attachment, :client_message_id)

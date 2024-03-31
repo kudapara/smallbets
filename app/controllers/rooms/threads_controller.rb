@@ -51,7 +51,7 @@ class Rooms::ThreadsController < RoomsController
 
   def broadcast_create_room
     @room.memberships.visible.each do |membership|
-      broadcast_update_parent_room(membership)
+      refresh_shared_rooms(membership.user)
     end
   end
 

@@ -13,6 +13,8 @@ class Message < ApplicationRecord
   before_create -> { self.client_message_id ||= Random.uuid } # Bots don't care
   after_create_commit -> { room.receive(self) }
 
+  after_create -> { room.update(last_active_at: created_at) }
+  
   after_save -> { involve_mentionees_in_room }
   after_save -> { involve_author_in_thread }, if: -> { room.thread? }
 
@@ -49,7 +51,7 @@ class Message < ApplicationRecord
   private
 
   def involve_mentionees_in_room
-    mentionees.each { |user| room.involve_user(user) }
+    mentionees.each { |user| room.involve_user(user, unread: true) }
   end
 
   def involve_author_in_thread

@@ -1,4 +1,6 @@
 class Room < ApplicationRecord
+  EXPIRES_INTERVAL = 30.days
+  
   has_many :memberships, dependent: :delete_all do
     def grant_to(users)
       room = proxy_association.owner
@@ -25,6 +27,7 @@ class Room < ApplicationRecord
   has_many :visible_memberships, -> { visible }, class_name: "Membership"
   has_many :visible_users, through: :visible_memberships, source: :user, class_name: "User"
   has_many :messages, dependent: :destroy
+  has_one :last_message, -> { order(created_at: :desc) }, class_name: "Message"
   has_many :threads, through: :messages, class_name: "Rooms::Thread", dependent: :destroy
   belongs_to :parent_message, class_name: "Message", optional: true, touch: true
   has_one :parent_room, through: :parent_message, source: :room, class_name: "Room"
@@ -37,6 +40,8 @@ class Room < ApplicationRecord
   scope :without_directs, -> { where.not(type: "Rooms::Direct") }
 
   scope :ordered, -> { order("LOWER(name)") }
+  
+  scope :without_expired_threads, -> { where("type != 'Rooms::Thread' or last_active_at is null or last_active_at > ?", EXPIRES_INTERVAL.ago) }
 
   class << self
     def create_for(attributes, users:)
@@ -57,9 +62,9 @@ class Room < ApplicationRecord
     push_later(message)
   end
   
-  def involve_user(user)
-    membership = memberships.create_with(involvement: "mentions", unread: true).find_or_create_by(user: user)
-    membership.update(unread_at: messages.last&.created_at || Time.current)
+  def involve_user(user, unread: false)
+    membership = memberships.create_with(involvement: "mentions").find_or_create_by(user: user)
+    membership.update(unread_at: messages.last&.created_at || Time.current) if unread && membership.read?
     membership.ensure_receives_mentions!
   end
 
@@ -77,6 +82,10 @@ class Room < ApplicationRecord
 
   def thread?
     is_a?(Rooms::Thread)
+  end
+  
+  def expired?
+    thread? && last_active_at.present? && last_active_at < EXPIRES_INTERVAL.ago
   end
   
   def default_involvement(user: nil)
