@@ -3,7 +3,7 @@ class Users::ProfilesController < ApplicationController
 
   def show
     @direct_memberships, @shared_memberships =
-      Current.user.memberships.with_ordered_room.partition { |m| m.room.direct? }
+      Current.user.memberships.without_expired_threads.with_ordered_room.partition { |m| m.room.direct? }
   end
 
   def update
