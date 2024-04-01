@@ -15,7 +15,7 @@ class Membership < ApplicationRecord
   scope :without_direct_rooms, -> { joins(:room).where.not(room: { type: "Rooms::Direct" }) }
   scope :without_thread_rooms, -> { joins(:room).where.not(room: { type: "Rooms::Thread" }) }
   scope :thread_rooms, -> { joins(:room).where(room: { type: "Rooms::Thread" }) }
-  scope :without_expired_threads, -> { joins(:room).where("rooms.type != 'Rooms::Thread' or rooms.last_active_at is null or rooms.last_active_at > ?", Room::EXPIRES_INTERVAL.ago) }
+  scope :without_expired_threads, -> { joins(:room).where("rooms.type != 'Rooms::Thread' or rooms.last_active_at > ?", Room::EXPIRES_INTERVAL.ago) }
 
   scope :visible, -> { where.not(involvement: :invisible) }
   scope :unread,  -> { where.not(unread_at: nil) }

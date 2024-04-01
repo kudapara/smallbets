@@ -33,6 +33,8 @@ class Room < ApplicationRecord
   has_one :parent_room, through: :parent_message, source: :room, class_name: "Room"
 
   belongs_to :creator, class_name: "User", default: -> { Current.user }
+  
+  before_validation -> { self.last_active_at = Time.current }, on: :create
 
   scope :opens,           -> { where(type: "Rooms::Open") }
   scope :closeds,         -> { where(type: "Rooms::Closed") }
@@ -41,7 +43,7 @@ class Room < ApplicationRecord
 
   scope :ordered, -> { order("LOWER(name)") }
   
-  scope :without_expired_threads, -> { where("type != 'Rooms::Thread' or last_active_at is null or last_active_at > ?", EXPIRES_INTERVAL.ago) }
+  scope :without_expired_threads, -> { where("type != 'Rooms::Thread' or last_active_at > ?", EXPIRES_INTERVAL.ago) }
 
   class << self
     def create_for(attributes, users:)

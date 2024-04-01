@@ -1,7 +1,7 @@
 class Message < ApplicationRecord
   include Attachment, Broadcasts, Mentionee, Pagination, Searchable
 
-  belongs_to :room, touch: true, counter_cache: true
+  belongs_to :room, touch: :last_active_at, counter_cache: true
   belongs_to :creator, class_name: "User", default: -> { Current.user }
 
   has_many :boosts, dependent: :destroy
@@ -12,8 +12,6 @@ class Message < ApplicationRecord
 
   before_create -> { self.client_message_id ||= Random.uuid } # Bots don't care
   after_create_commit -> { room.receive(self) }
-
-  after_create -> { room.update(last_active_at: created_at) }
   
   after_save -> { involve_mentionees_in_room }
   after_save -> { involve_author_in_thread }, if: -> { room.thread? }
