@@ -15,6 +15,7 @@ class Rooms::ThreadsController < RoomsController
   end
 
   def edit
+    @users = @room.visible_users
   end
 
   def update
