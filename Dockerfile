@@ -64,6 +64,7 @@ ENV GIT_REVISION=$GIT_REVISION
 EXPOSE 3000 2222
 
 COPY script/admin/full-backup /etc/cron.daily/
+COPY script/admin/db-backup /etc/cron.hourly/
 
 COPY sshd_config /etc/ssh/
 RUN echo "root:Docker!" | chpasswd
@@ -71,4 +72,4 @@ RUN echo "root:Docker!" | chpasswd
 RUN mkdir -p /home/campfire/storage
 
 # Start the server by default, this can be overwritten at runtime
-CMD service ssh start && bin/restore && bin/configure && bin/boot
+CMD service ssh start && bin/restore && bin/boot
