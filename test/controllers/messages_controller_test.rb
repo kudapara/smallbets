@@ -2,6 +2,8 @@ require "test_helper"
 
 class MessagesControllerTest < ActionDispatch::IntegrationTest
   setup do
+    host! "once.campfire.test"
+
     sign_in :david
     @room = rooms(:watercooler)
     @messages = @room.messages.ordered.to_a
@@ -44,6 +46,15 @@ class MessagesControllerTest < ActionDispatch::IntegrationTest
     get room_message_url(@room, message)
 
     assert_response :success
+  end
+
+  test "creating a message broadcasts the message to the room" do
+    post room_messages_url(@room, format: :turbo_stream), params: { message: { body: "New one", client_message_id: 999 } }
+
+    assert_rendered_turbo_stream_broadcast @room, :messages, action: "append", target: [ @room, :messages ] do
+      assert_select ".message__body", text: /New one/
+      assert_copy_link_button room_at_message_url(@room, Message.last, host: "once.campfire.test")
+    end
   end
 
   test "creating a message broadcasts unread room" do
@@ -133,5 +144,9 @@ class MessagesControllerTest < ActionDispatch::IntegrationTest
 
     def ensure_messages_not_present(*messages)
       ensure_messages_present *messages, count: 0
+    end
+
+    def assert_copy_link_button(url)
+      assert_select ".btn[title='Copy link'][data-copy-to-clipboard-content-value='#{url}']"
     end
 end

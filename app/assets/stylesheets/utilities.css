@@ -141,7 +141,7 @@
 
 /* Borders */
 .border { border: var(--border-size, 1px) solid var(--border-color, var(--color-border)); }
-.border-top { border-top: var(--border-size, 1px) solid var(--border-color, var(--color-border)); }
+.border-top { border-block-start: var(--border-size, 1px) solid var(--border-color, var(--color-border)); }
 .borderless { border: 0; }
 
 /* Border radius */

@@ -42,13 +42,3 @@ class ActionText::Attachment::OpengraphEmbed
     "action_text/attachables/opengraph_embed"
   end
 end
-
-ActiveSupport.on_load(:action_text_content) do
-  class ActionText::Attachment
-    class << self
-      def from_node(node, attachable = nil)
-        new(node, attachable || ActionText::Attachment::OpengraphEmbed.from_node(node) || ActionText::Attachable.from_node(node))
-      end
-    end
-  end
-end

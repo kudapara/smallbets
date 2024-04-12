@@ -1,7 +1,7 @@
 <% if owner = User.administrator.first %>
   <div class="txt-align-center margin-block-double full-width">
     <%= link_to "mailto:\"Small Bets Support\" <support@smallbets.com>", class: "btn center", title: "Email Small Bets Support" do %>
-      <%= image_tag "lifebuoy.svg", role: "presentation" %>
+      <%= image_tag "lifebuoy.svg", aria: { hidden: "true" } %>
       <span>support@smallbets.com</span>
     <% end %>
 

@@ -8,10 +8,8 @@
   <div class="flex align-center gap flex-item-justify-end">
     <% if Current.user == @user %>
       <%= link_to user_profile_path, class: "btn" do %>
-        <%= image_tag "pencil.svg" %>
-        <span class="for-screen-reader">
-          <%= Current.user.name %>
-        </span>
+        <%= image_tag "pencil.svg", aria: { hidden: "true" } %>
+        <span class="for-screen-reader">Edit my profile</span>
       <% end %>
     <% end %>
   </div>
@@ -20,8 +18,7 @@
 <section class="panel txt-align-center">
   <div class="flex flex-column gap">
     <div class="avatar txt-xx-large center" style="background: white">
-      <%= avatar_image_tag(@user, class: "avatar") %>
-      <span class="for-screen-reader">Avatar</span>
+      <%= avatar_image_tag(@user, class: "avatar", alt: "Profile avatar") %>
     </div>
 
     <% if @user.bot? %>
@@ -58,7 +55,7 @@
 
         <div class="pad-inline-double margin-inline margin-block-start">
           <%= button_to rooms_directs_path(user_ids: [ @user.id ]), class: "btn btn--reversed full-width txt-large" do %>
-            <%= image_tag "messages.svg" %>
+            <%= image_tag "messages.svg", aria: { hidden: "true" }, aria: { label: "Ping #{@user.name}" } %>
           <% end %>
         </div>
 

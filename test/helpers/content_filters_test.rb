@@ -53,6 +53,23 @@ class ContentFiltersTest < ActionView::TestCase
     assert_match /<div><action-text-attachment/, filtered.to_html
   end
 
+  test "message contains a forbidden tag" do
+    exploit_image_tag = 'Hello <img src="https://ssecurityrise.com/tests/billionlaughs-cache.svg">World'
+    message = Message.create! room: rooms(:pets), body: exploit_image_tag, client_message_id: "0015", creator: users(:jason)
+
+    filtered = ContentFilters::TextMessagePresentationFilters.apply(message.body.body)
+    assert_equal "Hello World", filtered.to_html
+  end
+
+  test "message with a mention attachment" do
+    message = Message.create! room: rooms(:pets), body: "<div>Hey #{mention_attachment_for(:david)}</div>", creator: users(:jason)
+
+    filtered = ContentFilters::TextMessagePresentationFilters.apply(message.body.body)
+    expected = /<action-text-attachment sgid="#{users(:david).attachable_sgid}" content-type="application\/vnd\.campfire\.mention" content="(.*?)"><\/action-text-attachment>/m
+
+    assert_match expected, filtered.to_html
+  end
+
   private
     def unfurled_message_body_for_basecamp(text)
       "<div>#{text}#{unfurled_link_trix_attachment_for_basecamp}</div>"

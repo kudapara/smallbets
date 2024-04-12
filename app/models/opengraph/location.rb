@@ -6,14 +6,20 @@ class Opengraph::Location
   attr_accessor :url, :parsed_url
 
   validate :validate_url, :validate_url_is_public
-  validate :validate_url_is_for_a_web_page, on: :read
 
   def initialize(url)
     @url = url
   end
 
-  def read
-    fetch_html if valid?
+  def read_html
+    fetch_html if valid? && !url.match(FILES_AND_MEDIA_URL_REGEX)
+  end
+
+  def fetch_content_type
+    Opengraph::Fetch.new.fetch_content_type(parsed_url, ip: resolved_ip) if valid?
+  rescue => e
+    Rails.logger.warn "Failed to fetch #{parsed_url} at #{resolved_ip} (#{e})"
+    nil
   end
 
   def resolved_ip
@@ -22,6 +28,8 @@ class Opengraph::Location
   end
 
   private
+    FILES_AND_MEDIA_URL_REGEX = /\bhttps?:\/\/\S+\.(?:zip|tar|tar\.gz|tar\.bz2|tar\.xz|gz|bz2|rar|7z|dmg|exe|msi|pkg|deb|iso|jpg|jpeg|png|gif|bmp|mp4|mov|avi|mkv|wmv|flv|heic|heif|mp3|wav|ogg|aac|wma|webm|ogv|mpg|mpeg)\b/
+
     def validate_url
       errors.add :url, "is invalid" unless parsed_url.is_a?(URI::HTTP)
     end
@@ -30,19 +38,13 @@ class Opengraph::Location
       errors.add :url, "is not public" unless resolved_ip
     end
 
-    def validate_url_is_for_a_web_page
-      errors.add :url, "is not for a webpage" if url.match(FILES_AND_MEDIA_URL_REGEX)
-    end
-
-    FILES_AND_MEDIA_URL_REGEX = /\bhttps?:\/\/\S+\.(?:zip|tar|tar\.gz|tar\.bz2|tar\.xz|gz|bz2|rar|7z|dmg|exe|msi|pkg|deb|iso|jpg|jpeg|png|gif|bmp|mp4|mov|avi|mkv|wmv|flv|heic|heif|mp3|wav|ogg|aac|wma|webm|ogv|mpg|mpeg)\b/
-
     def parsed_url
       return @parsed_url if defined? @parsed_url
       @parsed_url = URI.parse(url) rescue nil
     end
 
     def fetch_html
-      Opengraph::Fetch.new.fetch(parsed_url, ip: resolved_ip)
+      Opengraph::Fetch.new.fetch_document(parsed_url, ip: resolved_ip)
     rescue => e
       Rails.logger.warn "Failed to fetch #{parsed_url} at #{resolved_ip} (#{e})"
       nil

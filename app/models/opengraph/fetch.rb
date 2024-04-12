@@ -2,30 +2,42 @@ require "net/http"
 require "restricted_http/private_network_guard"
 
 class Opengraph::Fetch
-  ALLOWED_CONTENT_TYPE = "text/html"
+  ALLOWED_DOCUMENT_CONTENT_TYPE = "text/html"
   MAX_BODY_SIZE = 5.megabytes
   MAX_REDIRECTS = 10
 
   class TooManyRedirectsError < StandardError; end
   class RedirectDeniedError < StandardError; end
 
-  def fetch(url, ip: RestrictedHTTP::PrivateNetworkGuard.resolve(url.host))
-    MAX_REDIRECTS.times do
-      Net::HTTP.start(url.host, url.port, ipaddr: ip, use_ssl: url.scheme == "https") do |http|
-        http.request Net::HTTP::Get.new(url) do |response|
-          if response.is_a?(Net::HTTPRedirection)
-            url, ip = resolve_redirect(response["location"])
-          else
-            return body_if_acceptable(response)
-          end
-        end
-      end
+  def fetch_document(url, ip: RestrictedHTTP::PrivateNetworkGuard.resolve(url.host))
+    request(url, Net::HTTP::Get, ip: ip) do |response|
+      return body_if_acceptable(response)
     end
+  end
 
-    raise TooManyRedirectsError
+  def fetch_content_type(url, ip: RestrictedHTTP::PrivateNetworkGuard.resolve(url.host))
+    request(url, Net::HTTP::Head, ip: ip) do |response|
+      return response["Content-Type"]
+    end
   end
 
   private
+    def request(url, request_class, ip:)
+      MAX_REDIRECTS.times do
+        Net::HTTP.start(url.host, url.port, ipaddr: ip, use_ssl: url.scheme == "https") do |http|
+          http.request request_class.new(url) do |response|
+            if response.is_a?(Net::HTTPRedirection)
+              url, ip = resolve_redirect(response["location"])
+            else
+              yield response
+            end
+          end
+        end
+      end
+
+      raise TooManyRedirectsError
+    end
+
     def resolve_redirect(location)
       url = URI.parse(location)
       raise RedirectDeniedError unless url.is_a?(URI::HTTP)
@@ -58,7 +70,7 @@ class Opengraph::Fetch
     end
 
     def content_type_valid?(response)
-      response.content_type == ALLOWED_CONTENT_TYPE
+      response.content_type == ALLOWED_DOCUMENT_CONTENT_TYPE
     end
 
     def content_length_valid?(response)

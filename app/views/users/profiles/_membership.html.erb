@@ -4,7 +4,7 @@
     <strong><%= room_display_name(membership.room) %></strong>
   <% end %>
 
-  <hr class="separator">
+  <hr class="separator" aria-hidden="true">
 
   <span class="txt-small">
     <%= turbo_frame_tag dom_id(membership.room, :involvement) do %>

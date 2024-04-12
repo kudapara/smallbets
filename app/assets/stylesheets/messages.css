@@ -28,8 +28,8 @@
 .message-area__return-to-latest {
   animation: pulsing-outline 2s infinite both;
   outline: 0 solid var(--color-selected-dark);
-  bottom: var(--footer-height);
-  left: calc(50% - calc(var(--btn-size) / 2));
+  inset-block-end: var(--footer-height);
+  inset-inline-start: calc(50% - calc(var(--btn-size) / 2));
   position: absolute;
 }
 
@@ -108,7 +108,7 @@
   &:last-of-type {
     &:has(.boost__reactions) {
       .message__body {
-        padding-bottom: 3.2rem;
+        padding-block-end: 3.2rem;
       }
     }
   }
@@ -239,6 +239,14 @@
     visibility: visible;
   }
 
+  .message__heading {
+    align-items: center;
+    column-gap: calc(var(--message-column-gap) / 2);
+    display: inline-flex;
+    margin: 0;
+    min-inline-size: 0;
+  }
+
   .message__actions {
     @media (max-width: 100ch) {
       .message__options-btn {
@@ -331,7 +339,7 @@
   word-break: break-word;
 
   &:has(.message__attachment) {
-    margin-bottom: 0.33em;
+    margin-block-end: 0.33em;
     padding: 0;
 
     &:has(.boost) {
@@ -523,14 +531,16 @@ img.message__attachment {
     "sep sep sep"
     "body body avatar";
 
-  .message__body,
-  .message__meta {
+  :is(.message__body, .message__meta, .message__heading) {
     justify-self: end;
   }
 
-  .message__meta {
+  :is(.message__meta, .message__heading) {
     flex-direction: row-reverse;
     justify-content: end;
+  }
+
+  .message__meta {
     padding-inline: calc(var(--btn-size) / 2) 0;
   }
 
@@ -615,7 +625,7 @@ img.message__attachment {
     block-size: 100%;
     content: "";
     inline-size: 100%;
-    left: var(--percentage);
+    inset-inline-start: var(--percentage);
     position: absolute;
     transform: translateX(-100%);
     z-index: 1;

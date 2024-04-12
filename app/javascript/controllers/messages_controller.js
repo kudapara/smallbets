@@ -6,7 +6,7 @@ import MessagePaginator from "models/message_paginator"
 import ScrollManager from "models/scroll_manager"
 
 export default class extends Controller {
-  static targets = [ "latest", "message", "messages", "template" ]
+  static targets = [ "latest", "message", "body", "messages", "template" ]
   static classes = [ "firstOfDay", "formatted", "me", "mentioned", "threaded" ]
   static values = { pageUrl: String }
 
@@ -49,6 +49,9 @@ export default class extends Controller {
     this.#formatter.format(target, ThreadStyle.thread)
   }
 
+  bodyTargetConnected(target) {
+    this.#formatter.formatBody(target)
+  }
 
   // Actions
 

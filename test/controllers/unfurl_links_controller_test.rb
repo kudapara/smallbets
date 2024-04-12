@@ -55,5 +55,10 @@ class UnfurlLinksControllerTest < ActionDispatch::IntegrationTest
         body: "<html><head><meta property=\"og:url\" content=\"https://example.com\"><meta property=\"og:title\" content=\"Hey!\"><meta property=\"og:description\" content=\"desc..\"><meta property=\"og:image\" content=\"https://example.com/image.png\"></head></html>",
         headers: { content_type: "text/html" }
       )
+
+      WebMock.stub_request(:head, "https://example.com/image.png").to_return(
+        status: 200,
+        headers: { content_type: "image/png" }
+      )
     end
 end

@@ -20,7 +20,6 @@ export default class MessageFormatter {
   format(message, threadstyle) {
     this.#setMeClass(message)
     this.#highlightMentions(message)
-    this.#highlightCode(message)
 
     if (threadstyle != ThreadStyle.none) {
       this.#threadMessage(message)
@@ -28,6 +27,10 @@ export default class MessageFormatter {
     }
 
     this.#makeVisible(message)
+  }
+
+  formatBody(body) {
+    this.#highlightCode(body)
   }
 
   #setMeClass(message) {
@@ -66,8 +69,8 @@ export default class MessageFormatter {
     message.classList.toggle(this.#classes.mentioned, mentionsCurrentUser)
   }
 
-  #highlightCode(message) {
-    message.querySelectorAll("pre").forEach((block) => {
+  #highlightCode(body) {
+    body.querySelectorAll("pre").forEach(block => {
       onNextEventLoopTick(() => this.#highlightCodeBlock(block))
     })
   }

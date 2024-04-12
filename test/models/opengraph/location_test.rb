@@ -21,18 +21,15 @@ class Opengraph::LocationTest < ActiveSupport::TestCase
     assert_equal [ "is not public" ], location.errors[:url]
   end
 
-  test "validations while reading file urls" do
+  test "avoid reading file urls when expecting HTML" do
     large_file = Opengraph::Location.new("https://www.example.com/100gb.zip")
-    assert_not large_file.valid?(:read)
-    assert_equal [ "is not for a webpage" ], large_file.errors[:url]
 
-    assert_not Opengraph::Location.new("http://www.example.com/video.mp4").valid?(:read)
-    assert_not Opengraph::Location.new("http://www.example.com/archive.tar").valid?(:read)
-
-    assert_not Opengraph::Location.new("https://www.example.com/large.heic").valid?(:read)
-    assert_not Opengraph::Location.new("https://www.example.com/image.jpeg").valid?(:read)
-    assert_not Opengraph::Location.new("https://www.example.com/malware.exe").valid?(:read)
-    assert_not Opengraph::Location.new("https://www.example.com/massiveOS.iso").valid?(:read)
+    assert_nil Opengraph::Location.new("http://www.example.com/video.mp4").read_html
+    assert_nil Opengraph::Location.new("http://www.example.com/archive.tar").read_html
+    assert_nil Opengraph::Location.new("https://www.example.com/large.heic").read_html
+    assert_nil Opengraph::Location.new("https://www.example.com/image.jpeg").read_html
+    assert_nil Opengraph::Location.new("https://www.example.com/malware.exe").read_html
+    assert_nil Opengraph::Location.new("https://www.example.com/massiveOS.iso").read_html
   end
 
   test "read valid HTML" do
@@ -40,7 +37,7 @@ class Opengraph::LocationTest < ActiveSupport::TestCase
       .to_return(status: 200, body: "<body>ok<body>", headers: { content_type: "text/html" })
 
     location = Opengraph::Location.new("https://www.example.com")
-    assert_equal "<body>ok<body>", location.read
+    assert_equal "<body>ok<body>", location.read_html
   end
 
   test "read ignores invalid responses" do
@@ -48,6 +45,6 @@ class Opengraph::LocationTest < ActiveSupport::TestCase
       .to_return(status: 200, body: "too large", headers: { content_length: 1.gigabyte, content_type: "text/html" })
 
     location = Opengraph::Location.new("https://www.example.com")
-    assert_nil location.read
+    assert_nil location.read_html
   end
 end

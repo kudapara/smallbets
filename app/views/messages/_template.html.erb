@@ -13,18 +13,20 @@
 
     <div class="message__body">
       <div class="message__body-content">
-        <h3 class="message__meta">
-          <span class="message__author"><strong><%= Current.user.name %></strong></span>
-          <span class="message__permalink"><time class="message__timestamp" datetime="$messageDatetime$" data-local-time-target="time"></time></span>
+        <div class="message__meta">
+          <h3 class="message__heading">
+            <span class="message__author"><strong><%= Current.user.name %></strong></span>
+            <span class="message__permalink"><time class="message__timestamp" datetime="$messageDatetime$" data-local-time-target="time"></time></span>
+          </h3>
           <div class="message__actions">
             <div class="position-relative">
               <span class="btn message__action-btn message__options-btn">
-                <%= image_tag "menu-dots-horizontal.svg", class: "colorize--black" %>
+                <%= image_tag "menu-dots-horizontal.svg", class: "colorize--black", aria: { hidden: "true" } %>
                 <span class="for-screen-reader">Message options</span>
               </span>
             </div class="position-relative">
           </div>
-        </h3>
+        </div>
         $body$
       </div>
     </div>

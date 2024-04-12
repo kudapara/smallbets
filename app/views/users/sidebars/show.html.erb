@@ -2,18 +2,19 @@
   <%= turbo_stream_from :rooms %>
   <%= turbo_stream_from Current.user, :rooms %>
 
-  <div data-controller="badge-dot"
+  <div class="sidebar__container overflow-y overflow-hide-scrollbar"
+      data-controller="badge-dot"
       data-badge-dot-unread-class="unread"
-      data-action="rooms-list:unread@window->badge-dot#update rooms-list:read@window->badge-dot#update turbo:submit-start->turbo-frame#unpermanize"
-      class="sidebar-container">
+      data-action="rooms-list:unread@window->badge-dot#update rooms-list:read@window->badge-dot#update turbo:submit-start->turbo-frame#unpermanize">
     <turbo-frame id="direct_rooms_control" target="_top">
       <div class="directs gap overflow-x overflow-hide-scrollbar">
         <%= link_to new_rooms_direct_path, class: "direct direct__new", data: { turbo_frame: "_self" } do %>
           <span class="avatar avatar--icon">
-            <%= image_tag "messages-add.svg", size: 20, role: "presentation", class: "colorize--black" %>
+            <%= image_tag "messages-add.svg", size: 20, aria: { hidden: "true" }, class: "colorize--black" %>
           </span>
 
           <span class="direct__author flex max-width min-width border-radius pad-inline-half">
+            <span class="for-screen-reader">New</span>
             <span class="txt-small overflow-clip">Ping</span>
           </span>
         <% end %>
@@ -28,31 +29,31 @@
       </div>
     </turbo-frame>
 
-    <div class="rooms position-relative flex flex-column gap overflow-y overflow-hide-scrollbar">
+    <div class="rooms position-relative flex flex-column gap overflow-y">
       <div id="shared_rooms" contents>
         <%= render "users/sidebars/rooms/shared_rooms_list", memberships: @other_memberships, thread_memberships: @thread_memberships %>
       </div>
 
-      <%= link_to new_rooms_open_path, class: "rooms__new-btn btn room align-center gap txt-reversed" do %>
-        <%= image_tag "add.svg", size: 20, role: "presentation", style: "view-transition-name: new-room" %>
+      <%= link_to new_rooms_open_path, class: "rooms__new-btn btn room align-center gap txt-reversed", aria: { label: "New Chat Room" } do %>
+        <%= image_tag "add.svg", size: 20, aria: { hidden: "true" }, style: "view-transition-name: new-room" %>
       <% end %>
     </div>
 
     <button class="btn sidebar__toggle" data-action="toggle-class#toggle">
-      <%= image_tag "menu.svg", size: 20 %>
+      <%= image_tag "menu.svg", size: 20, aria: { hidden: "true" } %>
       <span class="for-screen-reader">Open menu</span>
     </button>
+  </div>
 
-    <span class="flex align-end sidebar__tools gap justify-end">
+    <div class="flex align-end sidebar__tools gap justify-end">
       <%= link_to user_profile_path, class: "btn avatar flex-item-no-shrink sidebar__tool" do %>
         <%= avatar_image_tag(Current.user, size: 48, style: "view-transition-name: avatar-#{Current.user.id}") %>
         <span class="for-screen-reader"><%= Current.user.name %></span>
       <% end %>
 
-      <%= link_to edit_account_path, class: "btn align-center gap txt-reversed sidebar__tool" do %>
-        <%= image_tag "settings.svg", size: 20, role: "presentation", style: "view-transition-name: account-settings" %>
-        <span class="for-screen-reader">Account Settings</span>
-      <% end %>
-    </span>
+    <%= link_to edit_account_path, class: "btn align-center gap txt-reversed sidebar__tool" do %>
+      <%= image_tag "settings.svg", size: 20, aria: { hidden: "true" }, style: "view-transition-name: account-settings" %>
+      <span class="for-screen-reader">Account Settings</span>
+    <% end %>
   </div>
 <% end %>

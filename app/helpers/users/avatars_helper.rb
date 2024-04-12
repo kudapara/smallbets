@@ -17,7 +17,7 @@ module Users::AvatarsHelper
   end
   
   def avatar_image_tag(user, **options)
-    image_tag user_image_path(user), role: "presentation", **options
+    image_tag user_image_path(user), aria: { hidden: "true" }, **options
   end
   
   def user_image_path(user)

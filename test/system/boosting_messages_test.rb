@@ -10,7 +10,7 @@ class BoostingMessagesTest < ApplicationSystemTestCase
     within_message messages(:third) do
       reveal_message_actions
       fill_in_boost_input "Good morning"
-      click_on "Save changes"
+      click_on "Submit"
       assert_boost_text "Good morning"
     end
   end
@@ -70,7 +70,7 @@ class BoostingMessagesTest < ApplicationSystemTestCase
       within_message messages(:third) do
         reveal_message_actions
         fill_in_boost_input "Morning"
-        click_on "Save changes"
+        click_on "Submit"
         assert_boost_text "Morning"
       end
     end

@@ -110,7 +110,7 @@
   }
 
   .composer--edit trix-toolbar {
-    border-bottom: 1px solid var(--color-border);
+    border-block-end: 1px solid var(--color-border);
     margin-inline: -0.8em;
     padding-inline: 0.3em;
     padding-block-end: 0.5em;

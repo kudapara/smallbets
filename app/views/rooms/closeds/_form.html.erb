@@ -3,7 +3,7 @@
     <% if Current.user.can_administer?(room) %>
       <li class="flex align-center gap margin-none">
         <figure class="avatar flex-item-no-shrink" style="--avatar-border-radius: 0; --avatar-size: 4ch;">
-          <%= image_tag "everyone.svg", role: "presentation", class: "colorize--black", style: "background-color: transparent; box-shadow-none" %>
+          <%= image_tag "everyone.svg", aria: { hidden: "true" }, class: "colorize--black", style: "background-color: transparent; box-shadow-none" %>
           <span class="for-screen-reader">Everyone</span>
         </figure>
 
@@ -11,7 +11,7 @@
           <div class="overflow-ellipsis fill-shade"><strong>Everyone</strong></div>
         </div>
 
-        <hr class="separator">
+        <hr class="separator" aria-hidden="true">
 
         <%= link_to type_change_path, class: "btn--faux flex-inline", tabindex: "-1", data: { turbo_action: "replace" } do %>
           <label for="room_type" class="switch">

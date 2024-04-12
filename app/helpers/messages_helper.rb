@@ -39,6 +39,11 @@ module MessagesHelper
         refresh_room_target: "message",
         reply_composer_outlet: "#composer"
       }, &
+  rescue Exception => e
+    Sentry.capture_exception(e, extra: { message: message })
+    Rails.logger.error "Exception while rendering message #{message.class.name}##{message.id}, failed with: #{e.class} `#{e.message}`"
+
+    render "messages/unrenderable"
   end
 
   def message_timestamp(message, **attributes)

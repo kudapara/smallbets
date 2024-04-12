@@ -7,9 +7,9 @@
     <div class="overflow-ellipsis fill-shade"><strong><%= user.name %></strong></div>
   </div>
 
-  <hr class="separator">
+  <hr class="separator" aria-hidden="true">
 
   <% if Current.user.can_administer?(room) %>
-    <%= image_tag "check.svg", size: 20, class: "colorize--black flex-item-no-shrink" %>
+    <%= image_tag "check.svg", size: 20, class: "colorize--black flex-item-no-shrink", aria: { hidden: "true" } %>
   <% end %>
 </li>

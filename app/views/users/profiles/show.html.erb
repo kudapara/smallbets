@@ -10,7 +10,7 @@
       <%= hidden_field_tag :push_subscription_endpoint, nil, data: { sessions_target: "pushSubscriptionEndpoint" } %>
 
       <button class="btn" data-action="sessions#logout:prevent">
-        <%= image_tag "logout.svg" %>
+        <%= image_tag "logout.svg", aria: { hidden: "true" } %>
         <span class="for-screen-reader">Log out</span>
       </button>
     <% end %>
@@ -57,7 +57,7 @@
     <% end %>
 
     <%= link_to "https://smallbets.com/editdirectoryprofile", class: "btn btn--reversed center txt-large", target: "_blank" do %>
-      <%= image_tag "pencil.svg" %>
+      <%= image_tag "pencil.svg", aria: { hidden: "true" } %>
       <span class="for-screen-reader">Edit on smallbets.com</span>
     <% end %>
   </div>
@@ -79,7 +79,7 @@
   <% if Rails.env.development? %>
     <fieldset>
       <legend>
-        <%= image_tag "key.svg", role: "presentation", size: 36, class: "colorize--black" %>
+        <%= image_tag "key.svg", aria: { hidden: "true" }, size: 36, class: "colorize--black" %>
       </legend>
       <%= link_to "Push Notifications Dev Mode", user_push_subscriptions_url, class: "btn txt-small center" %>
     </fieldset>

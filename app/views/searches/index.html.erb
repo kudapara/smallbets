@@ -21,7 +21,7 @@
     <% if @recent_searches.any? %>
       <%= button_to clear_searches_url, method: :delete, class: "btn searches__btn",
               data: { turbo_confirm: "Are you sure you want to clear your recent searches?" } do %>
-        <%= image_tag "broom.svg", role: "presentation" %>
+        <%= image_tag "broom.svg", aria: { hidden: "true" } %>
         <span class="for-screen-reader">Clear recent searches</span>
       <% end %>
     <% end %>
@@ -39,7 +39,7 @@
     <% if @recent_searches.any? %>
       <%= button_to clear_searches_url, method: :delete, class: "btn searches__btn",
               data: { turbo_confirm: "Are you sure you want to clear your recent searches?" } do %>
-        <%= image_tag "broom.svg", role: "presentation" %>
+        <%= image_tag "broom.svg", aria: { hidden: "true" } %>
         <span class="for-screen-reader">Clear recent searches</span>
       <% end %>
     <% end %>
@@ -49,7 +49,7 @@
 <div id="message-area" class="message-area">
   <div class="message-area--empty min-width center">
     <figure class="center pad">
-      <%= image_tag "search.svg", role: "presentation", class: "colorize--black translucent" %>
+      <%= image_tag "search.svg", aria: { hidden: "true" }, class: "colorize--black translucent" %>
     </figure>
   </div>
 
@@ -62,14 +62,14 @@
   <div class="composer flex align-end gap">
     <%= link_to room_path(@return_to_room),
             class: "btn flex-item-no-shrink margin-block-end", style: "view-transition-name: input-switcher; --btn-border-radius: 0.5em" do %>
-      <%= image_tag "arrow-left.svg", role: "presentation" %>
+      <%= image_tag "arrow-left.svg", aria: { hidden: "true" } %>
       <span class="for-screen-reader">Exit search </span>
     <% end %>
 
     <%= form_with url: searches_path, class: "margin-block flex-item-grow contain flex align-center gap",
           data: { controller: "form", action: "keydown.esc->form#cancel" } do |form| %>
       <div class="composer__input flex align-center flex-item-grow gap full-width input input--actor min-width">
-        <%= image_tag "search.svg", size: 20, role: "presentation", class: "composer__input-hint colorize--black", style: "view-transition-name: input-btn;" %>
+        <%= image_tag "search.svg", size: 20, aria: { hidden: "true" }, class: "composer__input-hint colorize--black", style: "view-transition-name: input-btn;" %>
 
         <%= form.text_field :q, value: params[:q], class: "searches__input input flex-item-grow", role: "searchbox", aria: { label: "search" }, autofocus: true, required: true %>
 
@@ -79,7 +79,7 @@
         <% end %>
 
         <%= form.button type: "submit", class: "btn btn--reversed flex-item-no-shrink txt-small", style: "--btn-border-radius: 0.5em" do %>
-          <%= image_tag "arrow-up.svg" %>
+          <%= image_tag "arrow-up.svg", aria: { hidden: "true" } %>
           <span class="for-screen-reader">Search</span>
         <% end %>
       </div>
