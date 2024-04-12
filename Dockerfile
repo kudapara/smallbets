@@ -71,4 +71,4 @@ RUN echo "root:Docker!" | chpasswd
 RUN mkdir -p /home/campfire/storage
 
 # Start the server by default, this can be overwritten at runtime
-CMD service ssh start && bin/restore && bin/boot
+CMD service ssh start && bin/restore && bin/configure && bin/boot
