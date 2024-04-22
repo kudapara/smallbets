@@ -1,6 +1,6 @@
 #!/bin/bash
-cd /home/campfire
+cd /rails
 export filename=campfire-$(date +%Y-%m-%d-%H-%M).tar
-tar -cvf $filename /home/campfire/storage/
+tar -cvf $filename /rails/storage/
 aws s3 cp $filename s3://smallbets/backups/campfire/$filename
 rm $filename

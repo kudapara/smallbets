@@ -11,9 +11,7 @@ WORKDIR /rails
 ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development" \
-    DISABLE_SSL=true
-
+    BUNDLE_WITHOUT="development"
 
 # Throw-away build stage to reduce size of final image
 FROM --platform=$TARGETPLATFORM base as build
@@ -26,10 +24,6 @@ RUN apt-get update -qq && \
 COPY Gemfile Gemfile.lock ./
 RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git
-
-# Copy application code
-RUN mkdir -p /home/campfire/storage
-RUN ln -s /home/campfire/storage/
 
 COPY . .
 
@@ -47,7 +41,7 @@ ENV HTTP_WRITE_TIMEOUT=300
 
 # Install packages needed to run the application
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y libsqlite3-0 libvips curl ffmpeg redis git sqlite3 awscli cron nano openssh-server dialog && \
+    apt-get install --no-install-recommends -y libsqlite3-0 libvips curl ffmpeg redis git sqlite3 awscli cron nano dialog && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Copy built artifacts: gems, application
@@ -61,15 +55,10 @@ ARG GIT_REVISION
 ENV GIT_REVISION=$GIT_REVISION
 
 # Expose ports for HTTP and HTTPS
-EXPOSE 3000 2222
+EXPOSE 80 443
 
 COPY script/admin/full-backup /etc/cron.daily/
 COPY script/admin/db-backup /etc/cron.hourly/
 
-COPY sshd_config /etc/ssh/
-RUN echo "root:Docker!" | chpasswd
-
-RUN mkdir -p /home/campfire/storage
-
 # Start the server by default, this can be overwritten at runtime
-CMD service ssh start && service cron start && bin/restore && bin/configure && bin/boot
+CMD service cron start && bin/configure && bin/boot
