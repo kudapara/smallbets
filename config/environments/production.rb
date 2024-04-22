@@ -30,10 +30,8 @@ Rails.application.configure do
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   # config.force_ssl = true
 
-  # Log to STDOUT by default
-  config.logger = ActiveSupport::Logger.new(STDOUT)
-    .tap  { |logger| logger.formatter = ::Logger::Formatter.new }
-    .then { |logger| ActiveSupport::TaggedLogging.new(logger) }
+  # Log to a file in storage
+  config.logger = ActiveSupport::Logger.new("#{Rails.root}/storage/logs/production.log", 10, 100.megabytes)
 
   # Prepend all log lines with the following tags.
   config.log_tags = [ :request_id ]

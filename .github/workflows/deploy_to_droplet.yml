@@ -22,7 +22,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v2
         with:
-          images: ${{ secrets.DOCKER_USERNAME }}/campfire
+          images: smallbets/campfire
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -45,7 +45,7 @@ jobs:
         run: |
           sshpass -p ${{ secrets.DROPLET_PASSWORD }} ssh -o StrictHostKeyChecking=no root@${{ secrets.DOMAIN }} "
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} &&
-            docker pull ${{ secrets.DOCKER_USERNAME }}/campfire:${{ github.ref_name }} &&
+            docker pull smallbets/campfire:${{ github.ref_name }} &&
             docker stop campfire &&
             docker rm campfire &&
             docker run \
@@ -61,6 +61,6 @@ jobs:
               -e SSL_DOMAIN=${{ secrets.DOMAIN }} \
               -e APP_VERSION=${{ github.sha }} \
               -v /disk/campfire/:/rails/storage/ \
-              -d ${{ secrets.DOCKER_USERNAME }}/campfire:${{ github.ref_name }}"
+              -d smallbets/campfire:${{ github.ref_name }}"
         env:
           SSH_PASSWORD: ${{ secrets.DROPLET_PASSWORD }}

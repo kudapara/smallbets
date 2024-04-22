@@ -1,5 +1,8 @@
 #!/bin/bash -e
 
+# create log directory
+mkdir -p /rails/storage/logs
+
 # create config directories
 mkdir -p ~/.aws
 mkdir -p /rails/storage/aws
