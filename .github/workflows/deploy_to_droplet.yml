@@ -61,6 +61,6 @@ jobs:
               -e SSL_DOMAIN=${{ secrets.DOMAIN }} \
               -e APP_VERSION=${{ github.sha }} \
               -v /disk/campfire/:/rails/storage/ \
-              -d dvassallo/campfire:render"
+              -d dvassallo/campfire:${{ github.ref_name }}"
         env:
           SSH_PASSWORD: ${{ secrets.DROPLET_PASSWORD }}
