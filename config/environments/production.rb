@@ -33,6 +33,11 @@ Rails.application.configure do
   # Log to a file in storage
   config.logger = ActiveSupport::Logger.new("#{Rails.root}/storage/logs/production.log", 10, 100.megabytes)
 
+  config.logger.formatter = proc do |severity, datetime, progname, msg|
+    "#{datetime.utc.iso8601} #{severity}: #{msg}\n"
+  end
+  config.logger = ActiveSupport::TaggedLogging.new(config.logger)
+
   # Prepend all log lines with the following tags.
   config.log_tags = [ :request_id ]
 
