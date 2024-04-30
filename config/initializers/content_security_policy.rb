@@ -23,3 +23,7 @@
 #   # Report violations without enforcing the policy.
 #   # config.content_security_policy_report_only = true
 # end
+
+Rails.application.config.content_security_policy do |policy|
+  policy.frame_ancestors 'https://smallbets.com', 'https://127.0.0.1:7239'
+end
