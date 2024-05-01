@@ -25,5 +25,5 @@
 # end
 
 Rails.application.config.content_security_policy do |policy|
-  policy.frame_ancestors 'https://*.smallbets.com', '127.0.0.1:*'
+  policy.frame_ancestors 'https://smallbets.com', 'https://*.smallbets.com', '127.0.0.1:*'
 end
