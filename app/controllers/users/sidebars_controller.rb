@@ -17,7 +17,7 @@ class Users::SidebarsController < ApplicationController
     end
   
     def extract_thread_memberships(all_memberships)
-      all_memberships.select { |m| m.room.thread? }
+      all_memberships.select { |m| m.room.thread? }.sort_by { |m| m.room.created_at }
     end
 
     def find_direct_placeholder_users

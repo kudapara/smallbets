@@ -7,7 +7,7 @@ module Threads::Broadcasts
 
   def refresh_shared_rooms(user)
     memberships = user.memberships.visible.without_expired_threads.with_ordered_room
-    thread_memberships = memberships.select { |membership| membership.room.thread? }
+    thread_memberships = memberships.select { |membership| membership.room.thread? }.sort_by { |m| m.room.created_at }
     memberships = memberships.without(thread_memberships).reject { |membership| membership.room.direct? }
 
     user.broadcast_replace_to user, :rooms, target: :shared_rooms,
