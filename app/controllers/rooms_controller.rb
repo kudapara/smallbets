@@ -12,15 +12,19 @@ class RoomsController < ApplicationController
   end
 
   def destroy
-    @room.parent_message&.touch
-    @room.destroy
-
-    broadcast_remove_room
-    broadcast_update_parent_message
+    destroy_room
     redirect_to root_url
   end
 
   private
+    def destroy_room
+      @room.parent_message&.touch
+      @room.destroy
+
+      broadcast_remove_room
+      broadcast_update_parent_message
+    end
+  
     def set_room
       if room = Current.user.rooms.find_by(id: params[:room_id] || params[:id])
         @room = room

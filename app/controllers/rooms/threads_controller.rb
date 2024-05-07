@@ -25,6 +25,11 @@ class Rooms::ThreadsController < RoomsController
     broadcast_update_parent_message
     redirect_to room_url(@room)
   end
+
+  def destroy
+    destroy_room
+    redirect_to room_at_message_path(@room.parent_message.room, @room.parent_message)
+  end
   
   private
   def create_room

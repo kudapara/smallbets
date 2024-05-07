@@ -28,7 +28,7 @@ module RoomsHelper
   end
 
   def button_to_delete_room(room, url: nil)
-    button_to url || room_url(room), method: :delete, class: "btn btn--negative max-width", aria: { label: "Delete #{room.name}" },
+    button_to room, method: :delete, class: "btn btn--negative max-width", aria: { label: "Delete #{room.name}" },
         data: { turbo_confirm: "Are you sure you want to delete this room and all messages in it? This can’t be undone." } do
       image_tag("trash.svg", aria: { hidden: "true" }, size: 20) +
       tag.span(room_display_name(room), class: "overflow-ellipsis")
