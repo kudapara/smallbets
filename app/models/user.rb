@@ -25,7 +25,8 @@ class User < ApplicationRecord
   after_create_commit :grant_membership_to_open_rooms
 
   scope :ordered, -> { order("LOWER(name)") }
-  scope :filtered_by, ->(query) { where("name like ?", "%#{query}%") if query.present? }
+  scope :filtered_by, ->(query) { where("name like ? or twitter_username like ? or linkedin_username like ?", 
+                                        "%#{query}%", "%#{query}%", "%#{query}%") if query.present? }
   
   after_initialize :set_default_name
 

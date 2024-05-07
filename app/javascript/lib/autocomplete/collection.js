@@ -71,7 +71,7 @@ export default class AutocompletableCollection {
     if (!query) { return this }
 
     return new this.constructor(
-      this.#matchAutocompletablesByNameOrDescription(this.#autocompletables, query),
+      this.#matchAutocompletablesByNameOrUsernameOrDescription(this.#autocompletables, query),
       { sort: false }
     )
   }
@@ -96,10 +96,12 @@ export default class AutocompletableCollection {
     return autocompletable.name.localeCompare(otherAutocompletable.name)
   }
 
-  #matchAutocompletablesByNameOrDescription(autocompletables, query) {
+  #matchAutocompletablesByNameOrUsernameOrDescription(autocompletables, query) {
     return uniqueValues([].concat(
-      this.#matchAutocompletablesByNameAtHead(autocompletables, query),
+      this.#matchAutocompletablesByNameAtHead(autocompletables, query), 
+      this.#matchAutocompletablesByUsernameAtHead(autocompletables, query),
       this.#matchAutocompletablesByRestOfName(autocompletables, query),
+      // this.#matchAutocompletablesByRestOfUsername(autocompletables, query),
       this.#matchAutocompletablesByRestOfDescription(autocompletables, query))
     )
   }
@@ -110,6 +112,20 @@ export default class AutocompletableCollection {
 
   #matchAutocompletablesByRestOfName(autocompletables, query) {
     return this.#matchAutocompletablesByRegExp(autocompletables, regexpForQuery(query, "\\s"))
+  }
+
+  #matchAutocompletablesByUsernameAtHead(autocompletables, query) {
+    return uniqueValues([].concat(
+        this.#matchAutocompletablesByRegExp(autocompletables, regexpForQuery(query, "^"), "twitter_username"),
+        this.#matchAutocompletablesByRegExp(autocompletables, regexpForQuery(query, "^"), "linkedin_username")
+    ))
+  }
+
+  #matchAutocompletablesByRestOfUsername(autocompletables, query) {
+    return uniqueValues([].concat(
+        this.#matchAutocompletablesByRegExp(autocompletables, regexpForQuery(query, ""), "twitter_username"),
+        this.#matchAutocompletablesByRegExp(autocompletables, regexpForQuery(query, ""), "linkedin_username")
+    ))
   }
 
   #matchAutocompletablesByRestOfDescription(autocompletables, query) {
