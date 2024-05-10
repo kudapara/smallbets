@@ -2,7 +2,7 @@ name: Deploy to Digital Ocean
 
 on:
   push:
-    # Push all branches
+    branches: [master]
 
 jobs:
   push_to_registry:
