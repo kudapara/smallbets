@@ -74,7 +74,17 @@ FOREIGN KEY ("parent_message_id")
   REFERENCES "messages" ("id")
 );
 CREATE INDEX "index_rooms_on_parent_message_id" ON "rooms" ("parent_message_id");
+CREATE TABLE IF NOT EXISTS "mentions" ("user_id" integer NOT NULL, "message_id" integer NOT NULL, CONSTRAINT "fk_rails_1b711e94aa"
+FOREIGN KEY ("user_id")
+  REFERENCES "users" ("id")
+, CONSTRAINT "fk_rails_df6f108928"
+FOREIGN KEY ("message_id")
+  REFERENCES "messages" ("id")
+);
+CREATE INDEX "index_mentions_on_user_id" ON "mentions" ("user_id");
+CREATE INDEX "index_mentions_on_message_id" ON "mentions" ("message_id");
 INSERT INTO "schema_migrations" (version) VALUES
+('20240515161105'),
 ('20240331153313'),
 ('20240328093042'),
 ('20240226155214'),

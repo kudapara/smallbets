@@ -7,14 +7,14 @@ module Message::Pagination
     scope :last_page, -> { ordered.last(PAGE_SIZE) }
     scope :first_page, -> { ordered.first(PAGE_SIZE) }
 
-    scope :before, ->(message) { where("created_at < ?", message.created_at) }
-    scope :after, ->(message) { where("created_at > ?", message.created_at) }
+    scope :before, ->(message) { where("messages.created_at < ?", message.created_at) }
+    scope :after, ->(message) { where("messages.created_at > ?", message.created_at) }
 
     scope :page_before, ->(message) { before(message).last_page }
     scope :page_after, ->(message) { after(message).first_page }
 
-    scope :page_created_since, ->(time) { where("created_at > ?", time).first_page }
-    scope :page_updated_since, ->(time) { where("updated_at > ?", time).last_page }
+    scope :page_created_since, ->(time) { where("messages.created_at > ?", time).first_page }
+    scope :page_updated_since, ->(time) { where("messages.updated_at > ?", time).last_page }
   end
 
   class_methods do

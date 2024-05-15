@@ -198,6 +198,7 @@
   --row-gap: 0.5em;
 
   padding-top: var(--block-space-half);
+  padding-bottom: var(--block-space-half);
   padding-inline: var(--sidebar-inline-space);
 }
 

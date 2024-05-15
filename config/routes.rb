@@ -89,6 +89,20 @@ Rails.application.routes.draw do
     end
   end
 
+  resource :inbox, only: %i[ show ] do
+    member do
+      get :mentions
+      get :notifications
+      get :messages
+      post :clear
+    end
+    scope path: "/paged", as: :paged do
+      resources :mentions, only: %i[ index ], controller: 'inboxes/mentions'
+      resources :notifications, only: %i[ index ], controller: 'inboxes/notifications'
+      resources :messages, only: %i[ index ], controller: 'inboxes/messages'
+    end
+  end
+
   resources :searches, only: %i[ index create ] do
     delete :clear, on: :collection
   end

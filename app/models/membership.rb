@@ -17,6 +17,7 @@ class Membership < ApplicationRecord
   scope :thread_rooms, -> { joins(:room).where(room: { type: "Rooms::Thread" }) }
   scope :without_expired_threads, -> { joins(:room).where("rooms.type != 'Rooms::Thread' or rooms.last_active_at > ?", Room::EXPIRES_INTERVAL.ago) }
 
+  scope :notifications_on, -> { where(involvement: :everything) }
   scope :visible, -> { where.not(involvement: :invisible) }
   scope :unread,  -> { where.not(unread_at: nil) }
 

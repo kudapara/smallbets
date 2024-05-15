@@ -1,0 +1,38 @@
+<% content_for :nav do %>
+  <div class="searches__query flex align-center gap pad-block-start-half">
+    <%= link_to room_path(last_room_visited),
+                class: "btn", style: "--btn-border-radius: 0.5em" do %>
+      <%= image_tag "arrow-left.svg", aria: { hidden: "true" } %>
+      <span class="for-screen-reader">Back</span>
+    <% end %>
+    
+    <%= tag.div class: "btn btn--reversed btn--faux align-center gap txt-nowrap", style: "block-size: var(--btn-size)" do %>
+      <span class="overflow-ellipsis">Messages</span>
+    <% end %>
+  </div>
+
+  <div class="searches__recents align-center gap pad-block-half overflow-y overflow-hide-scrollbar">
+    <%= link_to mentions_inbox_path, class: "align-center gap room btn txt-nowrap" do %>
+      <span class="overflow-ellipsis">Mentions</span>
+    <% end %>
+    <%= link_to notifications_inbox_path, class: "align-center gap room btn txt-nowrap" do %>
+      <span class="overflow-ellipsis">Notifications</span>
+    <% end %>
+    
+    <% if false %>
+      <%= button_to clear_inbox_path, class: "btn searches__btn",
+                    data: { turbo_confirm: "Are you sure you want to mark everything as read?" } do %>
+        <%= image_tag "eye.svg", aria: { hidden: "true" }, title: "Mark everything as read" %>
+        <span class="for-screen-reader">Mark everything as read</span>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<% content_for :messages do %>
+  <%= inbox_messages_tag(paged_inbox_messages_url, highlight_mentions: true) do %>
+    <%= render collection: @messages, partial: '/messages/message', cached: -> message { [ message, "inbox_#{Current.user.id}" ] } %>
+  <% end %>
+<% end %>
+
+<%= render template: 'inboxes/show' %>
