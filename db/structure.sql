@@ -83,7 +83,9 @@ FOREIGN KEY ("message_id")
 );
 CREATE INDEX "index_mentions_on_user_id" ON "mentions" ("user_id");
 CREATE INDEX "index_mentions_on_message_id" ON "mentions" ("message_id");
+CREATE INDEX "index_messages_on_created_at" ON "messages" ("created_at");
 INSERT INTO "schema_migrations" (version) VALUES
+('20240519151155'),
 ('20240515161105'),
 ('20240331153313'),
 ('20240328093042'),

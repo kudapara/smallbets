@@ -19,10 +19,19 @@ class Membership < ApplicationRecord
 
   scope :notifications_on, -> { where(involvement: :everything) }
   scope :visible, -> { where.not(involvement: :invisible) }
+  scope :read,  -> { where(unread_at: nil) }
   scope :unread,  -> { where.not(unread_at: nil) }
+
+  def read_until(time)
+    return if read? || time < unread_at
+    
+    update!(unread_at: room.messages.ordered.where("created_at > ?", time).first&.created_at)
+    broadcast_read if read?
+  end
 
   def read
     update!(unread_at: nil)
+    broadcast_read
   end
   
   def read?
@@ -60,6 +69,10 @@ class Membership < ApplicationRecord
   end
   
   private
+  
+  def broadcast_read
+    ActionCable.server.broadcast "user_#{user_id}_reads", { room_id: room_id }
+  end
   
   def make_parent_involvements_visible
     current_membership = self
