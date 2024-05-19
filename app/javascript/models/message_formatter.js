@@ -90,6 +90,6 @@ export default class MessageFormatter {
   }
 
   get #selectorForCurrentUser() {
-    return `.mention img[src^="/users/${Current.user.id}/avatar"]`
+    return `.mention a[href^="/users/${Current.user.id}"]`
   }
 }

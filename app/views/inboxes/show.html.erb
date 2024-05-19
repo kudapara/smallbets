@@ -31,6 +31,7 @@
   </div>
 
   <%= yield :messages %>
+  <%= turbo_stream_from Current.user, :inbox %>
 </div>
 
 <% content_for :footer do %>

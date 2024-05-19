@@ -57,7 +57,12 @@ class RoomsController < ApplicationController
   
     def broadcast_update_parent_message
       if @room.thread?
-        @room.parent_message.broadcast_replace_to @room.parent_message.room, :messages, target: [@room.parent_message, :threads], partial: "messages/threads", attributes: { maintain_scroll: true }
+        threads_html = render_to_string(partial: "messages/threads", locals: { message: @room.parent_message })
+
+        @room.parent_message.broadcast_replace_to @room.parent_message.room, :messages, target: [@room.parent_message, :threads], html: threads_html, attributes: { maintain_scroll: true }
+        @room.parent_message.room.users.each do |user|
+          @room.parent_message.broadcast_replace_to user, :inbox, target: [@room.parent_message, :threads], html: threads_html, attributes: { maintain_scroll: true }
+        end
       end
     end
 end

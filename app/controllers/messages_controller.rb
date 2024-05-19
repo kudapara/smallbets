@@ -38,8 +38,12 @@ class MessagesController < ApplicationController
   def update
     @message.update!(message_params)
 
+    presentation_html = render_to_string(partial: "messages/presentation", locals: { message: @message })
     @message.containing_rooms.each do |room|
-      @message.broadcast_replace_to room, :messages, target: [ @message, :presentation ], partial: "messages/presentation", attributes: { maintain_scroll: true }
+      @message.broadcast_replace_to room, :messages, target: [ @message, :presentation ], html: presentation_html, attributes: { maintain_scroll: true }
+    end
+    @message.room.users.each do |user|
+      @message.broadcast_replace_to user, :inbox, target: [ @message, :presentation ], html: presentation_html, attributes: { maintain_scroll: true }
     end
     broadcast_update_message_involvements(@message)
     deliver_webhooks_to_bots(@message, :updated)
@@ -52,6 +56,9 @@ class MessagesController < ApplicationController
     end
     @message.destroy
     @message.broadcast_remove_to @room, :messages
+    @message.room.users.each do |user|
+      @message.broadcast_remove_to user, :inbox
+    end
     deliver_webhooks_to_bots(@message, :deleted)
   end
 

@@ -23,13 +23,11 @@ class InboxesController < ApplicationController
     def find_notifications
       paginate Current.user.reachable_messages.with_threads.with_creator
                       .merge(Membership.notifications_on)
-                      .joins(:room).merge(Room.without_directs)
     end
   
     def find_messages
       paginate Current.user.reachable_messages.with_threads.with_creator
                       .merge(Membership.visible)
-                      .joins(:room).merge(Room.without_directs)
     end
   
     def paginate(messages)
