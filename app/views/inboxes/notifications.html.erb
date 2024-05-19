@@ -19,7 +19,7 @@
       <span class="overflow-ellipsis">All Messages</span>
     <% end %>
 
-    <% if false %>
+    <% if has_unreads? %>
       <%= button_to clear_inbox_path, class: "btn searches__btn",
                     data: { turbo_confirm: "Are you sure you want to mark everything as read?" } do %>
         <%= image_tag "eye.svg", aria: { hidden: "true" }, title: "Mark everything as read" %>
