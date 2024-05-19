@@ -6,7 +6,6 @@
   inset-inline-end: var(--sidebar-width);
   padding-block: var(--block-space);
   padding-inline: calc(var(--inline-space) * 1.5) var(--inline-space-double);
-  pointer-events: none;
   position: fixed;
   row-gap: var(--block-space);
   z-index: 2;
