@@ -18,17 +18,13 @@ class Messages::ByBotsController < MessagesController
     def format_mentions(body)
       body.to_s.gsub(/@\{(.+?)\}/) do |mention_sig|
         sso_user_id = $1
-        user = User.find_by(sso_user_id: sso_user_id)
-        if user
-          mention_user(user)
-        else
-          mention_sig
-        end
+        user = @room.users.find_by(sso_user_id: sso_user_id)
+        user ? mention_user(user) : ""
       end
     end
 
     def mention_user(user)
-      attachment_body = render partial: "users/mention", locals: { user: user }
+      attachment_body = render_to_string partial: "users/mention", locals: { user: user }
       "<action-text-attachment sgid=\"#{user.attachable_sgid}\" content-type=\"application/vnd.campfire.mention\" content=\"#{attachment_body.gsub('"', '&quot;')}\"></action-text-attachment>"
     end
   
