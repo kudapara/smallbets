@@ -37,16 +37,20 @@ class InboxesController < ApplicationController
 
   private
     def find_mentions
-      paginate Current.user.mentions.with_threads.with_creator
+      paginate Current.user.mentions.without_created_by(Current.user).with_threads.with_creator
     end
 
     def find_notifications
-      paginate Current.user.reachable_messages.with_threads.with_creator
+      paginate Current.user.reachable_messages
+                      .without_created_by(Current.user)
+                      .with_threads.with_creator
                       .merge(Membership.notifications_on)
     end
   
     def find_messages
-      paginate Current.user.reachable_messages.with_threads.with_creator
+      paginate Current.user.reachable_messages
+                      .without_created_by(Current.user)
+                      .with_threads.with_creator
                       .merge(Membership.visible)
     end
   

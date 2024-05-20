@@ -19,6 +19,7 @@ class Message < ApplicationRecord
   scope :ordered, -> { order(:created_at) }
   scope :with_creator, -> { includes(:creator) }
   scope :with_threads, -> { includes(:threads) }
+  scope :without_created_by, ->(user) { where.not(creator_id: user.id) }
 
   def containing_rooms
     Room.where(id: room_id).or(Room.where(parent_message_id: id))
