@@ -279,6 +279,16 @@
   }
 }
 
+.inbox {
+  .message__boosts:not(:has(*)) {
+    display: none;
+  }
+  
+  .message__boost-inline {
+    display: inline-flex !important;
+  }
+}
+
 .searches__recents {
   --mask: linear-gradient(to left, oklch(0% 0 0 / 1) 97%, oklch(0% 0 0 / 0) 99%);
 
