@@ -90,6 +90,6 @@ export default class MessageFormatter {
   }
 
   get #selectorForCurrentUser() {
-    return `.mention a[href^="/users/${Current.user.id}"]`
+    return `.mention a[href="/users/${Current.user.id}"]`
   }
 }
