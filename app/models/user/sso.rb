@@ -2,7 +2,7 @@ module User::Sso
   extend ActiveSupport::Concern
   
   def sso_linked?
-    sso_user_id.present? && (sso_token_expires_at.blank? || sso_token_expires_at > Time.current)
+    sso_user_id.present? && sso_token.present? && !sso_token_expired?
   end
   
   def sso_token_expired?
