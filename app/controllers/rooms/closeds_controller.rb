@@ -52,7 +52,7 @@ class Rooms::ClosedsController < RoomsController
 
     def broadcast_create_room(room)
       each_user_and_html_for(room) do |user, html|
-        broadcast_append_to user, :rooms, target: :shared_rooms, html: html
+        broadcast_append_to user, :rooms, target: :shared_rooms, html: html, attributes: { maintain_scroll: true }
       end
     end
 

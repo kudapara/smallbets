@@ -23,7 +23,7 @@ class Rooms::InvolvementsController < ApplicationController
         if @room.thread?
           refresh_shared_rooms(@membership.user)
         else
-          broadcast_append_to @membership.user, :rooms, target: :shared_rooms, partial: "users/sidebars/rooms/shared", locals: { room: @room }
+          broadcast_append_to @membership.user, :rooms, target: :shared_rooms, partial: "users/sidebars/rooms/shared", locals: { room: @room }, attributes: { maintain_scroll: true }
         end
       end
     end

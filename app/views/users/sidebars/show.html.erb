@@ -3,9 +3,9 @@
   <%= turbo_stream_from Current.user, :rooms %>
 
   <div class="sidebar__container overflow-y overflow-hide-scrollbar"
-      data-controller="badge-dot"
+      data-controller="badge-dot maintain-scroll"
       data-badge-dot-unread-class="unread"
-      data-action="rooms-list:unread@window->badge-dot#update rooms-list:read@window->badge-dot#update turbo:submit-start->turbo-frame#unpermanize">
+      data-action="rooms-list:unread@window->badge-dot#update rooms-list:read@window->badge-dot#update turbo:submit-start->turbo-frame#unpermanize turbo:before-render@document->maintain-scroll#beforeRender">
     <turbo-frame id="direct_rooms_control" target="_top">
       <div class="directs gap overflow-x overflow-hide-scrollbar">
         <%= link_to new_rooms_direct_path, class: "direct direct__new", data: { turbo_frame: "_self" } do %>
@@ -30,9 +30,7 @@
     </turbo-frame>
 
     <div class="rooms position-relative flex flex-column gap overflow-y">
-      <div id="shared_rooms" contents>
-        <%= render "users/sidebars/rooms/shared_rooms_list", memberships: @other_memberships, thread_memberships: @thread_memberships %>
-      </div>
+      <%= render "users/sidebars/rooms/shared_rooms_list", memberships: @other_memberships, thread_memberships: @thread_memberships %>
 
       <%= link_to new_rooms_open_path, class: "rooms__new-btn btn room align-center gap txt-reversed", aria: { label: "New Chat Room" } do %>
         <%= image_tag "add.svg", size: 20, aria: { hidden: "true" }, style: "view-transition-name: new-room" %>

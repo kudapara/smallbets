@@ -24,17 +24,21 @@ export default class ScrollManager {
     })
   }
 
-  async keepScroll(top, render) {
+  async keepScroll(top, render, scrollBehaviour, delay) {
     return this.#appendOperation(async () => {
       const scrollTop = this.#container.scrollTop
       const scrollHeight = this.#container.scrollHeight
 
       await render()
 
-      if (top) {
-        this.#container.scrollTop = scrollTop + (this.#container.scrollHeight - scrollHeight)
+      const newScrollTop = top ? scrollTop + (this.#container.scrollHeight - scrollHeight) : scrollTop
+      
+      if (delay) {
+        setTimeout(()=> {
+          this.#container.scrollTo({ top: newScrollTop, behavior: scrollBehaviour })
+        }, 1)
       } else {
-        this.#container.scrollTop = scrollTop
+        this.#container.scrollTo({ top: newScrollTop, behavior: scrollBehaviour })
       }
     })
   }

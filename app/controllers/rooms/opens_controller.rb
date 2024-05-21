@@ -37,7 +37,7 @@ class Rooms::OpensController < RoomsController
     end
 
     def broadcast_create_room
-      broadcast_append_to :rooms, target: :shared_rooms, partial: "users/sidebars/rooms/shared", locals: { room: @room }
+      broadcast_append_to :rooms, target: :shared_rooms, partial: "users/sidebars/rooms/shared", locals: { room: @room }, attributes: { maintain_scroll: true }
     end
 
     def broadcast_update_room

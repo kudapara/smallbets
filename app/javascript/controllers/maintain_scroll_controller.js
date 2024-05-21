@@ -19,8 +19,16 @@ export default class extends Controller {
     if (this.element.contains(targetElement) && shouldKeepScroll) {
       const top = this.#isAboveFold(targetElement)
       event.detail.render = async (streamElement) => {
-        this.#scrollManager.keepScroll(top, () => render(streamElement))
+        this.#scrollManager.keepScroll(top, () => render(streamElement), 'auto')
       }
+    }
+  }
+
+  beforeRender(event) {
+    const render = event.detail.render
+
+    event.detail.render = async (...args) => {
+      this.#scrollManager.keepScroll(false, () => render(...args), 'instant', true)
     }
   }
 
