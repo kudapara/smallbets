@@ -15,9 +15,14 @@ module Message::Mentionee
 
     def mentioned_users
       if body.body
-        body.body.attachables.grep(User).uniq
+        (body.body.attachables.grep(User) + cited_users).uniq
       else
         []
       end
+    end
+
+    def cited_users
+      cited_message_ids = body.body.fragment.find_all("cite a").map { |a| a["href"].to_s[/@([^@]+)$/, 1] }
+      User.joins(:messages).where.not(id: self.creator_id).where(messages: { id: cited_message_ids }).distinct
     end
 end
