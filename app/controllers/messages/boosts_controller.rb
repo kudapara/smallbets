@@ -40,17 +40,12 @@ class Messages::BoostsController < ApplicationController
       @boost.broadcast_append_to @boost.message.room, :messages,
         target: "boosts_message_#{@boost.message.client_message_id}", html: boost_html, attributes: { maintain_scroll: true }
 
-      @boost.message.room.users.each do |user|
-        @boost.broadcast_append_to user, :inbox, target: "boosts_message_#{@boost.message.client_message_id}", 
-                                   html: boost_html, attributes: { maintain_scroll: true }
-      end
+      @boost.broadcast_append_to :inbox, target: "boosts_message_#{@boost.message.client_message_id}",
+                                 html: boost_html, attributes: { maintain_scroll: true }
     end
 
     def broadcast_remove
       @boost.broadcast_remove_to @boost.message.room, :messages
-
-      @boost.message.room.users.each do |user|
-        @boost.broadcast_remove_to user, :inbox
-      end
+      @boost.broadcast_remove_to :inbox
     end
 end

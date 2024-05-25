@@ -42,9 +42,7 @@ class MessagesController < ApplicationController
     @message.containing_rooms.each do |room|
       @message.broadcast_replace_to room, :messages, target: [ @message, :presentation ], html: presentation_html, attributes: { maintain_scroll: true }
     end
-    @message.room.users.each do |user|
-      @message.broadcast_replace_to user, :inbox, target: [ @message, :presentation ], html: presentation_html, attributes: { maintain_scroll: true }
-    end
+    @message.broadcast_replace_to :inbox, target: [ @message, :presentation ], html: presentation_html, attributes: { maintain_scroll: true }
     broadcast_update_message_involvements(@message)
     deliver_webhooks_to_bots(@message, :updated)
     redirect_to room_message_url(@room, @message)
@@ -56,9 +54,7 @@ class MessagesController < ApplicationController
     end
     @message.destroy
     @message.broadcast_remove_to @room, :messages
-    @message.room.users.each do |user|
-      @message.broadcast_remove_to user, :inbox
-    end
+    @message.broadcast_remove_to :inbox
     deliver_webhooks_to_bots(@message, :deleted)
   end
 
