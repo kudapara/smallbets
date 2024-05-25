@@ -8,6 +8,7 @@ export default class extends Controller {
     if (srcElement.closest('[data-stop-propagation]')) return;
     
     if (Current.user.id !== boosterId) {
+      this.element.classList.add("busy")
       this.formTarget.requestSubmit()
     }
   }
