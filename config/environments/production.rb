@@ -34,7 +34,8 @@ Rails.application.configure do
   config.logger = ActiveSupport::Logger.new("#{Rails.root}/storage/logs/production.log", 10, 100.megabytes)
 
   config.logger.formatter = proc do |severity, datetime, progname, msg|
-    "#{datetime.utc.iso8601} #{severity}: #{msg}\n"
+    formatted_time = datetime.utc.strftime("%Y-%m-%dT%H:%M:%S.%3N")
+    "#{formatted_time} #{severity}: #{msg}\n"
   end
   config.logger = ActiveSupport::TaggedLogging.new(config.logger)
 
