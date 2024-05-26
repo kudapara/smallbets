@@ -107,25 +107,31 @@ export default class AutocompletableCollection {
   }
 
   #matchAutocompletablesByNameAtHead(autocompletables, query) {
-    return this.#matchAutocompletablesByRegExp(autocompletables, regexpForQuery(query, "^"))
+    return [].concat(
+      this.#matchAutocompletablesByRegExp(autocompletables, regexpForQuery(query, "^")),
+      this.#matchAutocompletablesByRegExp(autocompletables, regexpForQuery(query, "^"), "ascii_name")
+    )
   }
 
   #matchAutocompletablesByRestOfName(autocompletables, query) {
-    return this.#matchAutocompletablesByRegExp(autocompletables, regexpForQuery(query, "\\s"))
+    return [].concat(
+      this.#matchAutocompletablesByRegExp(autocompletables, regexpForQuery(query, "\\s")),
+      this.#matchAutocompletablesByRegExp(autocompletables, regexpForQuery(query, "\\s"), "ascii_name")
+    )
   }
 
   #matchAutocompletablesByUsernameAtHead(autocompletables, query) {
-    return uniqueValues([].concat(
+    return [].concat(
         this.#matchAutocompletablesByRegExp(autocompletables, regexpForQuery(query, "^"), "twitter_username"),
         this.#matchAutocompletablesByRegExp(autocompletables, regexpForQuery(query, "^"), "linkedin_username")
-    ))
+    )
   }
 
   #matchAutocompletablesByRestOfUsername(autocompletables, query) {
-    return uniqueValues([].concat(
+    return [].concat(
         this.#matchAutocompletablesByRegExp(autocompletables, regexpForQuery(query, ""), "twitter_username"),
         this.#matchAutocompletablesByRegExp(autocompletables, regexpForQuery(query, ""), "linkedin_username")
-    ))
+    )
   }
 
   #matchAutocompletablesByRestOfDescription(autocompletables, query) {

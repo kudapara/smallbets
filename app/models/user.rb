@@ -24,13 +24,13 @@ class User < ApplicationRecord
 
   has_secure_password validations: false
 
+  before_validation :set_default_name
+  before_save :transliterate_name, if: :name_changed?
   after_create_commit :grant_membership_to_open_rooms
 
   scope :ordered, -> { order("LOWER(name)") }
-  scope :filtered_by, ->(query) { where("name like ? or twitter_username like ? or linkedin_username like ?", 
-                                        "%#{query}%", "%#{query}%", "%#{query}%") if query.present? }
-  
-  after_initialize :set_default_name
+  scope :filtered_by, ->(query) { where("name like ? or ascii_name like ? or twitter_username like ? or linkedin_username like ?", 
+                                        "%#{query}%", "%#{query}%", "%#{query}%", "%#{query}%") if query.present? }
 
   def initials
     name.scan(/\b\w/).join
@@ -94,6 +94,10 @@ class User < ApplicationRecord
     end
   
     def set_default_name
-      self.name ||= DEFAULT_NAME
+      self.name = name.presence || DEFAULT_NAME
+    end
+  
+    def transliterate_name
+      self.ascii_name = name.to_s.to_ascii
     end
 end

@@ -60,4 +60,5 @@ group :test do
   gem "webmock", require: false
 end
 
-gem 'dotenv', groups: [:development, :test]
+gem "dotenv", groups: [:development, :test]
+gem "stringex"
