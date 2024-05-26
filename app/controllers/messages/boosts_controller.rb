@@ -10,11 +10,11 @@ class Messages::BoostsController < ApplicationController
   end
 
   def create
+    @source_boost = Boost.find_by(id: params[:source_boost_id])
     @boost = @message.boosts.create!(boost_params)
 
     broadcast_create
     deliver_webhooks_to_bots(@boost, :created)
-    redirect_to message_boosts_url(@message)
   end
 
   def destroy

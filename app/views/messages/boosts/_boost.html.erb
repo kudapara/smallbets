@@ -15,6 +15,7 @@
 
     <%= form_with model: [ boost.message, Boost.new ], html: { hidden: true }, 
                   data: { turbo_frame: dom_id(boost.message, :boosting), boost_repeat_target: "form"}  do %>
+      <%= hidden_field_tag "source_boost_id", boost.id %>
       <%= hidden_field_tag "boost[content]", boost.content %>
     <% end %>
     
