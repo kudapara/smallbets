@@ -44,26 +44,26 @@ class InboxesController < ApplicationController
 
   private
     def find_mentions
-      paginate Current.user.mentions.without_created_by(Current.user).with_threads.with_creator
+      Bookmark.populate_for paginate(Current.user.mentions.without_created_by(Current.user).with_threads.with_creator)
     end
 
     def find_notifications
-      paginate Current.user.reachable_messages
-                      .without_created_by(Current.user)
-                      .with_threads.with_creator
-                      .merge(Membership.notifications_on)
+      Bookmark.populate_for paginate(Current.user.reachable_messages
+                                            .without_created_by(Current.user)
+                                            .with_threads.with_creator
+                                            .merge(Membership.notifications_on))
     end
   
     def find_messages
-      paginate Current.user.reachable_messages
-                      .without_created_by(Current.user)
-                      .with_threads.with_creator
-                      .merge(Membership.visible)
+      Bookmark.populate_for paginate(Current.user.reachable_messages
+                                            .without_created_by(Current.user)
+                                            .with_threads.with_creator
+                                            .merge(Membership.visible))
     end
 
     def find_bookmarked_messages
       bookmarks = paginate Current.user.bookmarks.includes(:message).merge(Message.with_threads.with_creator)
-      bookmarks.map(&:message)
+      Bookmark.populate_for(bookmarks.map(&:message))
     end
   
     def paginate(records)
