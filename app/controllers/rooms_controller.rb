@@ -8,7 +8,7 @@ class RoomsController < ApplicationController
   end
 
   def show
-    @messages = find_messages
+    @messages = Bookmark.populate_for(find_messages)
   end
 
   def destroy

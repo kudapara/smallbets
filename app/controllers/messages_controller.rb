@@ -8,13 +8,7 @@ class MessagesController < ApplicationController
   layout false, only: :index
 
   def index
-    @messages = find_paged_messages
-
-    if @messages.any?
-      fresh_when @messages
-    else
-      head :no_content
-    end
+    @messages = Bookmark.populate_for(find_paged_messages)
   end
 
   def create

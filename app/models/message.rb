@@ -5,6 +5,7 @@ class Message < ApplicationRecord
   belongs_to :creator, class_name: "User", default: -> { Current.user }
 
   has_many :boosts, dependent: :destroy
+  has_many :bookmarks
 
   has_many :threads, class_name: "Rooms::Thread", foreign_key: :parent_message_id, dependent: :destroy
 
@@ -21,8 +22,17 @@ class Message < ApplicationRecord
   scope :with_threads, -> { includes(:threads) }
   scope :without_created_by, ->(user) { where.not(creator_id: user.id) }
 
+  attr_accessor :bookmarked
+  alias_method :bookmarked?, :bookmarked
+
   def containing_rooms
     Room.where(id: room_id).or(Room.where(parent_message_id: id))
+  end
+  
+  def bookmarked_by_current_user?
+    return bookmarked? unless bookmarked.nil?
+    
+    bookmarks.find_by(user_id: Current.user.id).present?
   end
   
   def plain_text_body

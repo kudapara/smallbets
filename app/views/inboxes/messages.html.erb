@@ -12,6 +12,9 @@
   </div>
 
   <div class="searches__recents align-center gap pad-block-half overflow-x overflow-hide-scrollbar">
+    <%= link_to bookmarks_inbox_path, class: "align-center gap room btn txt-nowrap" do %>
+      <span class="overflow-ellipsis">Bookmarks</span>
+    <% end %>
     <%= link_to mentions_inbox_path, class: "align-center gap room btn txt-nowrap" do %>
       <span class="overflow-ellipsis">Mentions</span>
     <% end %>

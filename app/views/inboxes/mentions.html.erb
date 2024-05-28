@@ -18,6 +18,9 @@
     <%= link_to messages_inbox_path, class: "align-center gap room btn txt-nowrap" do %>
       <span class="overflow-ellipsis">All Messages</span>
     <% end %>
+    <%= link_to bookmarks_inbox_path, class: "align-center gap room btn txt-nowrap" do %>
+      <span class="overflow-ellipsis">Bookmarks</span>
+    <% end %>
 
     <% if has_unreads? %>
       <%= button_to clear_inbox_path, class: "btn searches__btn",

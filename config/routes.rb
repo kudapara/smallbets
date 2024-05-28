@@ -86,6 +86,11 @@ Rails.application.routes.draw do
   resources :messages do
     scope module: "messages" do
       resources :boosts
+      resources :bookmarks, only: %i[ create ] do
+        collection do
+          delete '', to: 'bookmarks#destroy'
+        end
+      end
     end
   end
 
@@ -94,12 +99,14 @@ Rails.application.routes.draw do
       get :mentions
       get :notifications
       get :messages
+      get :bookmarks
       post :clear
     end
     scope path: "/paged", as: :paged do
       resources :mentions, only: %i[ index ], controller: 'inboxes/mentions'
       resources :notifications, only: %i[ index ], controller: 'inboxes/notifications'
       resources :messages, only: %i[ index ], controller: 'inboxes/messages'
+      resources :bookmarks, only: %i[ index ], controller: 'inboxes/bookmarks'
     end
   end
 

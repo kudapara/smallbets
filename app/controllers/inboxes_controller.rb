@@ -1,4 +1,7 @@
 class InboxesController < ApplicationController
+  before_action :set_message_pagination_anchors, only: %i[ mentions notifications messages ]
+  before_action :set_bookmark_pagination_anchors, only: %i[ bookmarks ]
+  
   def show
     clear_last_loaded_message_timestamps
     redirect_to mentions_inbox_path
@@ -17,6 +20,10 @@ class InboxesController < ApplicationController
   def messages
     @messages = find_messages
     session[:inbox_last_loaded_message_created_at] = (@messages.last&.created_at || Time.current).iso8601(6)
+  end
+
+  def bookmarks
+    @messages = find_bookmarked_messages
   end
 
   def clear
@@ -53,16 +60,31 @@ class InboxesController < ApplicationController
                       .with_threads.with_creator
                       .merge(Membership.visible)
     end
+
+    def find_bookmarked_messages
+      bookmarks = paginate Current.user.bookmarks.includes(:message).merge(Message.with_threads.with_creator)
+      bookmarks.map(&:message)
+    end
   
-    def paginate(messages)
+    def paginate(records)
       case
       when params[:before].present?
-        messages.page_before(messages.find(params[:before]))
+        records.page_before(@before)
       when params[:after].present?
-        messages.page_after(messages.find(params[:after]))
+        records.page_after(@after)
       else
-        messages.last_page
+        records.last_page
       end
+    end
+  
+    def set_message_pagination_anchors
+      @before = Message.find_by(id: params[:before])
+      @after = Message.find_by(id: params[:after])
+    end
+
+    def set_bookmark_pagination_anchors
+      @before = Message.find_by(id: params[:before])&.bookmarks&.find_by(user_id: Current.user.id)
+      @after = Message.find_by(id: params[:after])&.bookmarks&.find_by(user_id: Current.user.id)
     end
   
     def clear_last_loaded_message_timestamps

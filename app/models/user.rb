@@ -6,6 +6,8 @@ class User < ApplicationRecord
   has_many :memberships, dependent: :delete_all
   has_many :rooms, through: :memberships
 
+  has_many :bookmarks
+  has_many :bookmarked_messages, -> { order("bookmarks.created_at DESC") }, through: :bookmarks, source: :message
   has_many :reachable_messages, through: :rooms, source: :messages
   has_many :messages, dependent: :destroy, foreign_key: :creator_id
   has_and_belongs_to_many :mentions, ->(user) { where(room_id: user.room_ids) }, 
