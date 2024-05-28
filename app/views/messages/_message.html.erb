@@ -1,7 +1,7 @@
 <%# Be sure to check/update messages/_template.html.erb when changing this file %>
 
 <% current_room ||= message.room %>
-<% cache [ message, current_room&.id, message.bookmarked? ] do %>
+<% cache [ message, current_room&.id, message.bookmarked_by_current_user? ] do %>
   <%= message_tag message do %>
     <h2 class="message__day-separator"><%= local_datetime_tag message.created_at, style: :date %></h2>
 

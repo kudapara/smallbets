@@ -14,7 +14,7 @@
 
   <%= messages_tag(@room) do %>
     <%= render "rooms/show/invitation", room: @room %>
-    <%= render partial: "messages/message", collection: @messages, cached: -> message { [ message, @room.id, message.bookmarked? ] }, locals: { current_room: @room } %>
+    <%= render partial: "messages/message", collection: @messages, cached: -> message { [ message, @room.id, message.bookmarked_by_current_user? ] }, locals: { current_room: @room } %>
   <% end %>
 
   <%= turbo_stream_from @room, :messages %>
