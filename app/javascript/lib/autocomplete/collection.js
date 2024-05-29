@@ -93,7 +93,7 @@ export default class AutocompletableCollection {
   }
 
   #compareAutocompletables(autocompletable, otherAutocompletable) {
-    return autocompletable.name.localeCompare(otherAutocompletable.name)
+    return otherAutocompletable.last_posted_at - autocompletable.last_posted_at
   }
 
   #matchAutocompletablesByNameOrUsernameOrDescription(autocompletables, query) {

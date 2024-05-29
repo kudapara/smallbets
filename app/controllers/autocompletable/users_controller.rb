@@ -1,6 +1,6 @@
 class Autocompletable::UsersController < ApplicationController
   def index
-    set_page_and_extract_portion_from find_autocompletable_users.with_attached_avatar.ordered, per_page: 20
+    set_page_and_extract_portion_from find_autocompletable_users.with_attached_avatar.includes(:latest_message).recent_posters_first, per_page: 20
   end
 
   private

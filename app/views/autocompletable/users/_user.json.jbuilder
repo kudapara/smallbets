@@ -5,3 +5,4 @@ json.linkedin_username      user.linkedin_username
 json.value                  user.id
 json.avatar_url             user.avatar_url.presence || user_image_path(user)
 json.sgid                   user.attachable_sgid
+json.last_posted_at         user.latest_message&.created_at.to_i
