@@ -39,8 +39,15 @@
             <%= image_tag "share.svg", class: "colorize--black", size: 20, aria: { hidden: "true" } %>
           <% end %>
         <% else %>
-          <%= tag.button class: "btn message__action-btn center full-width", data: { action: "reply#reply" }, title: "Reply", aria: { label: "Reply" } do %>
-            <%= image_tag "reply.svg", class: "colorize--black", size: 20, aria: { hidden: "true" } %>
+          <% if current_room.present? %>
+            <%= tag.button class: "btn message__action-btn center full-width", data: { action: "reply#reply" }, title: "Reply", aria: { label: "Reply" } do %>
+              <%= image_tag "reply.svg", class: "colorize--black", size: 20, aria: { hidden: "true" } %>
+            <% end %>
+          <% else %>
+            <%= link_to room_at_message_url(message.room, message, reply: true), class: "btn message__action-btn center full-width",
+                        target: "_top", title: "Reply", aria: { label: "Reply" } do %>
+              <%= image_tag "reply.svg", class: "colorize--black", size: 20, aria: { hidden: "true" } %>
+            <% end %>
           <% end %>
         <% end %>
 
@@ -51,13 +58,13 @@
           <% end %>
         <% end %>
         
-        <%= tag.button class: "btn message__action-btn center full-width", title: "Copy link", aria: { label: "Copy link" }, data: { controller: "copy-to-clipboard", action: "copy-to-clipboard#copy", copy_to_clipboard_success_class: "btn--success", copy_to_clipboard_content_value: url } do %>
+        <%= tag.button class: "btn message__action-btn center full-width", title: "Copy link", aria: { label: "Copy link" }, data: { controller: "copy-to-clipboard", action: "copy-to-clipboard#copy", copy_to_clipboard_success_class: "btn--success", copy_to_clipboard_content_value: room_at_message_url(current_room || message.room, message) } do %>
           <%= image_tag "link.svg", class: "colorize--black", size: 20, aria: { hidden: "true" } %>
         <% end %>
 
         <%= render "messages/actions/bookmark", message: message %>
         
-        <%= link_to edit_room_message_path(room, message), class: "btn message__action-btn center full-width message__edit-btn",
+        <%= link_to edit_room_message_path(current_room || message.room, message), class: "btn message__action-btn center full-width message__edit-btn",
               data: { turbo_frame: dom_id(message, :edit) }, title: "Edit", aria: { label: "Edit"} do %>
           <%= image_tag "pencil.svg", class: "colorize--black", size: 20, aria: { hidden: "true" } %>
         <% end %>

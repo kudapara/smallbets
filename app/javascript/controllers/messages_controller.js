@@ -139,6 +139,11 @@ export default class extends Controller {
       highlightMessage.scrollIntoView({ behavior: "instant", block: "center" })
     }
 
+    const reply = new URLSearchParams(window.location.search).get("reply")
+    if (highlightMessage && reply == "true") {
+      highlightMessage.querySelector(`button[data-action="reply#reply"]`)?.click()
+    }
+
     this.#paginator.upToDate = false
   }
 

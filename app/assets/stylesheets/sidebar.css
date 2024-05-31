@@ -272,21 +272,6 @@
     visibility: visible;
     display: inline-block;
   }
-
-  .message__actions {
-    display: none !important;
-    visibility: hidden !important;
-  }
-}
-
-.inbox {
-  .message__boosts:not(:has(*)) {
-    display: none;
-  }
-  
-  .message__boost-inline {
-    display: inline-flex !important;
-  }
 }
 
 .searches__recents {
