@@ -140,11 +140,20 @@ export default class extends Controller {
     }
 
     const reply = new URLSearchParams(window.location.search).get("reply")
-    if (highlightMessage && reply == "true") {
+    if (highlightMessage && reply === "true") {
       highlightMessage.querySelector(`button[data-action="reply#reply"]`)?.click()
+      this.#removeReplyParam()
     }
 
     this.#paginator.upToDate = false
+  }
+
+  #removeReplyParam() {
+    try {
+      const url = new URL(window.location);
+      url.searchParams.delete("reply");
+      window.history.replaceState({}, document.title, url.toString());
+    } catch {}
   }
 
   get #hasSearchResult() {
