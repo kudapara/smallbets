@@ -9,6 +9,8 @@ class MessagesController < ApplicationController
 
   def index
     @messages = Bookmark.populate_for(find_paged_messages)
+
+    head :no_content if @messages.blank?
   end
 
   def create
