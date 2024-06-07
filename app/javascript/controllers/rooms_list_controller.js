@@ -4,7 +4,7 @@ import { ignoringBriefDisconnects } from "helpers/dom_helpers"
 
 export default class extends Controller {
   static targets = [ "room" ]
-  static classes = [ "unread" ]
+  static classes = [ "unread", "badge" ]
 
   #disconnected = true
 
@@ -14,12 +14,18 @@ export default class extends Controller {
       disconnected: this.#channelDisconnected.bind(this),
       received: this.#unread.bind(this)
     })
+    this.notificationsChannel ??= await cable.subscribeTo({ channel: "UnreadNotificationsChannel" }, {
+      received: this.#addBadge.bind(this)
+    })
   }
 
   disconnect() {
     ignoringBriefDisconnects(this.element, () => {
       this.channel?.unsubscribe()
       this.channel = null
+
+      this.notificationsChannel?.unsubscribe()
+      this.notificationsChannel = null
     })
   }
 
@@ -31,7 +37,7 @@ export default class extends Controller {
     const room = this.#findRoomTarget(roomId)
 
     if (room) {
-      room.classList.remove(this.unreadClass)
+      room.classList.remove(this.unreadClass, this.badgeClass)
       this.dispatch("read", { detail: { targetId: roomId } })
     }
   }
@@ -56,6 +62,16 @@ export default class extends Controller {
       }
 
       this.dispatch("unread", { detail: { targetId: unreadRoom.id } })
+    }
+  }
+
+  #addBadge({ roomId }) {
+    const unreadRoom = this.#findRoomTarget(roomId)
+
+    if (unreadRoom) {
+      if (Current.room.id != roomId) {
+        unreadRoom.classList.add(this.badgeClass)
+      }
     }
   }
 

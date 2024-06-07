@@ -8,7 +8,11 @@ async function showNotification({ title, options }) {
 }
 
 async function updateBadgeCount({ data: { badge } }) {
-  return self.navigator.setAppBadge?.(badge || 0)
+  if (badge && badge > 0) {
+    return self.navigator.setAppBadge?.(badge)
+  } else {
+    return self.navigator.clearAppBadge?.()
+  }
 }
 
 self.addEventListener("notificationclick", (event) => {

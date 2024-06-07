@@ -39,7 +39,7 @@
       --size: 1em;
 
       aspect-ratio: 1;
-      background-color: var(--color-negative);
+      background-color: var(--color-text);
       block-size: var(--size);
       border-radius: calc(var(--size) * 2);
       content: "";
@@ -48,6 +48,12 @@
       inset-block-start: calc(var(--size) / -4);
       inset-inline-end: calc(var(--size) / -4);
       position: absolute;
+    }
+  }
+
+  #sidebar:where(:not(.open):has(.badge)) & {
+    &::after {
+       background-color: var(--color-negative);
     }
   }
 
@@ -229,6 +235,22 @@
     &:not(:hover) {
       box-shadow: 0 0 0 1px var(--color-text);
     }
+  }
+
+  &.badge {
+    &::after {
+       --size: 0.6em;
+    
+       aspect-ratio: 1;
+       background-color: var(--color-negative);
+       block-size: var(--size);
+       border-radius: calc(var(--size) * 2);
+       content: "";
+       flex-shrink: 0;
+       inline-size: var(--size);
+       inset-inline-end: calc(var(--size));
+       position: absolute;
+     }
   }
 }
 

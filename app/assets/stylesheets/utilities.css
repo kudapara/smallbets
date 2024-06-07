@@ -94,6 +94,7 @@
 .pad-inline { padding-inline: var(--inline-space); }
 .pad-inline-start { padding-inline-start: var(--inline-space); }
 .pad-inline-end { padding-inline-end: var(--inline-space); }
+.pad-inline-end-half { padding-inline-end: var(--inline-space-half); }
 .pad-inline-half { padding-inline: var(--inline-space-half); }
 .pad-inline-double { padding-inline: var(--inline-space-double); }
 

@@ -7,6 +7,7 @@ module Message::Mentionee
 
     after_save :create_mentionees
     
+    scope :with_mentions, ->{ joins("JOIN mentions ON mentions.message_id = messages.id") }
     scope :without_user_mentions, ->(user) {
       joins("LEFT JOIN mentions ON mentions.message_id = messages.id")
         .where("mentions.user_id IS NULL OR mentions.user_id != ?", user.id)

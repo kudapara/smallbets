@@ -13,8 +13,9 @@ class Message < ApplicationRecord
 
   before_create -> { self.client_message_id ||= Random.uuid } # Bots don't care
   after_create_commit -> { room.receive(self) }
-  
-  after_save -> { involve_mentionees_in_room }
+
+  after_create -> { involve_mentionees_in_room(unread: true) }
+  after_update -> { involve_mentionees_in_room(unread: false) }
   after_save -> { involve_author_in_thread }, if: -> { room.thread? }
 
   scope :ordered, -> { order(:created_at) }
@@ -60,8 +61,8 @@ class Message < ApplicationRecord
   
   private
 
-  def involve_mentionees_in_room
-    mentionees.each { |user| room.involve_user(user, unread: true) }
+  def involve_mentionees_in_room(unread:)
+    mentionees.each { |user| room.involve_user(user, unread: unread) }
   end
 
   def involve_author_in_thread

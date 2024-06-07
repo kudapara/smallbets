@@ -4,6 +4,16 @@ class Membership < ApplicationRecord
   belongs_to :room
   belongs_to :user
 
+  has_many :unread_notifications, ->(membership) { 
+    unread_messages = where("messages.created_at >= ?", membership.unread_at || Time.current)
+    if membership.involved_in_nothing? || membership.involved_in_mentions?
+      unread_messages = unread_messages.with_mentions.where(mentions: { user_id: membership.user_id })
+    end
+    unread_messages.none! if membership.involved_in_invisible?
+
+    unread_messages
+  }, through: :room, source: :messages
+
   after_destroy_commit { user.reset_remote_connections }
 
   enum involvement: %w[ invisible nothing mentions everything ].index_by(&:itself), _prefix: :involved_in
@@ -40,6 +50,10 @@ class Membership < ApplicationRecord
   
   def unread?
     unread_at.present?
+  end
+  
+  def has_unread_notifications?
+    unread? && unread_notifications.any?
   end
   
   def receives_mentions?
