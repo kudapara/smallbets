@@ -5,7 +5,7 @@ class Message < ApplicationRecord
   belongs_to :creator, class_name: "User", default: -> { Current.user }
 
   has_many :boosts, dependent: :destroy
-  has_many :bookmarks
+  has_many :bookmarks, dependent: :destroy
 
   has_many :threads, class_name: "Rooms::Thread", foreign_key: :parent_message_id, dependent: :destroy
 
