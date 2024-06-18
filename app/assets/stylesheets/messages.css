@@ -416,7 +416,7 @@ img.message__attachment {
 
   .message__actions-menu & {
     --width: 100%;
-    --btn-padding: calc(var(--inline-space) / 3) var(--inline-space-half);
+    --btn-padding: calc(var(--inline-space-half) / 2) var(--inline-space-half);
     --btn-border-radius: calc(var(--arrow-size) / 2 - var(--inline-space-half));
     --busy-inset: calc(var(--inline-space) * 1.5);
   
