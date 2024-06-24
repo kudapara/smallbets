@@ -34,7 +34,7 @@
 
 <% content_for :messages do %>
   <%= inbox_messages_tag(paged_inbox_messages_url, highlight_mentions: true) do %>
-    <%= render collection: @messages, partial: '/messages/message', cached: -> message { [ message, "inbox_#{Current.user.id}", message.bookmarked_by_current_user?, message.creator.updated_at ] } %>
+    <%= render collection: @messages, partial: '/messages/message', cached: -> message { [ message, "inbox_#{Current.user.id}", message.bookmarked_by_current_user?, message.creator.updated_at, false ] } %>
   <% end %>
 <% end %>
 

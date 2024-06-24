@@ -4,16 +4,18 @@ import ClientMessage from "models/client_message"
 import MessageFormatter, { ThreadStyle } from "models/message_formatter"
 import MessagePaginator from "models/message_paginator"
 import ScrollManager from "models/scroll_manager"
+import ScrollTracker from "models/scroll_tracker"
 
 export default class extends Controller {
   static targets = [ "latest", "message", "body", "messages", "template" ]
-  static classes = [ "firstOfDay", "formatted", "me", "mentioned", "threaded" ]
+  static classes = [ "firstOfDay", "firstUnread", "formatted", "me", "mentioned", "threaded" ]
   static values = { pageUrl: String }
 
   #clientMessage
   #paginator
   #formatter
   #scrollManager
+  #scrollTracker
 
   // Lifecycle
 
@@ -31,13 +33,20 @@ export default class extends Controller {
     this.#clientMessage = new ClientMessage(this.templateTarget)
     this.#paginator = new MessagePaginator(this.messagesTarget, this.pageUrlValue, this.#formatter, this.#allContentViewed.bind(this))
     this.#scrollManager = new ScrollManager(this.messagesTarget)
+    this.#scrollTracker = new ScrollTracker(this.messagesTarget, { scrolledFarFromLatest: this.#showReturnToLatestButton.bind(this) })
 
     if (this.#hasSearchResult) {
       this.#highlightSearchResult()
+    } else if (this.#hasUnreadSeparator) {
+      this.#scrollToUnreadSeparator()
     } else {
       this.#scrollManager.autoscroll(true)
     }
 
+    if (this.#scrollTracker.scrolledFarFromLatest) {
+      this.#showReturnToLatestButton()
+    }
+    
     this.#paginator.monitor()
   }
 
@@ -73,19 +82,22 @@ export default class extends Controller {
             this.#paginator.trimExcessMessages(true)
           })
           if (!didScroll) {
-            this.latestTarget.hidden = false
+            this.#showReturnToLatestButton(true)
           }
         }
       } else {
-        this.latestTarget.hidden = false
+        this.#showReturnToLatestButton(true)
       }
     }
   }
 
   async returnToLatest() {
-    this.latestTarget.hidden = true
+    if (!this.#paginator.upToDate) {
+      this.latestTarget.classList.add('busy')
+    }
     await this.#ensureUpToDate()
     this.#scrollManager.autoscroll(true)
+    this.#hideReturnToLatestButton()
   }
 
   async editMyLastMessage() {
@@ -96,6 +108,15 @@ export default class extends Controller {
     }
   }
 
+  #hideReturnToLatestButton() {
+    this.latestTarget.hidden = true
+    this.latestTarget.classList.remove('pulse', 'busy')
+  }
+  
+  #showReturnToLatestButton(pulse = false) {
+    this.latestTarget.classList.toggle('pulse', pulse)
+    this.latestTarget.hidden = false
+  }
 
   // Outlet actions
 
@@ -119,7 +140,7 @@ export default class extends Controller {
   // Callbacks
 
   #allContentViewed() {
-    this.latestTarget.hidden = true
+    this.#hideReturnToLatestButton()
   }
 
 
@@ -147,6 +168,17 @@ export default class extends Controller {
 
     this.#paginator.upToDate = false
   }
+  
+  #scrollToUnreadSeparator() {
+    this.#unreadSeparator.scrollIntoView({ behavior: "instant" })
+    const targetTopOffset = window.innerHeight * 0.1;
+    const topOffset = this.#unreadSeparator.getBoundingClientRect().top;
+    if (topOffset < targetTopOffset) {
+      this.messagesTarget.scrollBy(0, topOffset - targetTopOffset); 
+    }
+
+    this.#paginator.upToDate = false
+  }
 
   #removeReplyParam() {
     try {
@@ -158,6 +190,14 @@ export default class extends Controller {
 
   get #hasSearchResult() {
     return location.pathname.includes("@")
+  }
+  
+  get #hasUnreadSeparator() {
+    return !!this.#unreadSeparator
+  }
+
+  get #unreadSeparator() {
+    return this.messagesTarget.querySelector(`.${this.firstUnreadClass}`)
   }
 
   get #lastMessage() {

@@ -1,9 +1,14 @@
 <%# Be sure to check/update messages/_template.html.erb when changing this file %>
 
 <% current_room ||= nil %>
-<% cache [ message, current_room&.id, message.bookmarked_by_current_user?, message.creator.updated_at ] do %>
+<% is_first_unread_message = (message == local_assigns[:first_unread_message]) %>
+<% cache [ message, current_room&.id, message.bookmarked_by_current_user?, message.creator.updated_at, is_first_unread_message ] do %>
   <%= message_tag message do %>
-    <h2 class="message__day-separator"><%= local_datetime_tag message.created_at, style: :date %></h2>
+    <% if is_first_unread_message %>
+      <h2 class="message-separator message__new-separator"><span>New since last visit</span></h2>
+    <% end %>
+    
+    <h2 class="message-separator message__day-separator"><%= local_datetime_tag message.created_at, style: :date %></h2>
 
     <figure class="avatar message__avatar">
       <%= avatar_tag message.creator, loading: :lazy %>

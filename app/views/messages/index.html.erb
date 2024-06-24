@@ -1,1 +1,1 @@
-<%= render partial: "messages/message", collection: @messages, cached: -> message { [ message, @room&.id || message.room_id, message.bookmarked_by_current_user?, message.creator.updated_at ] }, locals: { current_room: @room } %>
+<%= render partial: "messages/message", collection: @messages, cached: -> message { [ message, @room&.id || message.room_id, message.bookmarked_by_current_user?, message.creator.updated_at, false ] }, locals: { current_room: @room } %>

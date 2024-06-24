@@ -23,6 +23,7 @@ class Message < ApplicationRecord
   scope :with_threads, -> { includes(:threads) }
   scope :without_created_by, ->(user) { where.not(creator_id: user.id) }
   scope :between, ->(from, to) { where(created_at: from..to) }
+  scope :since, ->(time) { where(created_at: time..) }
 
   attr_accessor :bookmarked
   alias_method :bookmarked?, :bookmarked

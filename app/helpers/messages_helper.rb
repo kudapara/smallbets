@@ -4,6 +4,7 @@ module MessagesHelper
       controller: "messages presence drop-target",
       action: [ messages_actions, drop_target_actions, presence_actions ].join(" "),
       messages_first_of_day_class: "message--first-of-day",
+      messages_first_unread_class: "message__new-separator",
       messages_formatted_class: "message--formatted",
       messages_me_class: "message--me",
       messages_mentioned_class: "message--mentioned",
