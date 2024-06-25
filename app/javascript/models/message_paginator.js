@@ -65,7 +65,6 @@ export default class MessagePaginator {
 
   #messageBecameVisible(element) {
     const messageId = element.dataset.messageId
-    console.log('message became visible ' + messageId)
     const firstMesage = element === this.#container.firstElementChild
     const lastMessage = element === this.#container.lastElementChild
 
@@ -74,11 +73,9 @@ export default class MessagePaginator {
         this.#addPage({ before: messageId }, true)
       }
       if (lastMessage && !this.upToDate) {
-        console.log('will add page')
         this.#addPage({ after: messageId }, false)
       }
       if (lastMessage && this.upToDate) {
-        console.log('all viewed')
         this.#allContentViewedCallback?.()
       }
     }
