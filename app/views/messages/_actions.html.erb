@@ -30,7 +30,7 @@
 
       <div class="border-top margin-block-start-half pad-block-start-half">
         <% unless message.content_type.attachment? %>
-          <%= link_to edit_room_message_path(current_room || message.room, message), class: "btn message__action-btn full-width message__edit-btn",
+          <%= link_to edit_message_in_room_path(current_room, message), class: "btn message__action-btn full-width message__edit-btn",
                       data: { turbo_frame: dom_id(message, :edit) }, aria: { hidden: true } do %>
             <span>Edit</span>
           <% end %>
@@ -69,6 +69,12 @@
           <% end %>
         <% end %>
 
+        <% if current_room.present? %>
+          <%= button_to room_message_unreads_path(current_room, message), class: "btn message__action-btn full-width" do %>
+            <span>Mark unread</span>
+          <% end %>
+        <% end %>
+        
         <% unless message.room.direct? %>
           <%= link_to new_rooms_thread_path(parent_message_id: message.id), class: "btn message__action-btn full-width",
                       target: "_top", style: "view-transition-name: new-room" do %>

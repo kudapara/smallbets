@@ -9,9 +9,12 @@ export default class extends Controller {
   #disconnected = true
 
   async connect() {
-    this.channel ??= await cable.subscribeTo({ channel: "UnreadRoomsChannel" }, {
+    this.unreadsChannel ??= await cable.subscribeTo({ channel: "UnreadRoomsChannel" }, {
       connected: this.#channelConnected.bind(this),
       disconnected: this.#channelDisconnected.bind(this),
+      received: this.#unread.bind(this)
+    })
+    this.userUnreadsChannel ??= await cable.subscribeTo({ channel: "UserUnreadRoomsChannel" }, {
       received: this.#unread.bind(this)
     })
     this.notificationsChannel ??= await cable.subscribeTo({ channel: "UnreadNotificationsChannel" }, {
@@ -21,8 +24,11 @@ export default class extends Controller {
 
   disconnect() {
     ignoringBriefDisconnects(this.element, () => {
-      this.channel?.unsubscribe()
-      this.channel = null
+      this.unreadsChannel?.unsubscribe()
+      this.unreadsChannel = null
+
+      this.userUnreadsChannel?.unsubscribe()
+      this.userUnreadsChannel = null
 
       this.notificationsChannel?.unsubscribe()
       this.notificationsChannel = null

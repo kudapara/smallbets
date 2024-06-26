@@ -22,10 +22,12 @@ class Membership < ApplicationRecord
   after_update :set_nested_involvements_to_mentions, if: -> { saved_change_to_involvement? && involved_in_invisible? }
 
   scope :with_ordered_room, -> { includes(:room).joins(:room).order("messages_count DESC") }
+  scope :with_room_chronologically, -> { includes(:room).joins(:room).order("rooms.created_at") }
   scope :without_direct_rooms, -> { joins(:room).where.not(room: { type: "Rooms::Direct" }) }
   scope :without_thread_rooms, -> { joins(:room).where.not(room: { type: "Rooms::Thread" }) }
   scope :thread_rooms, -> { joins(:room).where(room: { type: "Rooms::Thread" }) }
   scope :without_expired_threads, -> { joins(:room).where("rooms.type != 'Rooms::Thread' or rooms.last_active_at > ?", Room::EXPIRES_INTERVAL.ago) }
+  scope :with_active_threads, -> { joins(:room).where("rooms.type == 'Rooms::Thread' and rooms.last_active_at > ?", Room::EXPIRES_INTERVAL.ago) }
 
   scope :notifications_on, -> { where(involvement: :everything) }
   scope :visible, -> { where.not(involvement: :invisible) }
@@ -37,6 +39,11 @@ class Membership < ApplicationRecord
     
     update!(unread_at: room.messages.ordered.where("created_at > ?", time).first&.created_at)
     broadcast_read if read?
+  end
+
+  def mark_unread_at(message)
+    update!(unread_at: message.created_at)
+    broadcast_unread_by_user
   end
 
   def read
@@ -74,6 +81,11 @@ class Membership < ApplicationRecord
     room.parent_room.memberships.create_with(involvement: "invisible").find_or_create_by(user: user)
   end
 
+  # Top level parent in hierarchy
+  def root_membership
+    parent_membership.nil? ? self : parent_membership.root_membership
+  end
+
   def set_nested_involvements_to_mentions
     room.threads.each do |thread|
       thread_membership = thread.memberships.find_by(user: user)
@@ -86,6 +98,11 @@ class Membership < ApplicationRecord
   
   def broadcast_read
     ActionCable.server.broadcast "user_#{user_id}_reads", { room_id: room_id }
+  end
+
+  def broadcast_unread_by_user
+    ActionCable.server.broadcast "user_#{user_id}_unreads", { roomId: room_id }
+    ActionCable.server.broadcast "user_#{user_id}_notifications", { roomId: room.id } if has_unread_notifications?
   end
   
   def make_parent_involvements_visible

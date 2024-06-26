@@ -205,8 +205,7 @@
 
 .message__new-separator {
   grid-area: new;
-  margin-block-start: 0;
-  margin-block-end: calc(var(--message-space) / 2);
+  margin-block: calc(var(--message-space) / 2);
   display: grid;
 
   span {
@@ -217,6 +216,10 @@
   &::after,
   &::before {
     border-top: 2px solid var(--color-contrast);
+  }
+
+  .message:first-child & {
+    margin-block-start: var(--message-space);
   }
 }
 

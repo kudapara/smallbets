@@ -1,7 +1,8 @@
 class MessagesController < ApplicationController
   include ActiveStorage::SetCurrent, RoomScoped, NotifyBots, Threads::Broadcasts
 
-  before_action :set_room, except: :create
+  before_action :set_room, only: %i[ index create destroy ]
+  before_action :set_room_if_found, only: %i[ show edit update ]
   before_action :set_message, only: %i[ show edit update destroy ]
   before_action :ensure_can_administer, only: %i[ edit update destroy ]
 
@@ -41,7 +42,8 @@ class MessagesController < ApplicationController
     @message.broadcast_replace_to :inbox, target: [ @message, :presentation ], html: presentation_html, attributes: { maintain_scroll: true }
     broadcast_update_message_involvements(@message)
     deliver_webhooks_to_bots(@message, :updated)
-    redirect_to room_message_url(@room, @message)
+
+    redirect_to @room ? room_message_url(@room, @message) : @message
   end
 
   def destroy
@@ -56,7 +58,11 @@ class MessagesController < ApplicationController
 
   private
     def set_message
-      @message = @room.messages_with_parent.find(params[:id])
+      if @room
+        @message = @room.messages_with_parent.find(params[:id])
+      else
+        @message = Current.user.reachable_messages.find(params[:id])
+      end
     end
 
     def ensure_can_administer

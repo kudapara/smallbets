@@ -10,4 +10,9 @@ module RoomScoped
       @membership = Current.user.memberships.find_by!(room_id: params[:room_id])
       @room = @membership.room
     end
+
+    def set_room_if_found
+      @membership = Current.user.memberships.find_by(room_id: params[:room_id])
+      @room = @membership&.room
+    end
 end

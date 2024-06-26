@@ -60,7 +60,9 @@ Rails.application.routes.draw do
   end
 
   resources :rooms do
-    resources :messages
+    resources :messages do
+      resources :unreads, only: %i[ create ], module: "messages"
+    end
 
     post ":bot_key/messages", to: "messages/by_bots#create", as: :bot_messages
 
