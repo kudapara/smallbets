@@ -18,6 +18,6 @@ class Messages::UnreadsController < ApplicationController
 
     def set_membership
       @membership = Current.user.memberships.find_by!(room_id: @room.id)
-      @thread_memberships = Current.user.memberships.with_active_threads.with_room_chronologically unless @membership.room.direct?
+      @thread_memberships = Current.user.memberships.visible.with_active_threads.with_room_chronologically unless @membership.room.direct?
     end
 end
