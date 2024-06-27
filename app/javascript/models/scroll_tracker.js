@@ -3,26 +3,20 @@ const SCROLLED_AWAY_FROM_LATEST_THRESHOLD = 500
 export default class ScrollTracker {
     #container
     #lastChildRevealedCallback
-    #scrolledFarFromLatestCallback
+    #lastChildHiddenCallback
     #intersectionObserver
     #mutationObserver
     #firstChildWasHidden
 
-    constructor(container, { lastChildRevealed, scrolledFarFromLatest }) {
+    constructor(container, { lastChildRevealed, lastChildHidden }) {
         this.#container = container
         this.#lastChildRevealedCallback = lastChildRevealed
-        this.#scrolledFarFromLatestCallback = scrolledFarFromLatest
+        this.#lastChildHiddenCallback = lastChildHidden
 
         this.#mutationObserver = new MutationObserver(this.#childrenChanged.bind(this))
         this.#mutationObserver.observe(container, {childList: true})
 
-        if (this.#lastChildRevealedCallback) {
-            this.#intersectionObserver = new IntersectionObserver(this.#handleIntersection.bind(this), {root: container})
-        }
-
-        if (this.#scrolledFarFromLatestCallback) {
-            this.#container.addEventListener('scroll', this.#onScroll.bind(this));
-        }
+        this.#intersectionObserver = new IntersectionObserver(this.#handleIntersection.bind(this), {root: container})
     }
 
     connect() {
@@ -58,19 +52,15 @@ export default class ScrollTracker {
 
             if (entry.isIntersecting) {
                 if (significantReveal) {
-                    this.#lastChildRevealedCallback(entry.target)
+                    this.#lastChildRevealedCallback?.(entry.target)
                 }
             } else {
                 if (isFirst) {
                     this.#firstChildWasHidden = true
+                } else {
+                    this.#lastChildHiddenCallback?.()
                 }
             }
-        }
-    }
-
-    #onScroll() {
-        if (this.scrolledFarFromLatest) {
-            this.#scrolledFarFromLatestCallback?.()
         }
     }
 

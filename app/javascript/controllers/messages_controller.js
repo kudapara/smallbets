@@ -33,7 +33,7 @@ export default class extends Controller {
     this.#clientMessage = new ClientMessage(this.templateTarget)
     this.#paginator = new MessagePaginator(this.messagesTarget, this.pageUrlValue, this.#formatter, this.#allContentViewed.bind(this))
     this.#scrollManager = new ScrollManager(this.messagesTarget)
-    this.#scrollTracker = new ScrollTracker(this.messagesTarget, { scrolledFarFromLatest: this.#showReturnToLatestButton.bind(this) })
+    this.#scrollTracker = new ScrollTracker(this.messagesTarget, { lastChildHidden: this.#showReturnToLatestButton.bind(this) })
 
     if (this.#hasSearchResult) {
       this.#highlightSearchResult()
@@ -48,10 +48,12 @@ export default class extends Controller {
     }
     
     this.#paginator.monitor()
+    this.#scrollTracker.connect()
   }
 
   disconnect() {
     this.#paginator.disconnect()
+    this.#scrollTracker.disconnect()
   }
 
   messageTargetConnected(target) {
