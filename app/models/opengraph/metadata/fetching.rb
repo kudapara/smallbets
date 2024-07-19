@@ -40,7 +40,7 @@ module Opengraph::Metadata::Fetching
       def valid_image_content_type(image)
         return unless image.present?
 
-        content_type = Opengraph::Location.new(URI.parse(image)).fetch_content_type&.downcase
+        content_type = Opengraph::Location.new(URI.parse(image)).fetch_content_type&.split(";")&.first&.downcase
         content_type.in?(ALLOWED_IMAGE_CONTENT_TYPES) ? image : nil
       rescue => e
         Rails.logger.warn "Failed to fetch image content tpye: #{image} (#{e})"
