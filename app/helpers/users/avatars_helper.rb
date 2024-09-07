@@ -10,8 +10,14 @@ module Users::AvatarsHelper
     AVATAR_COLORS[Zlib.crc32(user.to_param) % AVATAR_COLORS.size]
   end
 
-  def avatar_tag(user, **options)
+  def avatar_link_tag(user, **options)
     link_to user_path(user), title: user.title, class: "btn avatar", data: { turbo_frame: "_top" } do
+      avatar_image_tag(user, size: 48, **options)
+    end
+  end
+
+  def avatar_tag(user, **options)
+    tag.span(title: user.title, class: "btn avatar") do
       avatar_image_tag(user, size: 48, **options)
     end
   end

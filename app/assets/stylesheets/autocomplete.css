@@ -58,7 +58,6 @@
   margin: 0;
   padding-inline-start: calc(var(--avatar-size) + var(--inline-space) / 3) !important;
   position: relative;
-  z-index: 2;
 
   .avatar {
     aspect-ratio: 1;
@@ -71,6 +70,21 @@
     margin: 0;
     overflow: clip;
     position: absolute;
+  }
+  
+  details.avatar {
+    overflow: visible;
+    letter-spacing: normal;
+
+    .avatar {
+      inset-inline: 0;
+      position: relative;
+      margin: auto;
+    }
+    
+    .btn {
+      padding: var(--btn-padding, 0.5em 1.1em);
+    }
   }
 
   figcaption {

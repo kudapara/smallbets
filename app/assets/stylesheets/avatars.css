@@ -8,7 +8,7 @@
   margin: 0;
   place-items: center;
 
-  img {
+  > img {
     aspect-ratio: 1;
     block-size: auto;
     border-radius: var(--avatar-border-radius);

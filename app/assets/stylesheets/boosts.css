@@ -17,7 +17,7 @@
     margin-block-start: 0;
   }
 
-  .btn:not(.avatar) {
+  .btn:not(.avatar):not([type=submit]) {
     font-size: 0.55rem;
   }
 

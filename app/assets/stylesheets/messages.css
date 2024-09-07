@@ -124,11 +124,11 @@
   &:has([open]) {
     z-index: 1;
 
-    .message__options-btn {
+    [open] .message__options-btn {
       opacity: 1;
     }
 
-    .message__actions-menu {
+    [open] .popup-menu {
       display: block;
     }
   }
@@ -425,7 +425,6 @@ img.message__attachment {
   display: flex;
   flex-wrap: wrap;
   justify-content: start;
-  z-index: 3;
 }
 
 .message__action-btn {
@@ -490,7 +489,7 @@ img.message__attachment {
   }
 }
 
-.message__actions-menu {
+.popup-menu {
   --arrow-size: 1.5em;
   --boost-border-color: var(--color-selected-dark);
   --border-color: var(--color-border-darker);
@@ -499,37 +498,34 @@ img.message__attachment {
   background-color: var(--color-bg);
   border-radius: calc(var(--arrow-size) / 2);
   display: none;
-  inset: var(--btn-size) auto auto 50%;
   padding: var(--inline-space-half);
   position: absolute;
-  transform: translateX(-50%);
-  transform-origin: top left;
 
   &::before {
-    aspect-ratio: 2;
-    background: var(--border-color);
-    clip-path: polygon(50% 0, 100% 100%, 0 100%);
-    inline-size: var(--arrow-size);
-    content: "";
-    display: block;
-    inset-block-start: calc(var(--arrow-size) / -2);
-    inset-inline-start: 50%;
-    position: absolute;
-    transform: translateX(-50%);
-  }
-
+     aspect-ratio: 2;
+     background: var(--border-color);
+     clip-path: polygon(50% 0, 100% 100%, 0 100%);
+     inline-size: var(--arrow-size);
+     content: "";
+     display: block;
+     inset-block-start: calc(var(--arrow-size) / -2);
+     inset-inline-start: 50%;
+     position: absolute;
+     transform: translateX(-50%);
+   }
+  
   &::after {
-    aspect-ratio: 2;
-    background: var(--color-bg);
-    clip-path: polygon(50% 0, 100% 100%, 0 100%);
-    inline-size: var(--arrow-size);
-    content: "";
-    display: block;
-    inset-block-start: calc((var(--arrow-size) / -2) + var(--border-size) * 1.5);
-    inset-inline-start: 50%;
-    position: absolute;
-    transform: translateX(-50%);
-  }
+     aspect-ratio: 2;
+     background: var(--color-bg);
+     clip-path: polygon(50% 0, 100% 100%, 0 100%);
+     inline-size: var(--arrow-size);
+     content: "";
+     display: block;
+     inset-block-start: calc((var(--arrow-size) / -2) + var(--border-size) * 1.5);
+     inset-inline-start: 50%;
+     position: absolute;
+     transform: translateX(-50%);
+   }
 
   /*@media (max-width: 100ch) {*/
   /*  inset-block-start: calc(var(--btn-size) / 1.5);*/
@@ -556,6 +552,67 @@ img.message__attachment {
     /*  inset-block-end: calc(var(--btn-size) / 1.5);*/
     /*}*/
   }
+}
+
+.message__actions-menu {
+  --arrow-size: 1.5em;
+  
+  inset: var(--btn-size) auto auto 50%;
+  transform: translateX(-50%);
+  transform-origin: top left;
+  z-index: 3;
+}
+
+.message__avatar-menu {
+  --block-space: 1rem;
+  --arrow-size: 1.1em;
+  --avatar-border-size: 1px;
+
+  inline-size: fit-content;
+  width: 20ch;
+  padding: calc(var(--block-space) * 2/3);
+  
+  inset: calc(var(--avatar-size) + var(--avatar-border-size) * 2 + var(--arrow-size) / 2) auto auto auto;
+  transform-origin: top left;
+  z-index: 4;
+
+  &::before {
+     inset-block-start: calc(var(--arrow-size) / -2);
+     inset-inline-start: 0;
+     transform: translateX(calc(var(--avatar-size) / 2 + var(--arrow-size) / -2));
+   }
+  
+  &::after {
+     inset-block-start: calc((var(--arrow-size) / -2) + var(--border-size) * 1.5);
+     inset-inline-start: 0;
+     transform: translateX(calc(var(--avatar-size) / 2 + var(--arrow-size) / -2));
+  }
+  
+  .popup-orientation-top & {
+    inset-block-end: calc(var(--avatar-size) + var(--avatar-border-size) * 2 + var(--arrow-size) / 2);
+    inset-block-start: auto;
+    transform-origin: bottom left;
+  }
+}
+
+.boost__avatar .message__avatar-menu {
+  --arrow-size: 0.9em;
+
+  .btn {
+    padding: var(--btn-padding, 0.5em 1.1em);
+  }
+}
+
+.mention .message__avatar-menu {
+  --avatar-size: 1em;
+  --avatar-border-size: 0px;
+  --arrow-size: 0.7em;
+
+  padding: var(--block-space);
+}
+
+.trix-content .message__avatar-menu {
+  padding: var(--block-space);
 }
 
 /* Me */

@@ -10,9 +10,9 @@
     
     <h2 class="message-separator message__day-separator"><%= local_datetime_tag message.created_at, style: :date %></h2>
 
-    <figure class="avatar message__avatar">
-      <%= avatar_tag message.creator, loading: :lazy %>
-    </figure>
+    <div class="avatar message__avatar">
+      <%= render 'users/popup', user: message.creator %>
+    </div>
 
     <turbo-frame id="<%= dom_id(message, :edit) %>">
       <div class="message__body">

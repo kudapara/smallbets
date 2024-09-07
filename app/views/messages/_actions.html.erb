@@ -8,7 +8,7 @@
       <span class="for-screen-reader">Message options</span>
     </summary>
 
-    <div class="message__actions-menu border shadow" data-popup-target="menu">
+    <div class="popup-menu message__actions-menu border shadow" data-popup-target="menu">
       <div class="quick-boosts">
         <% EmojiHelper::REACTIONS.each do |character, title| %>
           <%= form_with model: [ message, Boost.new ], data: { turbo_frame: dom_id(message, :boosting), action: "popup#close"} do |form| %>

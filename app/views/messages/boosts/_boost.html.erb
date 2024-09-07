@@ -6,7 +6,7 @@
       data-boost-delete-booster-id-value="<%=boost.booster.id %>" data-boost-repeat-booster-id-param="<%=boost.booster.id %>">
     
     <figure class="avatar boost__avatar flex-item-no-shrink" data-stop-propagation="true">
-      <%= avatar_tag boost.booster, loading: :lazy, aria: { label: "#{boost.booster.name} boosted #{boost.content}" } %>
+      <%= render 'users/popup', user: boost.booster %>
     </figure>
 
     <%= tag.span boost.content, role: "button", 

@@ -95,6 +95,9 @@ Rails.application.routes.draw do
       end
     end
   end
+  scope module: "messages" do
+    resources :profiles, only: %i[show], as: :mention_profile
+  end
 
   resource :inbox, only: %i[ show ] do
     member do

@@ -1,6 +1,6 @@
 <li class="flex align-center gap margin-none" data-value="<%= user.name.downcase %>">
   <figure class="avatar flex-item-no-shrink" style="--avatar-size: 4ch;">
-    <%= avatar_tag user, loading: :lazy %>
+    <%= avatar_link_tag user, loading: :lazy %>
   </figure>
 
   <div class="min-width">

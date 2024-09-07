@@ -1,0 +1,58 @@
+<section class="txt-align-center">
+  <div class="flex flex-column gap">
+    <div class="avatar txt-x-large center relative" style="background: white">
+      <%= avatar_image_tag(user, class: "avatar", alt: "Profile avatar") %>
+    </div>
+
+    <% if user.bot? %>
+      <div class="pad-double--inline push--inline push--block-start">
+        <h1 class="txt-large txt-tight-lines margin-block-end">
+          <%= user.name %>
+        </h1>
+        
+        <% if user.active? %>
+          <%= button_to_direct_room_with user %>
+        <% else %>
+          <div class="txt-normal"><%= user.name %> is no longer on this account</div>
+        <% end %>
+      </div>
+    <% else %>
+      <% if user.active? %>
+        <div class="flex flex-column gap" style="--row-gap: var(--block-space-half)">
+          <h1 class="txt-large txt-tight-lines margin-none">
+            <%= link_to user_path(user), title: user.title, style: "color: var(--color-txt)", data: { turbo_frame: "_top" } do %>
+              <%= user.name %>
+            <% end %>
+          </h1>
+          <div class="txt-normal"><%= user.bio %></div>
+          <% if user.membership_started_at.present? %>
+            <div class="txt-small txt-subtle">Joined <%= user.membership_started_at.strftime("%b %d, %Y") %></div>
+          <% end %>
+          <div class="flex gap justify-center margin-block-start" style="--column-gap: calc(var(--block-space) / 3)">
+            <%= link_to user.twitter_url, target: "_blank" do %>
+              <%= image_tag "social/twitter.svg", size: 20 %>
+            <% end if user.twitter_url.present? %>
+            <%= link_to user.linkedin_url, target: "_blank" do %>
+              <%= image_tag "social/linkedin.svg", size: 20 %>
+            <% end if user.linkedin_url.present? %>
+          </div>
+          <% if user.personal_url.present? %>
+            <div>
+              <%= link_to friendly_domain(user.personal_url), with_protocol(user.personal_url),
+                          target: "_blank", class: "txt-small txt-medium", style: "color: var(--color-txt)" %>
+            </div>
+          <% end %>
+          
+          <%= button_to rooms_directs_path(user_ids: [ user.id ]), class: "btn btn--reversed full-width txt-medium", data: { turbo_frame: "_top" } do %>
+            <%= image_tag "messages.svg", aria: { hidden: "true" }, aria: { label: "Ping #{user.name}" } %>
+          <% end %>
+        </div>
+      <% else %>
+        <div>
+          <h1 class="txt-large margin-none"><%= user.name %></h1>
+          <div class="txt-normal"><%= user.name %> is no longer on this account</div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</section>
