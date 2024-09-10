@@ -93,7 +93,13 @@ FOREIGN KEY ("message_id")
 );
 CREATE INDEX "index_bookmarks_on_user_id" ON "bookmarks" ("user_id");
 CREATE INDEX "index_bookmarks_on_message_id" ON "bookmarks" ("message_id");
+CREATE TABLE IF NOT EXISTS "auth_tokens" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "user_id" integer NOT NULL, "token" varchar, "code" varchar, "expires_at" datetime(6), "used_at" datetime(6), "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_0d66c22f4c"
+FOREIGN KEY ("user_id")
+  REFERENCES "users" ("id")
+);
+CREATE INDEX "index_auth_tokens_on_user_id" ON "auth_tokens" ("user_id");
 INSERT INTO "schema_migrations" (version) VALUES
+('20240910115400'),
 ('20240526200606'),
 ('20240525122726'),
 ('20240519151155'),

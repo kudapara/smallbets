@@ -20,6 +20,7 @@ class User < ApplicationRecord
   has_many :searches, dependent: :delete_all
 
   has_many :sessions, dependent: :destroy
+  has_many :auth_tokens, dependent: :destroy
 
   scope :active, -> { where(active: true) }
   

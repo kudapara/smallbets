@@ -73,4 +73,7 @@ Rails.application.configure do
   config.active_record.sqlite3_production_warning = false
 
   config.active_job.queue_adapter = :resque
+
+  config.action_mailer.delivery_method = :ses
+  config.action_mailer.default_url_options = { host: "smallbets.com", protocol: "https" }
 end

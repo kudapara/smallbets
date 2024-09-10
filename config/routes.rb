@@ -9,6 +9,12 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :auth_tokens, only: %i[create]
+  namespace :auth_tokens do
+    resource :validations, only: %i[new create]
+  end
+  get "auth_tokens/validate/:token", to: "auth_tokens/validations#create", as: :sign_in_with_token
+
   scope module: "sso" do
     get "auth/:token", to: "sessions#new", as: :sso_auth, constraints: { token: /.+/ }
   end

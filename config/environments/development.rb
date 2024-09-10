@@ -68,4 +68,8 @@ Rails.application.configure do
 
   # Visit /rails/locks to see the locks
   config.middleware.insert_before Rack::Sendfile, ActionDispatch::DebugLocks
+
+  config.action_mailer.delivery_method = :letter_opener
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
 end

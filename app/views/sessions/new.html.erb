@@ -5,16 +5,35 @@
   <div class="panel <%= "shake" if flash[:alert] %>">
     <%= account_logo_tag style: "center margin-block-end txt-xx-large" %>
 
-    <fieldset class="flex flex-column gap center-block upad">
-      <legend class="txt-large txt-align-center"><strong><%= Current.account.name %></strong></legend>
-      <p class="txt-medium">To log in, go to smallbets.com and click the Small Talk banner on the homepage.</p>
-      
-    </fieldset>
-
-    <%= link_to "https://smallbets.com/", class: "btn btn--reversed center txt-large", title: "Login via smallbets.com" do %>
-      <%= image_tag "arrow-right.svg", aria: { hidden: "true" } %>
-      <span class="for-screen-reader">Go</span>
-    <% end %>
+    <div class="flex flex-column gap">
+      <fieldset class="flex flex-column gap center-block upad">
+        <legend class="txt-large txt-align-center"><strong>New to Small Bets Campfire?</strong></legend>
+        <div class="txt-medium">Go to <a href="https://smallbets.com">smallbets.com</a> and click the Small Talk banner on the homepage.</div>
+      </fieldset>
+  
+      <%= form_with url: auth_tokens_url, class: "flex flex-column gap", data: { turbo: false } do |form| %>
+        <fieldset class="flex flex-column gap center-block upad">
+          <legend class="txt-large txt-align-center"><strong>Member Login</strong></legend>
+  
+          <% if flash[:alert] %>
+            <p class="txt-medium txt-negative"><%= flash[:alert] %></p>
+          <% end %>
+          
+          <div class="flex align-center gap">
+            <%= translation_button(:email_address) %>
+            <label class="flex align-center gap input input--actor txt-large">
+              <%= form.email_field :email_address, required: true, class: "input", autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address] %>
+              <%= image_tag "email.svg", role: "presentation", size: 24, class: "colorize--black" %>
+            </label>
+          </div>
+  
+          <%= form.button class: "btn btn--reversed center txt-large", type: "submit", name: "log_in" do %>
+            <%= image_tag "arrow-right.svg", role: "presentation" %>
+            <span class="for-screen-reader">Go</span>
+          <% end %>
+        </fieldset>
+      <% end %>
+    </div>
   </div>
 
   <%= render "accounts/help_contact" %>

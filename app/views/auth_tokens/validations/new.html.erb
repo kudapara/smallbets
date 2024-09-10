@@ -1,0 +1,37 @@
+<% @page_title = "Sign in" %>
+<% turbo_page_requires_reload %>
+
+<section class="txt-align-center">
+  <div class="panel <%= "shake" if flash[:alert] %>">
+    <%= account_logo_tag style: "center margin-block-end txt-xx-large" %>
+  
+    <%= form_with url: auth_tokens_validations_url, class: "flex flex-column gap", data: { turbo: false } do |form| %>
+      <fieldset class="flex flex-column gap center-block upad">
+        <legend class="txt-large txt-align-center"><strong>Enter One Time Code</strong></legend>
+
+        <% if flash[:alert] %>
+          <p class="txt-medium txt-negative"><%= flash[:alert] %></p>
+        <% end %>
+        
+        <div class="txt-medium">
+          We sent an email to <%= session[:otp_email_address] %> with a code you can use to sign in below.
+          If you did not receive the email, you can <%= link_to "try again", new_session_url %>.</div>
+        
+        <div class="flex align-center gap">
+          <%= translation_button(:one_time_code) %>
+          <label class="flex align-center gap input input--actor txt-large">
+            <%= form.text_field :code, required: true, class: "input", inputmode: 'numeric', autofocus: true, placeholder: "Enter your one-time code" %>
+            <%= image_tag "password.svg", role: "presentation", size: 24, class: "colorize--black" %>
+          </label>
+        </div>
+
+        <%= form.button class: "btn btn--reversed center txt-large", type: "submit", name: "log_in" do %>
+          <%= image_tag "arrow-right.svg", role: "presentation" %>
+          <span class="for-screen-reader">Go</span>
+        <% end %>
+      </fieldset>
+    <% end %>
+  </div>
+
+  <%= render "accounts/help_contact" %>
+</section>
