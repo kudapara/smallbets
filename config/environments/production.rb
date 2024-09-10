@@ -75,5 +75,5 @@ Rails.application.configure do
   config.active_job.queue_adapter = :resque
 
   config.action_mailer.delivery_method = :ses
-  config.action_mailer.default_url_options = { host: "smallbets.com", protocol: "https" }
+  config.action_mailer.default_url_options = { host: "chat.smallbets.com", protocol: "https" }
 end
