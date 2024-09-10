@@ -28,7 +28,10 @@ export default class extends Controller {
   }
 
   #stripMentionAttachments(node) {
-    node.querySelectorAll(".mention").forEach(mention => mention.outerHTML = mention.textContent.trim())
+    node.querySelectorAll(".mention").forEach(mention => {
+      mention.querySelector("details")?.remove();
+      mention.outerHTML = mention.textContent.trim()
+    })
     return node
   }
 
