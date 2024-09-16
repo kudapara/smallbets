@@ -20,11 +20,31 @@
 <section class="panel flex flex-column gap" style="view-transition-name: avatar-<%= @user.id %>">
   <%= render partial: "pwa/install_instructions" %>
 
-  <div class="align-center center gap" data-controller="upload-preview">
-    <label class="btn avatar input--file txt-xx-large">
-      <%= avatar_image_tag(@user) %>
-      <span class="for-screen-reader">Avatar</span>
-    </label>
+  <div class="align-center center avatar__form gap" data-controller="upload-preview">
+    <%= profile_form_with @user, class:"txt-medium" do |form| %>
+      <label class="btn input--file">
+        <%= image_tag "camera.svg", role: "presentation", size: 20 %>
+        <%= form.file_field :avatar, id: "file", class: "input", accept: "image/*",
+            data: { upload_preview_target: "input", action: "upload-preview#previewImage change->form#submit" } %>
+        <span class="for-screen-reader">Upload avatar</span>
+      </label>
+    <% end %>
+
+    <%= profile_form_with @user do |form| %>
+      <label class="btn avatar input--file txt-xx-large">
+        <%= image_tag user_image_path(@user), role: "presentation", size: 300, data: { upload_preview_target: "image" } %>
+        <%= form.file_field :avatar, id: "file", class: "input", accept: "image/*",
+                            data: { upload_preview_target: "input", action: "upload-preview#previewImage change->form#submit" } %>
+        <span class="for-screen-reader">Avatar</span>
+      </label>
+    <% end %>
+
+    <% if @user.avatar.attached? %>
+      <% button_to user_avatar_path(@user), method: :delete, class: "btn btn--negative txt-small avatar__delete-btn" do %>
+        <%= image_tag "minus.svg", role: "presentation", size: 20 %>
+        <span class="for-screen-reader">Delete avatar</span>
+      <% end %>
+    <% end %>
   </div>
 
   <%= profile_form_with @user do |form| %>

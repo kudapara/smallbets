@@ -35,7 +35,7 @@ class Message < ApplicationRecord
   def bookmarked_by_current_user?
     return bookmarked? unless bookmarked.nil?
     
-    bookmarks.find_by(user_id: Current.user.id).present?
+    bookmarks.find_by(user_id: Current.user&.id).present?
   end
   
   def plain_text_body

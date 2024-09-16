@@ -27,8 +27,10 @@ module Users::AvatarsHelper
   end
   
   def user_image_path(user)
-    if user.avatar_url.present? || user.avatar.attached?
-      user.avatar_url.presence || fresh_user_avatar_path(user)
+    if user.avatar.attached?
+      fresh_user_avatar_path(user)
+    elsif user.avatar_url.present? 
+      user.avatar_url
     elsif user.bot?
       asset_path("default-bot-avatar.svg")
     else

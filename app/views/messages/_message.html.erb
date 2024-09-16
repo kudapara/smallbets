@@ -2,7 +2,7 @@
 
 <% current_room ||= nil %>
 <% is_first_unread_message = (message == local_assigns[:first_unread_message]) %>
-<% cache [ message, current_room&.id, message.bookmarked_by_current_user?, message.creator.updated_at, is_first_unread_message ] do %>
+<% cache message_cache_key(message, room_id: current_room&.id, is_first_unread_message:) do %>
   <%= message_tag message do %>
     <% if is_first_unread_message %>
       <h2 id="unread_separator" class="message-separator message__new-separator"><span>New since last visit</span></h2>

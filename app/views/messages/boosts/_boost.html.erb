@@ -1,4 +1,4 @@
-<% cache boost do %>
+<% cache [ boost, boost.booster ] do %>
   <div id="<%= dom_id(boost) %>"
       class="boost boost-item flex-inline postion--relative max-width align-center fill-white gap"
       data-controller="boost-delete boost-repeat" data-action="click->boost-repeat#perform click->boost-delete#reveal" 

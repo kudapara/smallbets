@@ -9,7 +9,10 @@ class Users::AvatarsController < ApplicationController
     if stale?(etag: @user)
       expires_in 30.minutes, public: true, stale_while_revalidate: 1.week
 
-      if @user.bot?
+      if @user.avatar.attached?
+        avatar_variant = @user.avatar.variant(SQUARE_WEBP_VARIANT).processed
+        send_webp_blob_file avatar_variant.key
+      elsif @user.bot?
         render_bot
       else
         render_initials
@@ -18,7 +21,7 @@ class Users::AvatarsController < ApplicationController
   end
 
   def destroy
-    Current.user.avatar.destroy
+    Current.user.avatar.purge
     redirect_to user_profile_url
   end
 
