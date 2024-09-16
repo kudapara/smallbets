@@ -29,6 +29,7 @@ class User < ApplicationRecord
   has_secure_password validations: false
 
   before_validation :set_default_name
+  before_validation :normalize_social_urls
   before_save :transliterate_name, if: :name_changed?
   after_create_commit :grant_membership_to_open_rooms
 
@@ -43,18 +44,6 @@ class User < ApplicationRecord
 
   def title
     [ name, bio ].compact_blank.join(" – ")
-  end
-
-  def twitter_url
-    return unless twitter_username.present?
-
-    "https://x.com/#{twitter_username}"
-  end
-  
-  def linkedin_url
-    return unless linkedin_username.present?
-    
-    "https://linkedin.com/in/#{linkedin_username}"
   end
 
   def deactivate
@@ -104,5 +93,26 @@ class User < ApplicationRecord
   
     def transliterate_name
       self.ascii_name = name.to_s.to_ascii
+    end
+
+    def normalize_social_urls
+      self.twitter_url = clean_twitter_url(twitter_url)
+      self.linkedin_url = clean_linkedin_url(linkedin_url)
+    end
+  
+    def clean_twitter_url(url)
+      return nil if url.blank?
+      return url.strip if url.include?("/")
+  
+      handle = url.gsub(/^@/, "").strip
+      "https://x.com/#{handle}"
+    end
+
+    def clean_linkedin_url(url)
+      return nil if url.blank?
+      return url.strip if url.strip.match?(/\/.+/)
+
+      handle = url.strip
+      "https://www.linkedin.com/in/#{handle}"
     end
 end

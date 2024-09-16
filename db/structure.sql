@@ -60,7 +60,7 @@ FOREIGN KEY ("user_id")
 );
 CREATE INDEX "index_sessions_on_user_id" ON "sessions" ("user_id");
 CREATE UNIQUE INDEX "index_sessions_on_token" ON "sessions" ("token");
-CREATE TABLE IF NOT EXISTS "users" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "role" integer DEFAULT 0 NOT NULL, "email_address" varchar DEFAULT NULL, "password_digest" varchar DEFAULT NULL, "active" boolean DEFAULT 1, "bio" text DEFAULT NULL, "bot_token" varchar DEFAULT NULL, "sso_user_id" varchar, "sso_token" varchar, "sso_token_expires_at" datetime(6), "avatar_url" varchar, "twitter_username" varchar, "linkedin_username" varchar, "personal_url" varchar, "membership_started_at" datetime(6), "ascii_name" varchar);
+CREATE TABLE IF NOT EXISTS "users" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "role" integer DEFAULT 0 NOT NULL, "email_address" varchar DEFAULT NULL, "password_digest" varchar DEFAULT NULL, "active" boolean DEFAULT 1, "bio" text DEFAULT NULL, "bot_token" varchar DEFAULT NULL, "sso_user_id" varchar, "sso_token" varchar, "sso_token_expires_at" datetime(6), "avatar_url" varchar, "twitter_username" varchar, "linkedin_username" varchar, "personal_url" varchar, "membership_started_at" datetime(6), "ascii_name" varchar, "twitter_url" varchar, "linkedin_url" varchar);
 CREATE UNIQUE INDEX "index_users_on_bot_token" ON "users" ("bot_token");
 CREATE UNIQUE INDEX "index_users_on_active_and_sso_user_id" ON "users" ("active", "sso_user_id");
 CREATE INDEX "index_users_on_email_address" ON "users" ("email_address");
@@ -99,6 +99,7 @@ FOREIGN KEY ("user_id")
 );
 CREATE INDEX "index_auth_tokens_on_user_id" ON "auth_tokens" ("user_id");
 INSERT INTO "schema_migrations" (version) VALUES
+('20240916105936'),
 ('20240910115400'),
 ('20240526200606'),
 ('20240525122726'),

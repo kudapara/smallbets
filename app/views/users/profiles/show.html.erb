@@ -27,40 +27,68 @@
     </label>
   </div>
 
-  <div class="flex flex-column gap">
-    <% if @user.name.present? %>
+  <%= profile_form_with @user do |form| %>
+    <div class="flex flex-column gap">
       <div class="flex align-center gap">
         <%= translation_button(:user_name) %>
 
-        <label class="flex align-center gap flex-item-grow txt-large">
-          <%= @user.name %>
+        <label class="flex align-center gap flex-item-grow input input--actor">
+          <%= form.text_field :name, class: "input txt-large ", autocomplete: "name", placeholder: "Enter your name",
+                              autofocus: true, required: true,  data: { "1p-ignore": true } %>
+          <%= image_tag "person.svg", role: "presentation", size: 24, class: "colorize--black" %>
         </label>
       </div>
-    <% end %>
 
-    <div class="flex align-center gap">
-      <%= translation_button(:email_address) %>
-
-      <label class="flex align-center gap flex-item-grow txt-large">
-        <%= @user.email_address %>
-      </label>
-    </div>
-
-    <% if @user.bio.present? %>
       <div class="flex align-center gap">
+        <%= translation_button(:email_address) %>
+
+        <label class="flex align-center gap flex-item-grow input input--actor">
+          <%= form.email_field :email_address, class: "input txt-large", value: @user.email_address, autocomplete: "username",
+                               placeholder: "Enter your email address", required: false, disabled: true %>
+          <%= image_tag "email.svg", role: "presentation", size: 24, class: "colorize--black" %>
+        </label>
+      </div>
+
+      <div class="flex align-center gap">
+        <%= translation_button(:twitter) %>
+
+        <label class="flex align-center gap flex-item-grow input input--actor">
+          <%= form.text_field :twitter_url, class: "input txt-large ", placeholder: "Your X profile", required: false %>
+          <%= image_tag "social/twitter-outline.svg", role: "presentation", size: 24, class: "colorize--black" %>
+        </label>
+      </div>
+
+      <div class="flex align-center gap">
+        <%= translation_button(:linkedin) %>
+
+        <label class="flex align-center gap flex-item-grow input input--actor">
+          <%= form.text_field :linkedin_url, class: "input txt-large ", placeholder: "Your LinkedIn profile", required: false %>
+          <%= image_tag "social/linkedin-bw.svg", role: "presentation", size: 24, class: "colorize--black" %>
+        </label>
+      </div>
+
+      <div class="flex align-center gap">
+        <%= translation_button(:website) %>
+
+        <label class="flex align-center gap flex-item-grow input input--actor">
+          <%= form.text_field :personal_url, class: "input txt-large ", placeholder: "Your website", required: false %>
+          <%= image_tag "web.svg", role: "presentation", size: 24, class: "colorize--black" %>
+        </label>
+      </div>
+
+      <div class="flex align-start gap">
         <%= translation_button(:bio) %>
 
-        <label class="flex align--center gap flex-item--grow txt-large">
-          <%= @user.bio %>
+        <label class="flex align--center gap flex-item--grow input input--actor">
+          <%= form.text_area :bio, class: "input txt-large", placeholder: "A few words about yourself…", maxlength: 200,
+                             rows: 3, required: false %>
+          <%= image_tag "bio.svg", role: "presentation", size: 24, class: "colorize--black" %>
         </label>
       </div>
-    <% end %>
 
-    <%= link_to "https://smallbets.com/editdirectoryprofile", class: "btn btn--reversed center txt-large", target: "_blank" do %>
-      <%= image_tag "pencil.svg", aria: { hidden: "true" } %>
-      <span class="for-screen-reader">Edit on smallbets.com</span>
-    <% end %>
-  </div>
+      <%= profile_form_submit_button %>
+    </div>
+  <% end %>
 
   <div class="margin-block pad-inline pad-block fill-shade border-radius">
     <menu class="flex flex-column gap margin-none pad">

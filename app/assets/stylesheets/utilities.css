@@ -71,6 +71,8 @@
 .max-inline-size { max-inline-size: 100%; }
 .constrain-height { max-block-size: var(--max-height, 50vh); }
 
+.break-word { word-break: break-word; }
+
 /* Overflow */
 .overflow-x { overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; }
 .overflow-y { overflow-y: auto; scroll-snap-type: y mandatory; scroll-behavior: smooth; }

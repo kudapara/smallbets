@@ -10,6 +10,12 @@
   padding: var(--input-padding, 0.5em 0.8em);
   resize: none;
 
+  &:disabled {
+    cursor: not-allowed;
+    color: var(--color-border-darker);
+    filter: brightness(1);
+  }
+
   &[type="search"] {
     &::-webkit-search-decoration,
     &::-webkit-search-results-button,

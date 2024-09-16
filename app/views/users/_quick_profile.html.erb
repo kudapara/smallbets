@@ -24,15 +24,15 @@
               <%= user.name %>
             <% end %>
           </h1>
-          <div class="txt-normal"><%= user.bio %></div>
+          <div class="txt-normal break-word"><%= auto_link user.bio %></div>
           <% if user.membership_started_at.present? %>
             <div class="txt-small txt-subtle">Joined <%= user.membership_started_at.strftime("%b %d, %Y") %></div>
           <% end %>
           <div class="flex gap justify-center margin-block-start" style="--column-gap: calc(var(--block-space) / 3)">
-            <%= link_to user.twitter_url, target: "_blank" do %>
+            <%= link_to with_protocol(user.twitter_url), target: "_blank" do %>
               <%= image_tag "social/twitter.svg", size: 20 %>
             <% end if user.twitter_url.present? %>
-            <%= link_to user.linkedin_url, target: "_blank" do %>
+            <%= link_to with_protocol(user.linkedin_url), target: "_blank" do %>
               <%= image_tag "social/linkedin.svg", size: 20 %>
             <% end if user.linkedin_url.present? %>
           </div>
