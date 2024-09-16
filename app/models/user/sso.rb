@@ -13,6 +13,6 @@ module User::Sso
     return if sso_token.blank?
 
     sso_attributes = Sso::Fetch.new(token: sso_token).fetch(read_timeout: 1, open_timeout: 2)
-    update(sso_attributes.except(:name, :email, :twitter_username, :linkedin_username, :personal_url))
+    update(sso_attributes.except(:name, :email, :twitter_url, :linkedin_url, :personal_url))
   end
 end

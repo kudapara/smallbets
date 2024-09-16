@@ -42,8 +42,8 @@ class Sso::Fetch
                 email: :email_address,
                 joinDate: :membership_started_at,
                 userId: :sso_user_id,
-                twitter: :twitter_username,
-                linkedIn: :linkedin_username,
+                twitter: :twitter_url,
+                linkedIn: :linkedin_url,
                 personalUrl: :personal_url,
                 tokenExpiry: :sso_token_expires_at,
                 profilePic: :avatar_url
