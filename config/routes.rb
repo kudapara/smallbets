@@ -65,6 +65,9 @@ Rails.application.routes.draw do
     route_for :user_avatar, user.avatar_token, v: user.updated_at.to_fs(:number)
   end
 
+  get "join/:join_code", to: "users#new", as: :join
+  post "join/:join_code", to: "users#create"
+
   resources :rooms do
     resources :messages do
       resources :unreads, only: %i[ create ], module: "messages"
