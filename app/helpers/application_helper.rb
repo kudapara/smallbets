@@ -23,7 +23,7 @@ module ApplicationHelper
   end
 
   def link_back
-    link_back_to "javascript:history.back()"
+    link_back_to request.referrer || root_path
   end
 
   def link_back_to(destination)
