@@ -3,6 +3,8 @@ source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 git_source(:bc)     { |repo| "https://github.com/basecamp/#{repo}" }
 
+ruby "3.3.0.rc1"
+
 # Rails
 gem "rails", github: "rails/rails", branch: "main"
 
