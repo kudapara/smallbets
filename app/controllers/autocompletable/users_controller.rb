@@ -1,6 +1,6 @@
 class Autocompletable::UsersController < ApplicationController
   def index
-    set_page_and_extract_portion_from find_autocompletable_users.with_attached_avatar.includes(:latest_message).recent_posters_first, per_page: 20
+    set_page_and_extract_portion_from find_autocompletable_users.with_attached_avatar, per_page: 20
   end
 
   private
@@ -9,6 +9,7 @@ class Autocompletable::UsersController < ApplicationController
     end
 
     def users_scope
-      params[:room_id].present? ? Current.user.rooms.find(params[:room_id]).users : User.all
+      scope = params[:room_id].present? ? Current.user.rooms.find(params[:room_id]).users : User.all
+      scope.recent_posters_first(params[:room_id]).includes(:latest_message)
     end
 end

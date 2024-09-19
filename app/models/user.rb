@@ -34,7 +34,16 @@ class User < ApplicationRecord
   after_create_commit :grant_membership_to_open_rooms
 
   scope :ordered, -> { order("LOWER(name)") }
-  scope :recent_posters_first, -> { left_joins(:messages).group(:id).order(Message.arel_table[:created_at].maximum.desc) }
+  scope :recent_posters_first, -> (room_id = nil) do
+    messages = Message.arel_table
+    join_condition = messages[:creator_id].eq(arel_table[:id])
+    join_condition = join_condition.and(messages[:room_id].eq(room_id)) if room_id.present?
+    
+    left_joins(:messages)
+      .where(join_condition)
+      .group(:id)
+      .order(messages[:created_at].maximum.desc)
+  end
   scope :filtered_by, ->(query) { where("name like ? or ascii_name like ? or twitter_username like ? or linkedin_username like ?", 
                                         "%#{query}%", "%#{query}%", "%#{query}%", "%#{query}%") if query.present? }
 
