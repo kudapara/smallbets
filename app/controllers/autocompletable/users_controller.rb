@@ -10,6 +10,6 @@ class Autocompletable::UsersController < ApplicationController
 
     def users_scope
       scope = params[:room_id].present? ? Current.user.rooms.find(params[:room_id]).users : User.all
-      scope.recent_posters_first(params[:room_id]).includes(:latest_message)
+      scope.recent_posters_first(params[:room_id])
     end
 end

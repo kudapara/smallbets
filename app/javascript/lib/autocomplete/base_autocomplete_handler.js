@@ -52,7 +52,7 @@ export default class BaseAutocompleteHandler {
   }
 
   setAutocompletables(autocompletables) {
-    this.#autocompletables = new Collection(autocompletables)
+    this.#autocompletables = new Collection(autocompletables, { sort: false })
   }
 
   // SuggestionController Delegate
