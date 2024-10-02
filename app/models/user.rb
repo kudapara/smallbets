@@ -34,14 +34,17 @@ class User < ApplicationRecord
 
   scope :ordered, -> { order("LOWER(name)") }
   scope :recent_posters_first, ->(room_id = nil) do
-    messages = Message.arel_table
-    join_condition = messages[:creator_id].eq(arel_table[:id])
-    join_condition = join_condition.and(messages[:room_id].eq(room_id)) if room_id.present?
+    messages_table = Message.arel_table
+    users_table = arel_table
 
-    left_joins(:messages)
-      .where(join_condition)
-      .group(:id)
-      .order(messages[:created_at].maximum.desc)
+    left_join_condition = messages_table[:creator_id].eq(users_table[:id])
+    left_join_condition = left_join_condition.and(messages_table[:room_id].eq(room_id)) if room_id.present?
+
+    left_join = users_table.join(messages_table, Arel::Nodes::OuterJoin).on(left_join_condition)
+
+    joins(left_join.join_sources)
+      .group(users_table[:id])
+      .order(messages_table[:created_at].maximum.desc)
   end
   scope :filtered_by, ->(query) { where("name like ? or ascii_name like ? or twitter_username like ? or linkedin_username like ?", 
                                         "%#{query}%", "%#{query}%", "%#{query}%", "%#{query}%") if query.present? }
