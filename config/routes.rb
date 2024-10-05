@@ -133,5 +133,7 @@ Rails.application.routes.draw do
   get "webmanifest"    => "pwa#manifest"
   get "service-worker" => "pwa#service_worker"
 
+  get 'library' => 'library#show'
+
   get "up" => "rails/health#show", as: :rails_health_check
 end

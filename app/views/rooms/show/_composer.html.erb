@@ -1,10 +1,6 @@
 <% content_for :footer do %>
   <div class="composer flex align-end gap position-relative"
       data-controller="typing-notifications" data-typing-notifications-active-class="typing-indicator--active">
-    <%= link_to inbox_path, class: "btn flex-item-no-shrink margin-block-end composer__context-btn" do %>
-      <%= image_tag "inbox.svg", size: 20, aria: { hidden: "true" } %>
-      <span class="for-screen-reader">Inbox</span>
-    <% end %>
     <%= link_to searches_path, class: "btn flex-item-no-shrink margin-block-end composer__context-btn", style: "view-transition-name: input-switcher" do %>
       <%= image_tag "search.svg", size: 20, aria: { hidden: "true" } %>
       <span class="for-screen-reader">Search</span>

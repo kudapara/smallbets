@@ -43,11 +43,21 @@
     </button>
   </div>
 
-    <div class="flex align-end sidebar__tools gap justify-end">
-      <%= link_to user_profile_path, class: "btn avatar flex-item-no-shrink sidebar__tool" do %>
-        <%= avatar_image_tag(Current.user, size: 48, style: "view-transition-name: avatar-#{Current.user.id}") %>
-        <span class="for-screen-reader"><%= Current.user.name %></span>
-      <% end %>
+  <div class="flex align-end sidebar__tools gap justify-end">
+    <%= link_to user_profile_path, class: "btn avatar flex-item-no-shrink sidebar__tool" do %>
+      <%= avatar_image_tag(Current.user, size: 48, style: "view-transition-name: avatar-#{Current.user.id}") %>
+      <span class="for-screen-reader"><%= Current.user.name %></span>
+    <% end %>
+
+    <%= link_to inbox_path, class: "btn align-center gap txt-reversed sidebar__tool" do %>
+      <%= image_tag "inbox.svg", size: 20, aria: { hidden: "true" } %>
+      <span class="for-screen-reader">Inbox</span>
+    <% end %>
+
+    <%= link_to library_path, class: "btn align-center gap txt-reversed sidebar__tool" do %>
+      <%= image_tag "library.svg", size: 20, aria: { hidden: "true" } %>
+      <span class="for-screen-reader">Library</span>
+    <% end %>
 
     <%= link_to edit_account_path, class: "btn align-center gap txt-reversed sidebar__tool" do %>
       <%= image_tag "settings.svg", size: 20, aria: { hidden: "true" }, style: "view-transition-name: account-settings" %>
