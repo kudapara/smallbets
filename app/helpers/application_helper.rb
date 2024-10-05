@@ -26,6 +26,10 @@ module ApplicationHelper
     link_back_to "javascript:history.back()"
   end
 
+  def link_home
+    link_back_to request.referer || "/"
+  end
+
   def link_back_to(destination)
     link_to destination, class: "btn" do
       image_tag("arrow-left.svg", aria: { hidden: "true" }, size: 20) +
