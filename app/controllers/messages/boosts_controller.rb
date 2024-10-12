@@ -10,7 +10,7 @@ class Messages::BoostsController < ApplicationController
   end
 
   def create
-    @source_boost = Boost.find_by(id: params[:source_boost_id])
+    @source_boost = Boost.active.find_by(id: params[:source_boost_id])
     @boost = @message.boosts.create!(boost_params)
 
     broadcast_create
@@ -19,7 +19,7 @@ class Messages::BoostsController < ApplicationController
 
   def destroy
     @boost = Current.user.boosts.find(params[:id])
-    @boost.destroy!
+    @boost.deactivate!
 
     broadcast_remove
     deliver_webhooks_to_bots(@boost, :deleted)

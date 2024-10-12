@@ -4,6 +4,6 @@ class Current < ActiveSupport::CurrentAttributes
   delegate :host, :protocol, to: :request, prefix: true, allow_nil: true
 
   def account
-    Account.first
+    Account.active.first
   end
 end

@@ -1,18 +1,23 @@
 class Message < ApplicationRecord
-  include Attachment, Broadcasts, Mentionee, Pagination, Searchable
+  include Attachment, Broadcasts, Mentionee, Pagination, Searchable, Deactivatable
 
   belongs_to :room, touch: :last_active_at, counter_cache: true
   belongs_to :creator, class_name: "User", default: -> { Current.user }
 
-  has_many :boosts, dependent: :destroy
-  has_many :bookmarks, dependent: :destroy
+  has_many :boosts, -> { active }, class_name: "Boost"
+  has_many :bookmarks, -> { active }, class_name: "Bookmark"
 
-  has_many :threads, class_name: "Rooms::Thread", foreign_key: :parent_message_id, dependent: :destroy
+  has_many :threads, -> { active }, class_name: "Rooms::Thread", foreign_key: :parent_message_id
 
   has_rich_text :body
 
   before_create -> { self.client_message_id ||= Random.uuid } # Bots don't care
   after_create_commit -> { room.receive(self) }
+  after_update_commit -> do
+    if saved_change_to_attribute?(:active) && active?
+      broadcast_reactivation
+    end
+  end
 
   after_create -> { involve_mentionees_in_room(unread: true) }
   after_update -> { involve_mentionees_in_room(unread: false) }

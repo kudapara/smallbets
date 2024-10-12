@@ -27,7 +27,7 @@ class Rooms::ThreadsController < RoomsController
   end
 
   def destroy
-    destroy_room
+    deactivate_room
     redirect_to room_at_message_path(@room.parent_message.room, @room.parent_message)
   end
   

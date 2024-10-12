@@ -9,7 +9,7 @@ module Message::Broadcasts
   def broadcast_update
     broadcast_notifications(ignore_if_older_message: true)
   end
-  
+
   def broadcast_notifications(ignore_if_older_message: false)
     memberships = room.memberships.where(user_id: mentionee_ids)
     memberships = memberships.or(room.memberships.involved_in_everything)
@@ -18,6 +18,26 @@ module Message::Broadcasts
       next if ignore_if_older_message && (membership.read? || membership.unread_at > created_at)
 
       ActionCable.server.broadcast "user_#{membership.user_id}_notifications", { roomId: room.id }
+    end
+  end
+
+  def broadcast_reactivation
+    containing_rooms.each do |room|
+      previous_message = room.messages.active.order(:created_at).where("created_at < ?", created_at).last
+      if previous_message.present?
+        target = previous_message
+        action = "after"
+      else
+        target = [ room, :messages ]
+        action = "prepend"
+      end
+
+      broadcast_action_to room, :messages,
+                          action:,
+                          target:,
+                          partial: "messages/message",
+                          locals: { message: self, current_room: room },
+                          attributes: { maintain_scroll: true }
     end
   end
 end
