@@ -103,7 +103,7 @@ class Room < ApplicationRecord
   end
 
   def messages_with_parent
-    Message.where(room_id: id).or(Message.where(id: parent_message_id))
+    Message.active.where(room_id: id).or(Message.active.where(id: parent_message_id))
   end
 
   def top_level_parent_room
