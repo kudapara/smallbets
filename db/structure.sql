@@ -1,15 +1,9 @@
 CREATE TABLE IF NOT EXISTS "schema_migrations" ("version" varchar NOT NULL PRIMARY KEY);
 CREATE TABLE IF NOT EXISTS "ar_internal_metadata" ("key" varchar NOT NULL PRIMARY KEY, "value" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL);
-CREATE TABLE IF NOT EXISTS "accounts" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "join_code" varchar NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "custom_styles" text);
 CREATE TABLE IF NOT EXISTS "action_text_rich_texts" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "body" text, "record_type" varchar NOT NULL, "record_id" bigint NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL);
 CREATE UNIQUE INDEX "index_action_text_rich_texts_uniqueness" ON "action_text_rich_texts" ("record_type", "record_id", "name");
 CREATE TABLE IF NOT EXISTS "active_storage_blobs" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "key" varchar NOT NULL, "filename" varchar NOT NULL, "content_type" varchar, "metadata" text, "service_name" varchar NOT NULL, "byte_size" bigint NOT NULL, "checksum" varchar, "created_at" datetime(6) NOT NULL);
 CREATE UNIQUE INDEX "index_active_storage_blobs_on_key" ON "active_storage_blobs" ("key");
-CREATE TABLE IF NOT EXISTS "memberships" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "room_id" integer NOT NULL, "user_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "unread_at" datetime(6), "involvement" varchar DEFAULT 'mentions', "connections" integer DEFAULT 0 NOT NULL, "connected_at" datetime(6));
-CREATE INDEX "index_memberships_on_room_id_and_created_at" ON "memberships" ("room_id", "created_at");
-CREATE UNIQUE INDEX "index_memberships_on_room_id_and_user_id" ON "memberships" ("room_id", "user_id");
-CREATE INDEX "index_memberships_on_room_id" ON "memberships" ("room_id");
-CREATE INDEX "index_memberships_on_user_id" ON "memberships" ("user_id");
 CREATE TABLE IF NOT EXISTS "active_storage_attachments" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "record_type" varchar NOT NULL, "record_id" bigint NOT NULL, "blob_id" bigint NOT NULL, "created_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_c3b3935057"
 FOREIGN KEY ("blob_id")
   REFERENCES "active_storage_blobs" ("id")
@@ -21,21 +15,6 @@ FOREIGN KEY ("blob_id")
   REFERENCES "active_storage_blobs" ("id")
 );
 CREATE UNIQUE INDEX "index_active_storage_variant_records_uniqueness" ON "active_storage_variant_records" ("blob_id", "variation_digest");
-CREATE TABLE IF NOT EXISTS "boosts" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "message_id" integer NOT NULL, "booster_id" integer NOT NULL, "content" varchar(16) NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_3539c52d73"
-FOREIGN KEY ("message_id")
-  REFERENCES "messages" ("id")
-);
-CREATE INDEX "index_boosts_on_booster_id" ON "boosts" ("booster_id");
-CREATE INDEX "index_boosts_on_message_id" ON "boosts" ("message_id");
-CREATE TABLE IF NOT EXISTS "messages" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "room_id" integer NOT NULL, "creator_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "client_message_id" varchar NOT NULL, CONSTRAINT "fk_rails_a8db0fb63a"
-FOREIGN KEY ("room_id")
-  REFERENCES "rooms" ("id")
-, CONSTRAINT "fk_rails_761a2f12b3"
-FOREIGN KEY ("creator_id")
-  REFERENCES "users" ("id")
-);
-CREATE INDEX "index_messages_on_creator_id" ON "messages" ("creator_id");
-CREATE INDEX "index_messages_on_room_id" ON "messages" ("room_id");
 CREATE TABLE IF NOT EXISTS "push_subscriptions" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "user_id" integer NOT NULL, "endpoint" varchar DEFAULT NULL, "p256dh_key" varchar DEFAULT NULL, "auth_key" varchar DEFAULT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "user_agent" varchar DEFAULT NULL, CONSTRAINT "fk_rails_43d43720fc"
 FOREIGN KEY ("user_id")
   REFERENCES "users" ("id")
@@ -60,20 +39,11 @@ FOREIGN KEY ("user_id")
 );
 CREATE INDEX "index_sessions_on_user_id" ON "sessions" ("user_id");
 CREATE UNIQUE INDEX "index_sessions_on_token" ON "sessions" ("token");
-CREATE TABLE IF NOT EXISTS "users" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "role" integer DEFAULT 0 NOT NULL, "email_address" varchar DEFAULT NULL, "password_digest" varchar DEFAULT NULL, "active" boolean DEFAULT 1, "bio" text DEFAULT NULL, "bot_token" varchar DEFAULT NULL, "sso_user_id" varchar, "sso_token" varchar, "sso_token_expires_at" datetime(6), "avatar_url" varchar, "twitter_username" varchar, "linkedin_username" varchar, "personal_url" varchar, "membership_started_at" datetime(6), "ascii_name" varchar, "twitter_url" varchar, "linkedin_url" varchar);
-CREATE UNIQUE INDEX "index_users_on_bot_token" ON "users" ("bot_token");
-CREATE UNIQUE INDEX "index_users_on_active_and_sso_user_id" ON "users" ("active", "sso_user_id");
-CREATE INDEX "index_users_on_email_address" ON "users" ("email_address");
 CREATE TABLE IF NOT EXISTS "webhooks" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "user_id" integer NOT NULL, "url" varchar DEFAULT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "receives" varchar, CONSTRAINT "fk_rails_51bf96d3bc"
 FOREIGN KEY ("user_id")
   REFERENCES "users" ("id")
 );
 CREATE INDEX "index_webhooks_on_user_id" ON "webhooks" ("user_id");
-CREATE TABLE IF NOT EXISTS "rooms" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar DEFAULT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "type" varchar NOT NULL, "creator_id" bigint NOT NULL, "messages_count" integer DEFAULT 0, "parent_message_id" integer DEFAULT NULL, "last_active_at" datetime(6), CONSTRAINT "fk_rails_76a8fc443c"
-FOREIGN KEY ("parent_message_id")
-  REFERENCES "messages" ("id")
-);
-CREATE INDEX "index_rooms_on_parent_message_id" ON "rooms" ("parent_message_id");
 CREATE TABLE IF NOT EXISTS "mentions" ("user_id" integer NOT NULL, "message_id" integer NOT NULL, CONSTRAINT "fk_rails_1b711e94aa"
 FOREIGN KEY ("user_id")
   REFERENCES "users" ("id")
@@ -83,22 +53,58 @@ FOREIGN KEY ("message_id")
 );
 CREATE INDEX "index_mentions_on_user_id" ON "mentions" ("user_id");
 CREATE INDEX "index_mentions_on_message_id" ON "mentions" ("message_id");
-CREATE INDEX "index_messages_on_created_at" ON "messages" ("created_at");
-CREATE TABLE IF NOT EXISTS "bookmarks" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "user_id" integer NOT NULL, "message_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_c1ff6fa4ac"
-FOREIGN KEY ("user_id")
-  REFERENCES "users" ("id")
-, CONSTRAINT "fk_rails_ff39da9a98"
-FOREIGN KEY ("message_id")
-  REFERENCES "messages" ("id")
-);
-CREATE INDEX "index_bookmarks_on_user_id" ON "bookmarks" ("user_id");
-CREATE INDEX "index_bookmarks_on_message_id" ON "bookmarks" ("message_id");
 CREATE TABLE IF NOT EXISTS "auth_tokens" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "user_id" integer NOT NULL, "token" varchar, "code" varchar, "expires_at" datetime(6), "used_at" datetime(6), "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_0d66c22f4c"
 FOREIGN KEY ("user_id")
   REFERENCES "users" ("id")
 );
 CREATE INDEX "index_auth_tokens_on_user_id" ON "auth_tokens" ("user_id");
+CREATE TABLE IF NOT EXISTS "rooms" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar DEFAULT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "type" varchar NOT NULL, "creator_id" bigint NOT NULL, "messages_count" integer DEFAULT 0, "parent_message_id" integer DEFAULT NULL, "last_active_at" datetime(6) DEFAULT NULL, "active" boolean DEFAULT 1, CONSTRAINT "fk_rails_76a8fc443c"
+FOREIGN KEY ("parent_message_id")
+  REFERENCES "messages" ("id")
+);
+CREATE INDEX "index_rooms_on_parent_message_id" ON "rooms" ("parent_message_id");
+CREATE TABLE IF NOT EXISTS "messages" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "room_id" integer NOT NULL, "creator_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "client_message_id" varchar NOT NULL, "active" boolean DEFAULT 1, CONSTRAINT "fk_rails_761a2f12b3"
+FOREIGN KEY ("creator_id")
+  REFERENCES "users" ("id")
+, CONSTRAINT "fk_rails_a8db0fb63a"
+FOREIGN KEY ("room_id")
+  REFERENCES "rooms" ("id")
+);
+CREATE INDEX "index_messages_on_creator_id" ON "messages" ("creator_id");
+CREATE INDEX "index_messages_on_room_id" ON "messages" ("room_id");
+CREATE INDEX "index_messages_on_created_at" ON "messages" ("created_at");
+CREATE TABLE IF NOT EXISTS "memberships" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "room_id" integer NOT NULL, "user_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "unread_at" datetime(6) DEFAULT NULL, "involvement" varchar DEFAULT 'mentions', "connections" integer DEFAULT 0 NOT NULL, "connected_at" datetime(6) DEFAULT NULL, "active" boolean DEFAULT 1);
+CREATE INDEX "index_memberships_on_room_id_and_created_at" ON "memberships" ("room_id", "created_at");
+CREATE UNIQUE INDEX "index_memberships_on_room_id_and_user_id" ON "memberships" ("room_id", "user_id");
+CREATE INDEX "index_memberships_on_room_id" ON "memberships" ("room_id");
+CREATE INDEX "index_memberships_on_user_id" ON "memberships" ("user_id");
+CREATE TABLE IF NOT EXISTS "boosts" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "message_id" integer NOT NULL, "booster_id" integer NOT NULL, "content" varchar(16) NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "active" boolean DEFAULT 1, CONSTRAINT "fk_rails_3539c52d73"
+FOREIGN KEY ("message_id")
+  REFERENCES "messages" ("id")
+);
+CREATE INDEX "index_boosts_on_booster_id" ON "boosts" ("booster_id");
+CREATE INDEX "index_boosts_on_message_id" ON "boosts" ("message_id");
+CREATE TABLE IF NOT EXISTS "bookmarks" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "user_id" integer NOT NULL, "message_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "active" boolean DEFAULT 1, CONSTRAINT "fk_rails_ff39da9a98"
+FOREIGN KEY ("message_id")
+  REFERENCES "messages" ("id")
+, CONSTRAINT "fk_rails_c1ff6fa4ac"
+FOREIGN KEY ("user_id")
+  REFERENCES "users" ("id")
+);
+CREATE INDEX "index_bookmarks_on_user_id" ON "bookmarks" ("user_id");
+CREATE INDEX "index_bookmarks_on_message_id" ON "bookmarks" ("message_id");
+CREATE TABLE IF NOT EXISTS "accounts" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "join_code" varchar NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "custom_styles" text DEFAULT NULL, "active" boolean DEFAULT 1);
+CREATE TABLE IF NOT EXISTS "users" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "role" integer DEFAULT 0 NOT NULL, "email_address" varchar DEFAULT NULL, "password_digest" varchar DEFAULT NULL, "active" boolean DEFAULT 1, "bio" text DEFAULT NULL, "bot_token" varchar DEFAULT NULL, "sso_user_id" varchar DEFAULT NULL, "sso_token" varchar DEFAULT NULL, "sso_token_expires_at" datetime(6) DEFAULT NULL, "avatar_url" varchar DEFAULT NULL, "twitter_username" varchar DEFAULT NULL, "linkedin_username" varchar DEFAULT NULL, "personal_url" varchar DEFAULT NULL, "membership_started_at" datetime(6) DEFAULT NULL, "ascii_name" varchar DEFAULT NULL, "twitter_url" varchar DEFAULT NULL, "linkedin_url" varchar DEFAULT NULL);
+CREATE UNIQUE INDEX "index_users_on_bot_token" ON "users" ("bot_token");
+CREATE UNIQUE INDEX "index_users_on_active_and_sso_user_id" ON "users" ("active", "sso_user_id");
+CREATE INDEX "index_users_on_email_address" ON "users" ("email_address");
 INSERT INTO "schema_migrations" (version) VALUES
+('20241015185114'),
+('20241015185107'),
+('20241015185058'),
+('20241015185047'),
+('20241015185038'),
+('20241015185028'),
 ('20240916105936'),
 ('20240910115400'),
 ('20240526200606'),

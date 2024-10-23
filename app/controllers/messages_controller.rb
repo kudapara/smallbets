@@ -50,7 +50,7 @@ class MessagesController < ApplicationController
     @message.threads.each do |thread|
       broadcast_remove_to :rooms, target: [ thread, :list_node ]
     end
-    @message.destroy
+    @message.deactivate
     @message.broadcast_remove_to @room, :messages
     @message.broadcast_remove_to :inbox
     deliver_webhooks_to_bots(@message, :deleted)
@@ -82,7 +82,7 @@ class MessagesController < ApplicationController
     end
 
     def broadcast_unexpire_thread
-      @room.memberships.visible.each do |membership|
+      @room.memberships.active.visible.each do |membership|
         refresh_shared_rooms(membership.user)
       end
     end

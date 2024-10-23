@@ -1,28 +1,26 @@
 class User < ApplicationRecord
   DEFAULT_NAME = "Small Better"
-  
-  include Avatar, Bot, Mentionable, Role, Transferable, Sso
 
-  has_many :memberships, dependent: :delete_all
-  has_many :rooms, through: :memberships
+  include Avatar, Bot, Mentionable, Role, Transferable, Sso, Deactivatable
 
-  has_many :bookmarks
+  has_many :memberships, -> { active }, class_name: "Membership"
+  has_many :rooms, -> { active }, through: :memberships, source: :room
+
+  has_many :bookmarks, -> { active }, class_name: "Bookmark"
   has_many :bookmarked_messages, -> { order("bookmarks.created_at DESC") }, through: :bookmarks, source: :message
   has_many :reachable_messages, through: :rooms, source: :messages
-  has_many :messages, dependent: :destroy, foreign_key: :creator_id
+  has_many :messages, -> { active }, foreign_key: :creator_id, class_name: "Message"
   has_and_belongs_to_many :mentions, ->(user) { where(room_id: user.room_ids) },
                           class_name: "Message", join_table: "mentions"
 
   has_many :push_subscriptions, class_name: "Push::Subscription", dependent: :delete_all
 
-  has_many :boosts, dependent: :destroy, foreign_key: :booster_id
+  has_many :boosts, -> { active }, foreign_key: :booster_id, class_name: "Boost"
   has_many :searches, dependent: :delete_all
 
   has_many :sessions, dependent: :destroy
   has_many :auth_tokens, dependent: :destroy
 
-  scope :active, -> { where(active: true) }
-  
   scope :without_default_names, -> { where.not(name: DEFAULT_NAME) }
 
   has_secure_password validations: false
@@ -34,8 +32,8 @@ class User < ApplicationRecord
 
   scope :ordered, -> { order("LOWER(name)") }
   scope :recent_posters_first, ->(room_id = nil) do
-    messages_table = Message.arel_table
-    users_table = arel_table
+    messages_table = Message.active.arel_table
+    users_table = active.arel_table
 
     left_join_condition = messages_table[:creator_id].eq(users_table[:id])
     left_join_condition = left_join_condition.and(messages_table[:room_id].eq(room_id)) if room_id.present?
@@ -57,11 +55,21 @@ class User < ApplicationRecord
     [ name, bio ].compact_blank.join(" – ")
   end
 
+  def reactivate
+    transaction do
+      memberships.without_direct_rooms.update!(active: true)
+
+      update! active: true, email_address: reactivated_email_address
+
+      reset_remote_connections
+    end
+  end
+
   def deactivate
     transaction do
       close_remote_connections
 
-      memberships.without_direct_rooms.delete_all
+      memberships.without_direct_rooms.update!(active: false)
       push_subscriptions.delete_all
       searches.delete_all
       sessions.delete_all
@@ -70,16 +78,12 @@ class User < ApplicationRecord
     end
   end
 
-  def deactivated?
-    !active?
-  end
-
   def reset_remote_connections
     close_remote_connections reconnect: true
   end
-  
+
   def member_of?(room)
-    Membership.visible.exists?(room_id: room.id, user_id: id)
+    Membership.active.visible.exists?(room_id: room.id, user_id: id)
   end
 
   private
@@ -90,6 +94,10 @@ class User < ApplicationRecord
       end
     end
 
+    def reactivated_email_address
+      email_address&.gsub(/-deactivated-.+@/, "@")
+    end
+
     def deactived_email_address
       email_address&.gsub(/@/, "-deactivated-#{SecureRandom.uuid}@")
     end
@@ -97,11 +105,11 @@ class User < ApplicationRecord
     def close_remote_connections(reconnect: false)
       ActionCable.server.remote_connections.where(current_user: self).disconnect reconnect: reconnect
     end
-  
+
     def set_default_name
       self.name = name.presence || DEFAULT_NAME
     end
-  
+
     def transliterate_name
       self.ascii_name = name.to_s.to_ascii
     end
@@ -110,11 +118,11 @@ class User < ApplicationRecord
       self.twitter_url = clean_twitter_url(twitter_url)
       self.linkedin_url = clean_linkedin_url(linkedin_url)
     end
-  
+
     def clean_twitter_url(url)
       return nil if url.blank?
       return url.strip if url.include?("/")
-  
+
       handle = url.gsub(/^@/, "").strip
       "https://x.com/#{handle}"
     end

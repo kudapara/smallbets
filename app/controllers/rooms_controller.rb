@@ -13,14 +13,14 @@ class RoomsController < ApplicationController
   end
 
   def destroy
-    destroy_room
+    deactivate_room
     redirect_to root_url
   end
 
   private
-    def destroy_room
+    def deactivate_room
       @room.parent_message&.touch
-      @room.destroy
+      @room.deactivate
 
       broadcast_remove_room
       broadcast_update_parent_message

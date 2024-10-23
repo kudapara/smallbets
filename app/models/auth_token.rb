@@ -36,7 +36,7 @@ class AuthToken < ApplicationRecord
   def generate_code
     self.code = format("%06d", rand(100_000..999_999))
   end
-  
+
   def invalidate_other_tokens
     user.auth_tokens.without(self).update_all(expires_at: Time.current)
   end

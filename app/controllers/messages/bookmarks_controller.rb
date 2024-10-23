@@ -8,8 +8,8 @@ class Messages::BookmarksController < ApplicationController
   end
 
   def destroy
-    @message.bookmarks.where(user_id: Current.user.id).destroy_all
-    
+    @message.bookmarks.where(user_id: Current.user.id).update(active: false)
+
     broadcast_message_update
   end
 

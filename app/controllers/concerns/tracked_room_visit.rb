@@ -9,10 +9,10 @@ module TrackedRoomVisit
   def remember_last_room_visited
     cookies.permanent[:last_room] = @room.id
   end
-  
+
   def landing_room
-    original_open_room = Room.opens.order(:created_at).first
-    Current.user.member_of?(original_open_room) ? original_open_room : last_room_visited 
+    original_open_room = Room.opens.active.order(:created_at).first
+    Current.user.member_of?(original_open_room) ? original_open_room : last_room_visited
   end
 
   def last_room_visited

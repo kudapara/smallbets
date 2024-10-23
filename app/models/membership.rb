@@ -1,5 +1,5 @@
 class Membership < ApplicationRecord
-  include Connectable
+  include Connectable, Deactivatable
 
   belongs_to :room
   belongs_to :user
@@ -14,6 +14,7 @@ class Membership < ApplicationRecord
     unread_messages
   }, through: :room, source: :messages
 
+  after_update_commit { user.reset_remote_connections if deactivated? }
   after_destroy_commit { user.reset_remote_connections }
 
   enum involvement: %w[ invisible nothing mentions everything ].index_by(&:itself), _prefix: :involved_in
