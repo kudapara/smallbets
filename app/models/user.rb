@@ -44,7 +44,7 @@ class User < ApplicationRecord
       .group(users_table[:id])
       .order(messages_table[:created_at].maximum.desc)
   end
-  scope :filtered_by, ->(query) { where("name like ? or ascii_name like ? or twitter_username like ? or linkedin_username like ?", 
+  scope :filtered_by, ->(query) { where("name like ? or ascii_name like ? or twitter_username like ? or linkedin_username like ?",
                                         "%#{query}%", "%#{query}%", "%#{query}%", "%#{query}%") if query.present? }
 
   def initials
