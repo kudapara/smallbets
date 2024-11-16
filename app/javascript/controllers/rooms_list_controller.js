@@ -65,9 +65,10 @@ export default class extends Controller {
     if (unreadRoom) {
       if (Current.room.id != roomId) {
         unreadRoom.classList.add(this.unreadClass)
+        this.dispatch("unread", { detail: { targetId: unreadRoom.id } })
+      } else {
+        this.dispatch("update", { detail: { targetId: unreadRoom.id } })
       }
-
-      this.dispatch("unread", { detail: { targetId: unreadRoom.id } })
     }
   }
 

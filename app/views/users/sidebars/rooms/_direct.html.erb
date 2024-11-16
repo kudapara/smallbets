@@ -2,7 +2,8 @@
   <% members = membership.room.users.without(membership.user).presence || [ membership.user ] %>
 
   <%= link_to_room membership.room, class: [ "direct", "unread": membership.unread? ], id: dom_id(membership.room, :list),
-        data: { sorted_list_number: membership.room.updated_at.to_fs(:epoch) } do %>
+        data: { sorted_list_priority: membership.unread? ? 0 : 1,
+                sorted_list_number: (membership.unread_at || membership.room.updated_at).to_fs(:epoch) } do %>
     <% if members.many? %>
       <div class="avatar__group">
         <% members.first(4).each do |member| %>
