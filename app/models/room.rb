@@ -125,6 +125,16 @@ class Room < ApplicationRecord
     end
   end
 
+  def merge_into!(target_room)
+    transaction do
+      memberships.update(active: false)
+      messages.update(room_id: target_room.id)
+      Message::RichTextUpdater.update_room_links_in_quoted_messages(from: id, to: target_room.id)
+
+      deactivate!
+    end
+  end
+
   def deactivate
     transaction do
       memberships.update(active: false)

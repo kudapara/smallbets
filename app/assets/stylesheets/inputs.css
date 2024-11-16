@@ -200,3 +200,14 @@
     }
   }
 }
+
+select {
+  accent-color: var(--input-accent-color, var(--color-text));
+  background-color: var(--input-background, transparent);
+  border-radius: var(--input-border-radius, 0.5em);
+  border: var(--input-border-size, 1px) solid var(--input-border-color, var(--color-border-darker));
+  color: var(--input-color, var(--color-text));
+  font-size: max(16px, 1em);
+  inline-size: 100%;
+  padding: var(--input-padding, 0.5em 0.8em);
+}

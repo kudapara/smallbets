@@ -29,6 +29,8 @@
 .txt-medium { font-weight: 500; }
 .txt-nowrap { white-space: nowrap; }
 
+.block { display: block }
+
 /* Flexbox and Grid */
 .justify-end { justify-content: end; }
 .justify-start { justify-content: start; }
