@@ -6,7 +6,10 @@ class Room < ApplicationRecord
   has_many :memberships, -> { active } do
     def grant_to(users)
       room = proxy_association.owner
-      Membership.upsert_all(Array(users).collect { |user| { room_id: room.id, user_id: user.id, involvement: room.default_involvement(user: user), active: true } })
+      Membership.upsert_all(
+        Array(users).collect { |user| { room_id: room.id, user_id: user.id, involvement: room.default_involvement(user: user), active: true } },
+        unique_by: %i[room_id user_id]
+      )
       room.threads.find_each { |thread| thread.memberships.grant_to(users) }
     end
 
