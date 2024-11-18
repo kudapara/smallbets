@@ -3,7 +3,7 @@ class AccountsController < ApplicationController
   before_action :set_account
 
   def edit
-    set_page_and_extract_portion_from User.active.ordered, per_page: 500
+    set_page_and_extract_portion_from User.active.includes(avatar_attachment: :blob).ordered, per_page: 500
   end
 
   def update

@@ -20,7 +20,7 @@ class Rooms::OpensController < RoomsController
   end
 
   def edit
-    @users = User.active.ordered
+    @users = User.active.includes(avatar_attachment: :blob).ordered
   end
 
   def update

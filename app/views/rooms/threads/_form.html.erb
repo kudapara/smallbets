@@ -6,7 +6,7 @@
         <%= user_filter_search_tag if users.count > 20 %>
       
         <div data-filter-target="list" contents>
-          <%= render partial: "rooms/threads/user", collection: users, locals: { room: room } %>
+          <%= render partial: "rooms/threads/user", collection: users, locals: { room: room }, cached: -> user { ["threads_user_list", user] } %>
         </div>
       <% end %>
   <% end %>
