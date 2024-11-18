@@ -41,12 +41,14 @@ class Room < ApplicationRecord
 
   before_validation -> { self.last_active_at = Time.current }, on: :create
 
+  before_save :set_sortable_name
+
   scope :opens,           -> { where(type: "Rooms::Open") }
   scope :closeds,         -> { where(type: "Rooms::Closed") }
   scope :directs,         -> { where(type: "Rooms::Direct") }
   scope :without_directs, -> { where.not(type: "Rooms::Direct") }
 
-  scope :ordered, -> { order("LOWER(name)") }
+  scope :ordered, -> { order(:sortable_name) }
 
   scope :without_expired_threads, -> { where("type != 'Rooms::Thread' or last_active_at > ?", EXPIRES_INTERVAL.ago) }
 
@@ -149,6 +151,10 @@ class Room < ApplicationRecord
   end
 
   private
+    def set_sortable_name
+      self.sortable_name = name.to_s.gsub(/[[:^ascii:]\p{So}]/, "").strip.downcase
+    end
+
     def unread_memberships(message)
       memberships.visible.disconnected.read.where.not(user: message.creator).update_all(unread_at: message.created_at, updated_at: Time.current)
     end

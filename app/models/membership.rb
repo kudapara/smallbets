@@ -22,7 +22,8 @@ class Membership < ApplicationRecord
   after_update :make_parent_involvements_visible, if: -> { saved_change_to_involvement? && involvement_before_last_save.inquiry.invisible? }
   after_update :set_nested_involvements_to_mentions, if: -> { saved_change_to_involvement? && involved_in_invisible? }
 
-  scope :with_ordered_room, -> { includes(:room).joins(:room).order("messages_count DESC") }
+  scope :with_ordered_room, -> { includes(:room).joins(:room).order("rooms.sortable_name") }
+  scope :with_room_by_activity, -> { includes(:room).joins(:room).order("messages_count DESC") }
   scope :with_room_chronologically, -> { includes(:room).joins(:room).order("rooms.created_at") }
   scope :without_direct_rooms, -> { joins(:room).where.not(room: { type: "Rooms::Direct" }) }
   scope :without_thread_rooms, -> { joins(:room).where.not(room: { type: "Rooms::Thread" }) }

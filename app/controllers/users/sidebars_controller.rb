@@ -2,7 +2,7 @@ class Users::SidebarsController < ApplicationController
   DIRECT_PLACEHOLDERS = 10
 
   def show
-    all_memberships     = Current.user.memberships.visible.without_expired_threads.with_ordered_room
+    all_memberships     = Current.user.memberships.visible.without_expired_threads.with_room_by_activity
     @direct_memberships = extract_direct_memberships(all_memberships)
     @thread_memberships = extract_thread_memberships(all_memberships)
     @other_memberships  = all_memberships.without(@direct_memberships).without(@thread_memberships)
