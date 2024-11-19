@@ -10,7 +10,7 @@ class Users::ProfilesController < ApplicationController
 
   def update
     @user.update user_params
-    redirect_to user_profile_url, notice: update_notice
+    redirect_to after_update_url, notice: update_notice
   end
 
   private
@@ -20,6 +20,14 @@ class Users::ProfilesController < ApplicationController
 
     def user_params
       params.require(:user).permit(:name, :avatar, :email_address, :password, :bio, :twitter_url, :linkedin_url, :personal_url).compact
+    end
+
+    def after_update_url
+      name_changed_from_default? ? root_url : user_profile_url
+    end
+
+    def name_changed_from_default?
+      @user.name_previously_was == User::DEFAULT_NAME && @user.saved_change_to_name?
     end
 
     def update_notice

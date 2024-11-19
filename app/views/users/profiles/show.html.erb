@@ -49,11 +49,18 @@
 
   <%= profile_form_with @user do |form| %>
     <div class="flex flex-column gap">
+
+      <% if flash[:alert] %>
+        <div class="margin-block pad-inline fill-negative border-radius">
+          <p class="pad-inline-start txt-medium txt-negative"><%= flash[:alert] %></p>
+        </div>
+      <% end %>
+      
       <div class="flex align-center gap">
         <%= translation_button(:user_name) %>
 
         <label class="flex align-center gap flex-item-grow input input--actor">
-          <%= form.text_field :name, class: "input txt-large ", autocomplete: "name", placeholder: "Enter your name",
+          <%= form.text_field :name, value: @user.editable_name, class: "input txt-large ", autocomplete: "name", placeholder: "Enter your name",
                               autofocus: true, required: true,  data: { "1p-ignore": true } %>
           <%= image_tag "person.svg", role: "presentation", size: 24, class: "colorize--black" %>
         </label>

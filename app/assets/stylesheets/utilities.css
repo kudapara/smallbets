@@ -140,6 +140,7 @@
 .fill { background-color: var(--color-bg); }
 .fill-white { background-color: var(--color-text-reversed); }
 .fill-shade { background-color: var(--color-border); }
+.fill-negative { background-color: var(--color-bg-negative); }
 .fill-transparent { background-color: transparent; }
 
 .translucent { opacity: var(--opacity, 0.5); }

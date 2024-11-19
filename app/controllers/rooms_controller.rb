@@ -1,6 +1,7 @@
 class RoomsController < ApplicationController
   before_action :set_room, only: %i[ edit update show destroy ]
   before_action :set_membership, only: %i[ show ]
+  before_action :ensure_has_real_name, only: %i[ show ]
   before_action :ensure_can_administer, only: %i[ update destroy ]
   before_action :remember_last_room_visited, only: :show
 
@@ -36,6 +37,10 @@ class RoomsController < ApplicationController
   
     def set_membership
       @membership = Membership.find_by(room_id: @room.id, user_id: Current.user.id)
+    end
+
+    def ensure_has_real_name
+      redirect_to user_profile_path, alert: "Please enter your name" if Current.user.default_name?
     end
 
     def ensure_can_administer

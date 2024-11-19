@@ -86,6 +86,14 @@ class User < ApplicationRecord
     Membership.active.visible.exists?(room_id: room.id, user_id: id)
   end
 
+  def default_name?
+    name == DEFAULT_NAME
+  end
+
+  def editable_name
+    default_name? ? "" : name
+  end
+
   private
     def grant_membership_to_open_rooms
       Membership.insert_all(Rooms::Open.pluck(:id).collect { |room_id| { room_id: room_id, user_id: id } })
