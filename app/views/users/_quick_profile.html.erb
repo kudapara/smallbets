@@ -25,9 +25,7 @@
             <% end %>
           </h1>
           <div class="txt-normal break-word"><%= auto_link user.bio %></div>
-          <% if user.membership_started_at.present? %>
-            <div class="txt-small txt-subtle">Joined <%= user.membership_started_at.strftime("%b %d, %Y") %></div>
-          <% end %>
+          <div class="txt-small txt-subtle">Joined <%= user.joined_at.strftime("%b %d, %Y") %></div>
           <div class="flex gap justify-center margin-block-start" style="--column-gap: calc(var(--block-space) / 3)">
             <%= link_to with_protocol(user.twitter_url), target: "_blank" do %>
               <%= image_tag "social/twitter.svg", size: 20 %>

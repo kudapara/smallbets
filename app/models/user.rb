@@ -93,6 +93,10 @@ class User < ApplicationRecord
   def editable_name
     default_name? ? "" : name
   end
+  
+  def joined_at
+    membership_started_at || created_at
+  end
 
   private
     def grant_membership_to_open_rooms
