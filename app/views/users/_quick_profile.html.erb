@@ -37,7 +37,7 @@
             <% end if user.linkedin_url.present? %>
           </div>
           <% if user.personal_url.present? %>
-            <div>
+            <div class="break-word">
               <%= link_to friendly_domain(user.personal_url), with_protocol(user.personal_url),
                           target: "_blank", class: "txt-small txt-medium", style: "color: var(--color-txt)" %>
             </div>
