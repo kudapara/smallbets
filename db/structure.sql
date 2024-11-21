@@ -42,11 +42,6 @@ FOREIGN KEY ("user_id")
 );
 CREATE INDEX "idx_on_endpoint_p256dh_key_auth_key_7553014576" ON "push_subscriptions" ("endpoint", "p256dh_key", "auth_key");
 CREATE INDEX "index_push_subscriptions_on_user_id" ON "push_subscriptions" ("user_id");
-CREATE TABLE IF NOT EXISTS "searches" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "user_id" integer NOT NULL, "query" varchar NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_e192b86393"
-FOREIGN KEY ("user_id")
-  REFERENCES "users" ("id")
-);
-CREATE INDEX "index_searches_on_user_id" ON "searches" ("user_id");
 CREATE VIRTUAL TABLE message_search_index using fts5(body, tokenize=porter)
 /* message_search_index(body) */;
 CREATE TABLE IF NOT EXISTS 'message_search_index_data'(id INTEGER PRIMARY KEY, block BLOB);
@@ -98,7 +93,17 @@ FOREIGN KEY ("user_id")
   REFERENCES "users" ("id")
 );
 CREATE INDEX "index_auth_tokens_on_user_id" ON "auth_tokens" ("user_id");
+CREATE TABLE IF NOT EXISTS "searches" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "user_id" integer NOT NULL, "query" varchar NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "creator_id" integer DEFAULT NULL, CONSTRAINT "fk_rails_e192b86393"
+FOREIGN KEY ("user_id")
+  REFERENCES "users" ("id")
+, CONSTRAINT "fk_rails_a00933ab4f"
+FOREIGN KEY ("creator_id")
+  REFERENCES "users" ("id")
+);
+CREATE INDEX "index_searches_on_user_id" ON "searches" ("user_id");
+CREATE INDEX "index_searches_on_creator_id" ON "searches" ("creator_id");
 INSERT INTO "schema_migrations" (version) VALUES
+('20241120095425'),
 ('20241118112348'),
 ('20241015185114'),
 ('20241015185107'),

@@ -1,26 +1,36 @@
-<% @page_title = "Search" %>
+<% @page_title = "Messages by #{@user.name}" %>
 <% @body_class = "sidebar searches" %>
 
 <% content_for :nav do %>
-  <% if @query %>
-    <div class="searches__query flex align-center gap pad-block-start-half">
-      <%= tag.div class: "btn btn--reversed btn--faux align-center gap txt-nowrap" do %>
+  <div class="searches__query flex align-center gap pad-block-start-half">
+    <%= tag.div class: "btn btn--reversed btn--faux align-center gap txt-nowrap" do %>
+      <%= avatar_image_tag(@user, size: 20, class: "avatar", loading: :lazy) %>
+      <%= @user.name %>    
+    <% end %>
+    <%= tag.div class: "btn btn--reversed btn--faux align-center gap txt-nowrap" do %>
+      <% if @query %>
         <span class="overflow-ellipsis">“<%= @query %>”</span>
-        <span class="flex-item-no-shrink"><%= @messages.count %></span>
+      <% else %>
+        <span class="overflow-ellipsis">All messages</span>
       <% end %>
-    </div>
-  <% end %>
+      <span class="flex-item-no-shrink"><%= @message_count %></span>
+    <% end %>
+  </div>
 
   <div class="searches__recents align-center gap pad-block-half overflow-y overflow-hide-scrollbar">
+    <%= link_to user_messages_path(@user), class: "align-center gap room btn txt-nowrap" do %>
+      <span class="overflow-ellipsis">All messages by <%= @user.name %></span>
+    <% end %>
+    
     <% @recent_searches.each do |search| %>
-      <%= link_to searches_path(q: search.query), class: "align-center gap room btn txt-nowrap" do %>
+      <%= link_to user_messages_path(@user, q: search.query), class: "align-center gap room btn txt-nowrap" do %>
         <span class="overflow-ellipsis">“<%= search.query %>”</span>
       <% end %>
     <% end %>
 
     <% if @recent_searches.any? %>
-      <%= button_to clear_searches_url, method: :delete, class: "btn searches__btn",
-              data: { turbo_confirm: "Are you sure you want to clear your recent searches?" } do %>
+      <%= button_to clear_user_searches_url(@user), method: :delete, class: "btn searches__btn",
+              data: { turbo_confirm: "Are you sure you want to clear your recent searches for #{@user.name}?" } do %>
         <%= image_tag "broom.svg", aria: { hidden: "true" } %>
         <span class="for-screen-reader">Clear recent searches</span>
       <% end %>
@@ -30,15 +40,19 @@
 
 <% content_for :sidebar do %>
   <div class="rooms position-relative flex flex-column gap overflow-y overflow-hide-scrollbar">
+    <%= link_to user_messages_path(@user), class: "align-center gap room btn txt-nowrap" do %>
+      <span class="overflow-ellipsis">All messages by <%= @user.name %></span>
+    <% end %>
+    
     <% @recent_searches.each do |search| %>
-      <%= link_to searches_path(q: search.query), class: "align-center gap room btn txt-nowrap" do %>
+      <%= link_to user_messages_path(@user, q: search.query), class: "align-center gap room btn txt-nowrap" do %>
         <span class="overflow-ellipsis">“<%= search.query %>”</span>
       <% end %>
     <% end %>
 
     <% if @recent_searches.any? %>
-      <%= button_to clear_searches_url, method: :delete, class: "btn searches__btn",
-              data: { turbo_confirm: "Are you sure you want to clear your recent searches?" } do %>
+      <%= button_to clear_user_searches_url(@user), method: :delete, class: "btn searches__btn",
+              data: { turbo_confirm: "Are you sure you want to clear your recent searches for #{@user.name}?" } do %>
         <%= image_tag "broom.svg", aria: { hidden: "true" } %>
         <span class="for-screen-reader">Clear recent searches</span>
       <% end %>
@@ -53,7 +67,7 @@
     </figure>
   </div>
 
-  <%= search_results_tag("search-results", page_searches_url(q: params[:q])) do %>
+  <%= search_results_tag("search-results", page_user_messages_url(@user, q: @query)) do %>
     <%= render partial: "messages/message", collection: @messages, cached: -> message { message_cache_key(message, room_id: "search_#{Current.user.id}") } %>
   <% end %>
 </div>
@@ -66,7 +80,7 @@
       <span class="for-screen-reader">Exit search </span>
     <% end %>
 
-    <%= form_with url: searches_path, class: "margin-block flex-item-grow contain flex align-center gap",
+    <%= form_with url: user_searches_path(@user), class: "margin-block flex-item-grow contain flex align-center gap",
           data: { controller: "form", action: "keydown.esc->form#cancel" } do |form| %>
       <div class="composer__input flex align-center flex-item-grow gap full-width input input--actor min-width">
         <%= image_tag "search.svg", size: 20, aria: { hidden: "true" }, class: "composer__input-hint colorize--black", style: "view-transition-name: input-btn;" %>

@@ -42,6 +42,10 @@
                           target: "_blank", class: "txt-small txt-medium", style: "color: var(--color-txt)" %>
             </div>
           <% end %>
+
+          <%= link_to user_messages_path(user), class: "btn full-width txt-medium" do %>
+            <%= image_tag "message_log.svg", aria: { hidden: "true" } %>
+          <% end %>
           
           <%= button_to rooms_directs_path(user_ids: [ user.id ]), class: "btn btn--reversed full-width txt-medium", data: { turbo_frame: "_top" } do %>
             <%= image_tag "messages.svg", aria: { hidden: "true" }, aria: { label: "Ping #{user.name}" } %>

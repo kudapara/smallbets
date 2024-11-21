@@ -33,7 +33,7 @@
 <% end %>
 
 <% content_for :messages do %>
-  <%= inbox_messages_tag(paged_inbox_notifications_url, highlight_mentions: true) do %>
+  <%= search_results_tag("inbox", paged_inbox_notifications_url, highlight_mentions: true) do %>
     <%= render collection: @messages, partial: '/messages/message', cached: -> message { message_cache_key(message, room_id: "inbox_#{Current.user.id}") } %>
   <% end %>
 <% end %>

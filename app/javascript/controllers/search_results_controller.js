@@ -1,14 +1,18 @@
 import { Controller } from "@hotwired/stimulus"
 import MessageFormatter, { ThreadStyle } from "models/message_formatter"
+import MessagePaginator from "models/message_paginator"
 
 export default class extends Controller {
-  static targets = [ "message" ]
-  static classes = [ "me", "threaded", "mentioned", "formatted" ]
+  static targets = [ "messages" ]
+  static classes = [ "firstOfDay", "me", "threaded", "mentioned", "formatted" ]
+  static values = { pageUrl: String }
 
+  #paginator
   #formatter
 
   initialize() {
     this.#formatter = new MessageFormatter(Current.user.id, {
+      firstOfDay: this.firstOfDayClass,
       formatted: this.formattedClass,
       me: this.meClass,
       mentioned: this.mentionedClass,
@@ -17,10 +21,13 @@ export default class extends Controller {
   }
 
   connect() {
+    this.#paginator = new MessagePaginator(this.messagesTarget, this.pageUrlValue, this.#formatter)
+
     this.element.scrollTo({ top: this.element.scrollHeight })
+    this.#paginator.monitor()
   }
 
   messageTargetConnected(target) {
-    this.#formatter.format(target, ThreadStyle.none)
+    this.#formatter.format(target, ThreadStyle.thread)
   }
 }

@@ -26,6 +26,7 @@ class Message < ApplicationRecord
   scope :ordered, -> { order(:created_at) }
   scope :with_creator, -> { includes(:creator) }
   scope :with_threads, -> { includes(:threads) }
+  scope :created_by, ->(user) { where(creator_id: user.id) }
   scope :without_created_by, ->(user) { where.not(creator_id: user.id) }
   scope :between, ->(from, to) { where(created_at: from..to) }
   scope :since, ->(time) { where(created_at: time..) }

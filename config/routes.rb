@@ -44,6 +44,12 @@ Rails.application.routes.draw do
   resources :users, only: :show do
     scope module: "users" do
       resource :avatar, only: %i[ show destroy ]
+      resources :messages, only: %i[ index ] do
+        get :page, on: :collection
+      end
+      resources :searches, only: %i[ create ] do
+        delete :clear, on: :collection
+      end
 
       scope defaults: { user_id: "me" } do
         resource :sidebar, only: :show
@@ -126,7 +132,10 @@ Rails.application.routes.draw do
   end
 
   resources :searches, only: %i[ index create ] do
-    delete :clear, on: :collection
+    collection do
+      delete :clear
+      get :page
+    end
   end
 
   resource :unfurl_link, only: :create
