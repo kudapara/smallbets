@@ -43,7 +43,7 @@
             </div>
           <% end %>
 
-          <%= link_to user_messages_path(user), class: "btn full-width txt-medium" do %>
+          <%= link_to user_messages_path(user), class: "btn full-width txt-medium", data: { turbo_frame: "_top" } do %>
             <%= image_tag "message_log.svg", aria: { hidden: "true" } %>
           <% end %>
           
