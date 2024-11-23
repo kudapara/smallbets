@@ -48,7 +48,7 @@ class User < ApplicationRecord
                                         "%#{query}%", "%#{query}%", "%#{query}%", "%#{query}%") if query.present? }
 
   def self.from_gumroad_sale(attributes)
-    return User.create!(attributes) if ENV["GUMROAD_OFF"]
+    return User.create!(attributes) if ENV["GUMROAD_OFF"] || true
 
     sale = GumroadAPI.sales(email: attributes[:email_address]).first
     User.create!(attributes.merge(membership_started_at: sale["created_at"], order_id: sale["id"])) if sale
