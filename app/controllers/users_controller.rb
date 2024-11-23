@@ -10,9 +10,14 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = User.create!(user_params)
-    start_new_session_for @user
-    redirect_to root_url
+    @user = User.from_gumroad_sale(user_params)
+
+    if @user
+      start_new_session_for @user
+      redirect_to root_url
+    else
+      redirect_to account_join_code_url, alert: "We couldn't find a sale for that email. Please try a different email or contact support@smallbets.com."
+    end
   rescue ActiveRecord::RecordNotUnique
     start_otp_if_user_exists
   end

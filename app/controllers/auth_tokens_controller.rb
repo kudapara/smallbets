@@ -20,7 +20,7 @@ class AuthTokensController < ApplicationController
     @user = User.find_by(email_address: params[:email_address])
 
     unless @user
-      redirect_to new_session_url, alert: "We couldn't find an account with that email. Please try a different email or contact support@smallbets.co."
+      redirect_to new_session_url, alert: "We couldn't find an account with that email. Please try a different email or contact support@smallbets.com."
     end
   end
 end
