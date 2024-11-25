@@ -106,6 +106,10 @@ class User < ApplicationRecord
   def joined_at
     membership_started_at || created_at
   end
+  
+  def suspended?
+    suspended_at.present?
+  end
 
   private
     def grant_membership_to_open_rooms
