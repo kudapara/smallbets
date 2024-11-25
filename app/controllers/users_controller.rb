@@ -19,7 +19,15 @@ class UsersController < ApplicationController
       redirect_to account_join_code_url, alert: "We couldn't find a sale for that email. Please try a different email or contact support@smallbets.com."
     end
   rescue ActiveRecord::RecordNotUnique
-    start_otp_if_user_exists
+    user = User.find_by(email_address: user_params[:email_address])
+
+    if user
+      start_otp_for user
+      redirect_to new_auth_tokens_validations_path
+    else
+      # Perhaps a duplicate order_id, needs manual review
+      redirect_to account_join_code_url, alert: "We are having a problem logging you in. Please contact support@smallbets.com."
+    end
   end
 
   def show
