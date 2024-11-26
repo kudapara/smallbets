@@ -110,6 +110,10 @@ class User < ApplicationRecord
   def suspended?
     suspended_at.present?
   end
+  
+  def suspend!
+    update!(suspended_at: Time.current) unless suspended?
+  end
 
   private
     def grant_membership_to_open_rooms
