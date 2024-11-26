@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   DEFAULT_NAME = "Small Better"
 
-  include Avatar, Bot, Mentionable, Role, Transferable, Sso, Deactivatable
+  include Avatar, Bot, Mentionable, Role, Transferable, Deactivatable
 
   has_many :memberships, -> { active }, class_name: "Membership"
   has_many :rooms, -> { active }, through: :memberships, source: :room

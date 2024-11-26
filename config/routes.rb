@@ -15,10 +15,6 @@ Rails.application.routes.draw do
   end
   get "auth_tokens/validate/:token", to: "auth_tokens/validations#create", as: :sign_in_with_token
 
-  scope module: "sso" do
-    get "auth/:token", to: "sessions#new", as: :sso_auth, constraints: { token: /.+/ }
-  end
-
   resource :account do
     scope module: "accounts" do
       resources :users

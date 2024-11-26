@@ -17,8 +17,8 @@ class Messages::ByBotsController < MessagesController
   
     def format_mentions(body)
       body.to_s.gsub(/@\{(.+?)\}/) do |mention_sig|
-        sso_user_id = $1
-        user = @room.users.find_by(sso_user_id: sso_user_id)
+        user_id = $1
+        user = @room.users.find_by(id: user_id)
         user ? mention_user(user) : ""
       end
     end

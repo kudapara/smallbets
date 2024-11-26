@@ -3,7 +3,7 @@
     <strong class="overflow-ellipsis">Ping</strong>
   </legend>
 
-  <% curl_text_line = %[curl -H "Content-Type: application/json" #{rooms_bot_directs_url(bot.bot_key)} -d '{ "users": [ "#{Current.user.sso_user_id}" ] }'] %>
+  <% curl_text_line = %[curl -H "Content-Type: application/json" #{rooms_bot_directs_url(bot.bot_key)} -d '{ "user_ids": [ "#{Current.user.id}" ] }'] %>
   <div class="flex align-center gap">
     <%= image_tag "add.svg", role: "presentation", size: 24, class: "colorize--black" %>
 

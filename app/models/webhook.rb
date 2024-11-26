@@ -128,16 +128,15 @@ class Webhook < ApplicationRecord
       {
         id: message.id,
         body: { html: message.body.body, plain: message.plain_text_body },
-        mentionees: message.mentionees.map { |m| { name: m.name, sso_user_id: m.sso_user_id } },
+        mentionees: message.mentionees.map { |m| { id: m.id, name: m.name } },
         path: message_path(message)
       }
     end
   
     def user_to_api(user)
       { 
-        id: user.id, 
-        sso_user_id: user.sso_user_id, 
-        name: user.name ,
+        id: user.id,
+        name: user.name,
         path: user_path(user)
       }
     end
