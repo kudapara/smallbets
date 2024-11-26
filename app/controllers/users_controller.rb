@@ -16,7 +16,7 @@ class UsersController < ApplicationController
 
     if @user
       start_new_session_for @user
-      deliver_webhooks_to_bots(user, :created) if user.previously_new_record?
+      deliver_webhooks_to_bots(@user, :created) if @user.previously_new_record?
       redirect_to root_url
     else
       redirect_to account_join_code_url, alert: "We couldn't find a sale for that email. Please try a different email or contact support@smallbets.com."
