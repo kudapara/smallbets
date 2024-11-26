@@ -62,6 +62,8 @@ class UsersController < ApplicationController
     end
 
     def user_params
-      params.require(:user).permit(:name, :avatar, :email_address)
+      permitted_params = params.require(:user).permit(:name, :avatar, :email_address)
+      permitted_params[:email_address]&.downcase!
+      permitted_params
     end
 end
