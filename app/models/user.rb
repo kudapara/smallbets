@@ -51,7 +51,14 @@ class User < ApplicationRecord
     if ENV["GUMROAD_ON"] == "true"
       return nil unless attributes[:email_address].present?
 
+      # try matching the buyer's email
       sale = GumroadAPI.sales(email: attributes[:email_address]).first
+
+      # if not found, try matching the giftee's email
+      if sale.nil?
+        sale = GumroadAPI.sales(giftee_email: attributes[:email_address]).first
+      end
+
       User.create!(attributes.merge(membership_started_at: sale["created_at"], order_id: sale["order_id"])) if sale
     else
       User.create!(attributes)
