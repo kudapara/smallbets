@@ -2,44 +2,38 @@ import { Controller } from "@hotwired/stimulus"
 import { throttle } from "helpers/timing_helpers"
 
 export default class extends Controller {
-  static targets = [ "item" ]
+  static targets = [ "item", "container" ]
+  static values = {
+    attribute: String,
+    attributeType: String,
+    order: String,
+  }
+
+  initialize() {
+    this.sortKey = this.attributeValue || 'name'
+    this.sortKeyType = this.attributeTypeValue || 'string'
+    this.sortOrder = this.orderValue || 'asc'
+  }
 
   itemTargetConnected(target) {
     this.#throttledSort()
   }
-
-  moveToFront({ detail: { targetId }}) {
-    this.#updateItemAndSort(targetId, "0")
-  }
-
-  updateItem({ detail: { targetId }}) {
-    this.#updateItemAndSort(targetId, "1")
-  }
-
-  #updateItemAndSort(targetId, priority) {
-    const itemTargetForUpdate = this.itemTargets.find(itemTarget => itemTarget.id == targetId)
-
-    if (itemTargetForUpdate) {
-      itemTargetForUpdate.dataset.sortedListPriority = priority
-
-      if (itemTargetForUpdate.dataset.sortedListNumber) {
-        itemTargetForUpdate.dataset.sortedListNumber = new Date().getTime()
-      }
-
-      this.sort()
-    }
+  
+  reSort() {
+    this.#throttledSort()
   }
 
   sort() {
+    const container = this.hasContainerTarget ? this.containerTarget : this.element
+    
     const sortCriteria = [
       { key: 'sortedListPriority', type: 'number', order: 'asc' },
-      { key: 'sortedListNumber', type: 'number', order: 'desc' },
-      { key: 'sortedListName', type: 'string', order: 'asc' },
+      { key: this.sortKey, type: this.sortKeyType, order: this.sortOrder },
     ]
 
     this.itemTargets
         .sort((a, b) => this.#compareItems(a, b, sortCriteria))
-        .forEach(item => this.element.appendChild(item))
+        .forEach(item => { container.appendChild(item) })
   }
 
   #compareItems(a, b, criteria) {

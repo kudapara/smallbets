@@ -469,26 +469,6 @@ img.message__attachment {
   }
 }
 
-.message__options-btn {
-  @media (hover: hover) and (pointer: fine) {
-    opacity: 0;
-    transition: opacity 150ms ease-in-out;
-    transition-delay: 150ms;
-
-    .message:hover & {
-      opacity: 1;
-    }
-  }
-
-  @media (hover: none) and (pointer: coarse) {
-    opacity: 0.5;
-
-    & [open] {
-      opacity: 1;
-    }
-  }
-}
-
 .popup-menu {
   --arrow-size: 1.5em;
   --boost-border-color: var(--color-selected-dark);

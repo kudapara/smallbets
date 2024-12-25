@@ -1,5 +1,5 @@
-<%= link_to_room room,
-      id: dom_id(room, :list), data: { sorted_list_name: room.name },
+<%= link_to_room room, 
+      id: dom_id(room, dom_prefix(list_name, :node_name)),
       style: "--column-gap: 0.5em", class: [ "align-center gap room btn txt-nowrap position-relative", "unread": local_assigns[:unread], "badge": local_assigns[:has_notifications] ] do %>
   <span class="overflow-ellipsis <%= 'pad-inline-end-half' if local_assigns[:has_notifications] %>"><%= room_display_name(room) %></span>
 <% end %>

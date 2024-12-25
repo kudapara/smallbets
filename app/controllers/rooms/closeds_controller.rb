@@ -51,24 +51,39 @@ class Rooms::ClosedsController < RoomsController
     end
 
     def broadcast_create_room(room)
-      each_user_and_html_for(room) do |user, html|
-        broadcast_append_to user, :rooms, target: :shared_rooms, html: html, attributes: { maintain_scroll: true }
+      [:inbox, :shared_rooms].each do |list_name|
+        each_user_and_html_for_create(room, list_name:) do |user, html|
+          broadcast_append_to user, :rooms, target: list_name, html: html, attributes: { maintain_scroll: true }
+        end
       end
     end
 
     def broadcast_update_room
-      each_user_and_html_for(@room) do |user, html|
-        broadcast_replace_to user, :rooms, target: [ @room, :list ], html: html
+      [:inbox, :shared_rooms].each do |list_name|
+        each_user_and_html_for(@room, list_name:) do |user, html|
+          broadcast_replace_to user, :rooms, target: [@room, helpers.dom_prefix(list_name, :node_name)], html: html
+        end
       end
     end
 
-    def each_user_and_html_for(room)
+    def each_user_and_html_for_create(room, **locals)
       # Optimization to avoid rendering the same partial for every user
-      unread_html = render_to_string(partial: "users/sidebars/rooms/shared", locals: { room: room, unread: true })
-      read_html = render_to_string(partial: "users/sidebars/rooms/shared", locals: { room: room, unread: false })
-  
+      html = render_to_string(partial: "users/sidebars/rooms/shared_with_threads", locals: { room: room }.merge(locals))
+
       room.memberships.visible.each do |membership|
-        yield membership.user, membership.unread? ? unread_html : read_html
+        yield membership.user, html
+      end
+    end
+
+    def each_user_and_html_for(room, **locals)
+      html_cache = {}
+
+      room.memberships.visible.includes(:user).with_has_unread_notifications.each do |membership|
+        yield membership.user, render_or_cached(html_cache,
+                                                partial: "users/sidebars/rooms/shared",
+                                                locals: { room: room,
+                                                          unread: membership.unread?,
+                                                          has_notifications: membership.preloaded_has_unread_notifications?}.merge(locals))
       end
     end
 end

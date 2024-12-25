@@ -19,8 +19,8 @@ class Message < ApplicationRecord
     end
   end
 
-  after_create -> { involve_mentionees_in_room(unread: true) }
-  after_update -> { involve_mentionees_in_room(unread: false) }
+  after_create_commit -> { involve_mentionees_in_room(unread: true) }
+  after_update_commit -> { involve_mentionees_in_room(unread: false) }
   after_save -> { involve_author_in_thread }, if: -> { room.thread? }
 
   scope :ordered, -> { order(:created_at) }

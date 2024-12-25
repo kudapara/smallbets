@@ -6,13 +6,18 @@ module Threads::Broadcasts
   end
 
   def refresh_shared_rooms(user)
-    memberships = user.memberships.visible.without_expired_threads.with_room_by_activity
+    memberships = user.memberships.visible.without_direct_rooms.without_expired_threads
     thread_memberships = memberships.select { |membership| membership.room.thread? }.sort_by { |m| m.room.created_at }
-    memberships = memberships.without(thread_memberships).reject { |membership| membership.room.direct? }
+    memberships = memberships.without(thread_memberships)
 
-    user.broadcast_replace_to user, :rooms, target: :shared_rooms,
-                              partial: "users/sidebars/rooms/shared_rooms_list",
-                              locals: { memberships: memberships, thread_memberships: thread_memberships },
-                              attributes: { maintain_scroll: true }
+    {
+      inbox: memberships.with_room_by_last_active_oldest_first,
+      shared_rooms: memberships.with_room_by_user_sort_order(user)
+    }.each do |list_name, memberships|
+      user.broadcast_replace_to user, :rooms, target: list_name,
+                                partial: "users/sidebars/rooms/shared_rooms_list",
+                                locals: { list_name:, memberships:, thread_memberships: },
+                                attributes: { maintain_scroll: true }
+    end
   end
 end

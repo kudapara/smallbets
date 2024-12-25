@@ -19,11 +19,10 @@ module Rooms::InvolvementsHelper
     HUMANIZE_INVOLVEMENT = {
       "mentions" => "Notifying about @ mentions",
       "everything" => "Notifying about all messages",
-      "nothing" => "Notifications are off",
       "invisible" => "Notifications are off and room invisible in sidebar"
     }
 
-    SHARED_INVOLVEMENT_ORDER = %w[ mentions everything nothing invisible ]
+    SHARED_INVOLVEMENT_ORDER = %w[ mentions everything invisible ]
     DIRECT_INVOLVEMENT_ORDER = %w[ everything nothing ]
 
     def next_involvement_for(room, involvement:)

@@ -63,7 +63,9 @@ class RoomsController < ApplicationController
     end
 
     def broadcast_remove_room
-      broadcast_remove_to :rooms, target: [ @room, :list_node ]
+      [:inbox, :shared_rooms].each do |list_name|
+        broadcast_remove_to :rooms, target: [@room, helpers.dom_prefix(list_name, :list_node)]
+      end
     end
   
     def broadcast_update_parent_message

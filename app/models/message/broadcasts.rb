@@ -1,7 +1,7 @@
 module Message::Broadcasts
   def broadcast_create
     broadcast_append_to room, :messages, target: [ room, :messages ], partial: "messages/message", locals: { current_room: room }
-    ActionCable.server.broadcast("unread_rooms", { roomId: room.id })
+    ActionCable.server.broadcast("unread_rooms", { roomId: room.id, roomSize: room.messages_count, roomUpdatedAt: created_at.to_fs(:epoch) })
 
     broadcast_notifications
   end
@@ -12,7 +12,6 @@ module Message::Broadcasts
 
   def broadcast_notifications(ignore_if_older_message: false)
     memberships = room.memberships.where(user_id: mentionee_ids)
-    memberships = memberships.or(room.memberships.involved_in_everything)
 
     memberships.each do |membership|
       next if ignore_if_older_message && (membership.read? || membership.unread_at > created_at)

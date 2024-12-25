@@ -19,7 +19,9 @@
           </span>
         <% end %>
 
-        <div id="direct_rooms" contents data-controller="sorted-list" data-action="rooms-list:unread@window->sorted-list#moveToFront rooms-list:update@window->sorted-list#updateItem">
+        <div id="direct_rooms" contents data-controller="sorted-list" data-sorted-list-attribute-value="updatedAt"
+             data-sorted-list-attribute-type-value="number" data-sorted-list-order-value="desc"
+             >
           <%= render partial: "users/sidebars/rooms/direct", collection: @direct_memberships, as: :membership, cached: true %>
         </div>
 
@@ -30,7 +32,26 @@
     </turbo-frame>
 
     <div class="rooms position-relative flex flex-column gap overflow-y">
-      <%= render "users/sidebars/rooms/shared_rooms_list", memberships: @other_memberships, thread_memberships: @thread_memberships %>
+      <div id="sidebar_inbox" data-controller="sidebar-inbox sorted-list" <%= inbox_sort_order %> 
+           data-action="rooms-list:unread@window->sidebar-inbox#toggleRooms rooms-list:read@window->sidebar-inbox#toggleRooms rooms-list:involved@window->sidebar-inbox#toggleRooms rooms-list:unread@window->sorted-list#reSort rooms-list:read@window->sorted-list#reSort"
+           class="flex position-relative flex-column gap overflow margin-block-end">
+        <div class="flex gap-half align-center">
+          <h1 class="txt-small">Inbox</h1>
+          <%= render "users/sidebars/inbox_actions" %>
+        </div>
+
+        <%= render "users/sidebars/rooms/shared_rooms_list", list_name: :inbox, memberships: @inbox_memberships, thread_memberships: @thread_memberships %>
+      </div>
+
+      <div class="flex gap-half align-center">
+        <h1 class="txt-small">All Rooms</h1>
+        <%= render "users/sidebars/all_rooms_actions" %>
+      </div>
+      <div data-controller="sorted-list" <%= all_rooms_sort_order %>
+           data-action="rooms-list:unread@window->sorted-list#reSort rooms-list:read@window->sorted-list#reSort rooms-list:renamed@window->sorted-list#reSort"
+           class="flex position-relative flex-column gap overflow">
+        <%= render "users/sidebars/rooms/shared_rooms_list", list_name: :shared_rooms, memberships: @all_memberships, thread_memberships: @thread_memberships %>
+      </div>
 
       <%= link_to new_rooms_open_path, class: "rooms__new-btn btn room align-center gap txt-reversed", aria: { label: "New Chat Room" } do %>
         <%= image_tag "add.svg", size: 20, aria: { hidden: "true" }, style: "view-transition-name: new-room" %>

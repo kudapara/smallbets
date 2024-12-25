@@ -37,6 +37,10 @@ Rails.application.routes.draw do
 
   resources :qr_code, only: :show
 
+  scope module: :users do
+    resource :preference, only: [:update]
+  end
+
   resources :users, only: :show do
     scope module: "users" do
       resource :avatar, only: %i[ show destroy ]

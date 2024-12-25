@@ -43,6 +43,8 @@ class Room < ApplicationRecord
 
   before_save :set_sortable_name
 
+  after_save_commit :broadcast_updates, if: :saved_change_to_sortable_name?
+
   scope :opens,           -> { where(type: "Rooms::Open") }
   scope :closeds,         -> { where(type: "Rooms::Closed") }
   scope :directs,         -> { where(type: "Rooms::Direct") }
@@ -142,9 +144,9 @@ class Room < ApplicationRecord
 
   def deactivate
     transaction do
-      memberships.update(active: false)
-      messages.update(active: false)
-      threads.update(active: false)
+      memberships.update_all(active: false)
+      messages.update_all(active: false)
+      threads.update_all(active: false)
 
       deactivate!
     end
@@ -163,7 +165,13 @@ class Room < ApplicationRecord
       Room::PushMessageJob.perform_later(self, message)
     end
 
+    def broadcast_updates
+      ActionCable.server.broadcast "room_list", { roomId: id, sortableName: sortable_name }
+    end
+
     def broadcast_reactivation
-      broadcast_append_to :rooms, target: :shared_rooms, partial: "users/sidebars/rooms/shared", locals: { room: self }, attributes: { maintain_scroll: true }
+      [:inbox, :shared_rooms].each do |list_name|
+        broadcast_append_to :rooms, target: list_name, partial: "users/sidebars/rooms/shared_with_threads", locals: { list_name:, room: self }, attributes: { maintain_scroll: true }
+      end
     end
 end

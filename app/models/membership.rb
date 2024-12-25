@@ -4,15 +4,32 @@ class Membership < ApplicationRecord
   belongs_to :room
   belongs_to :user
 
-  has_many :unread_notifications, ->(membership) { 
-    unread_messages = where("messages.created_at >= ?", membership.unread_at || Time.current)
-    if membership.involved_in_nothing? || membership.involved_in_mentions?
-      unread_messages = unread_messages.with_mentions.where(mentions: { user_id: membership.user_id })
-    end
-    unread_messages.none! if membership.involved_in_invisible?
+  has_many :unread_notifications, ->(membership) {
+    next none if membership.involved_in_invisible?
 
-    unread_messages
+    since(membership.unread_at || Time.current).mentioning(membership.user_id)
   }, through: :room, source: :messages
+
+  scope :with_has_unread_notifications, -> {
+    select(
+      "memberships.*",
+
+      <<~SQL.squish + " AS preloaded_has_unread_notifications"
+        EXISTS (
+          SELECT 1
+          FROM messages
+          JOIN mentions ON mentions.message_id = messages.id
+          WHERE messages.room_id = memberships.room_id
+            AND memberships.involvement NOT IN ('invisible')
+            AND mentions.user_id = memberships.user_id
+            AND messages.created_at >= COALESCE(
+              memberships.unread_at,
+              '#{Time.current.utc.iso8601}'
+            )
+        )
+      SQL
+    )
+  }
 
   after_update_commit { user.reset_remote_connections if deactivated? }
   after_destroy_commit { user.reset_remote_connections }
@@ -21,13 +38,27 @@ class Membership < ApplicationRecord
 
   after_update :make_parent_involvements_visible, if: -> { saved_change_to_involvement? && involvement_before_last_save.inquiry.invisible? }
   after_update :set_nested_involvements_to_mentions, if: -> { saved_change_to_involvement? && involved_in_invisible? }
+  after_update :broadcast_involvement, if: :saved_change_to_involvement?
+  
 
   scope :with_ordered_room, -> { includes(:room).joins(:room).order("rooms.sortable_name") }
   scope :with_room_by_activity, -> { includes(:room).joins(:room).order("messages_count DESC") }
+  scope :with_room_by_last_active_oldest_first, -> { includes(:room).joins(:room).order("rooms.last_active_at") }
+  scope :with_room_by_last_active_newest_first, -> { includes(:room).joins(:room).order("rooms.last_active_at DESC") }
   scope :with_room_chronologically, -> { includes(:room).joins(:room).order("rooms.created_at") }
-  scope :without_direct_rooms, -> { joins(:room).where.not(room: { type: "Rooms::Direct" }) }
-  scope :without_thread_rooms, -> { joins(:room).where.not(room: { type: "Rooms::Thread" }) }
-  scope :thread_rooms, -> { joins(:room).where(room: { type: "Rooms::Thread" }) }
+  scope :with_room_by_user_sort_order, -> (user) {
+    case user.preference('all_rooms_sort_order')
+    when "alphabetical"
+      with_ordered_room
+    when "last_updated"
+      with_room_by_last_active_newest_first
+    else
+      with_room_by_activity
+    end
+  }
+  scope :without_direct_rooms, -> { joins(:room).where.not(rooms: { type: "Rooms::Direct" }) }
+  scope :without_thread_rooms, -> { joins(:room).where.not(rooms: { type: "Rooms::Thread" }) }
+  scope :thread_rooms, -> { joins(:room).where(rooms: { type: "Rooms::Thread" }) }
   scope :without_expired_threads, -> { joins(:room).where("rooms.type != 'Rooms::Thread' or rooms.last_active_at > ?", Room::EXPIRES_INTERVAL.ago) }
   scope :with_active_threads, -> { joins(:room).where("rooms.type == 'Rooms::Thread' and rooms.last_active_at > ?", Room::EXPIRES_INTERVAL.ago) }
 
@@ -91,9 +122,14 @@ class Membership < ApplicationRecord
   def set_nested_involvements_to_mentions
     room.threads.each do |thread|
       thread_membership = thread.memberships.find_by(user: user)
+      next unless thread_membership
       thread_membership.update(involvement: :mentions) if thread_membership.involved_in_everything?
       thread_membership.set_nested_involvements_to_mentions
     end
+  end
+
+  def preloaded_has_unread_notifications?
+    ActiveRecord::Type::Boolean.new.cast(self[:preloaded_has_unread_notifications])
   end
   
   private
@@ -105,6 +141,10 @@ class Membership < ApplicationRecord
   def broadcast_unread_by_user
     ActionCable.server.broadcast "user_#{user_id}_unreads", { roomId: room_id }
     ActionCable.server.broadcast "user_#{user_id}_notifications", { roomId: room.id } if has_unread_notifications?
+  end
+
+  def broadcast_involvement
+    ActionCable.server.broadcast "user_#{user_id}_involvements", { roomId: room_id, involvement: involvement }
   end
   
   def make_parent_involvements_visible

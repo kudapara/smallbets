@@ -5,11 +5,6 @@ CREATE TABLE IF NOT EXISTS "action_text_rich_texts" ("id" integer PRIMARY KEY AU
 CREATE UNIQUE INDEX "index_action_text_rich_texts_uniqueness" ON "action_text_rich_texts" ("record_type", "record_id", "name");
 CREATE TABLE IF NOT EXISTS "active_storage_blobs" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "key" varchar NOT NULL, "filename" varchar NOT NULL, "content_type" varchar, "metadata" text, "service_name" varchar NOT NULL, "byte_size" bigint NOT NULL, "checksum" varchar, "created_at" datetime(6) NOT NULL);
 CREATE UNIQUE INDEX "index_active_storage_blobs_on_key" ON "active_storage_blobs" ("key");
-CREATE TABLE IF NOT EXISTS "memberships" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "room_id" integer NOT NULL, "user_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "unread_at" datetime(6), "involvement" varchar DEFAULT 'mentions', "connections" integer DEFAULT 0 NOT NULL, "connected_at" datetime(6), "active" boolean DEFAULT 1);
-CREATE INDEX "index_memberships_on_room_id_and_created_at" ON "memberships" ("room_id", "created_at");
-CREATE UNIQUE INDEX "index_memberships_on_room_id_and_user_id" ON "memberships" ("room_id", "user_id");
-CREATE INDEX "index_memberships_on_room_id" ON "memberships" ("room_id");
-CREATE INDEX "index_memberships_on_user_id" ON "memberships" ("user_id");
 CREATE TABLE IF NOT EXISTS "active_storage_attachments" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "record_type" varchar NOT NULL, "record_id" bigint NOT NULL, "blob_id" bigint NOT NULL, "created_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_c3b3935057"
 FOREIGN KEY ("blob_id")
   REFERENCES "active_storage_blobs" ("id")
@@ -99,11 +94,17 @@ FOREIGN KEY ("creator_id")
 CREATE INDEX "index_searches_on_user_id" ON "searches" ("user_id");
 CREATE INDEX "index_searches_on_creator_id" ON "searches" ("creator_id");
 CREATE TABLE IF NOT EXISTS "webhook_events" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "source" varchar, "event_type" varchar, "payload" text, "processed_at" datetime(6), "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL);
-CREATE TABLE IF NOT EXISTS "users" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "role" integer DEFAULT 0 NOT NULL, "email_address" varchar DEFAULT NULL, "password_digest" varchar DEFAULT NULL, "active" boolean DEFAULT 1, "bio" text DEFAULT NULL, "bot_token" varchar DEFAULT NULL, "avatar_url" varchar DEFAULT NULL, "twitter_username" varchar DEFAULT NULL, "linkedin_username" varchar DEFAULT NULL, "personal_url" varchar DEFAULT NULL, "membership_started_at" datetime(6) DEFAULT NULL, "ascii_name" varchar DEFAULT NULL, "twitter_url" varchar DEFAULT NULL, "linkedin_url" varchar DEFAULT NULL, "order_id" bigint DEFAULT NULL, "suspended_at" datetime(6) DEFAULT NULL);
+CREATE TABLE IF NOT EXISTS "users" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "role" integer DEFAULT 0 NOT NULL, "email_address" varchar DEFAULT NULL, "password_digest" varchar DEFAULT NULL, "active" boolean DEFAULT 1, "bio" text DEFAULT NULL, "bot_token" varchar DEFAULT NULL, "avatar_url" varchar DEFAULT NULL, "twitter_username" varchar DEFAULT NULL, "linkedin_username" varchar DEFAULT NULL, "personal_url" varchar DEFAULT NULL, "membership_started_at" datetime(6) DEFAULT NULL, "ascii_name" varchar DEFAULT NULL, "twitter_url" varchar DEFAULT NULL, "linkedin_url" varchar DEFAULT NULL, "order_id" bigint DEFAULT NULL, "suspended_at" datetime(6) DEFAULT NULL, "preferences" text DEFAULT '{}');
 CREATE UNIQUE INDEX "index_users_on_bot_token" ON "users" ("bot_token");
 CREATE UNIQUE INDEX "index_users_on_email_address" ON "users" ("email_address");
 CREATE UNIQUE INDEX "index_users_on_order_id" ON "users" ("order_id") WHERE order_id IS NOT NULL;
+CREATE TABLE IF NOT EXISTS "memberships" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "room_id" integer NOT NULL, "user_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "unread_at" datetime(6) DEFAULT NULL, "involvement" varchar DEFAULT 'mentions', "connections" integer DEFAULT 0 NOT NULL, "connected_at" datetime(6) DEFAULT NULL, "active" boolean DEFAULT 1);
+CREATE INDEX "index_memberships_on_room_id_and_created_at" ON "memberships" ("room_id", "created_at");
+CREATE UNIQUE INDEX "index_memberships_on_room_id_and_user_id" ON "memberships" ("room_id", "user_id");
+CREATE INDEX "index_memberships_on_room_id" ON "memberships" ("room_id");
+CREATE INDEX "index_memberships_on_user_id" ON "memberships" ("user_id");
 INSERT INTO "schema_migrations" (version) VALUES
+('20241224175056'),
 ('20241126110407'),
 ('20241125133852'),
 ('20241125132029'),
