@@ -11,7 +11,8 @@ class Gumroad::ImportUserJob < ApplicationJob
     email = payload["email"]
     order_id = payload["order_number"]
     membership_started_at = payload["sale_timestamp"]
-    name = payload["full_name"]
+    if_gift_purchase = payload["is_gift_receiver_purchase"] == "true"
+    name = if_gift_purchase ? payload["full_name"] : nil
 
     raise "Expected email to be present. Event ID #{event.id}" unless email.present?
     raise "Expected order ID to be present. Event ID #{event.id}" unless order_id.present?
