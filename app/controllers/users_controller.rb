@@ -14,22 +14,19 @@ class UsersController < ApplicationController
   def create
     @user = User.from_gumroad_sale(user_params)
 
-    if @user
+    if @user.nil?
+      redirect_to account_join_code_url, alert: "We couldn't find a sale for that email. Please try a different email or contact support@smallbets.com."
+      return
+    end
+
+    if @user.previously_new_record?
       start_new_session_for @user
-      deliver_webhooks_to_bots(@user, :created) if @user.previously_new_record?
+      deliver_webhooks_to_bots(@user, :created)
       redirect_to root_url
     else
-      redirect_to account_join_code_url, alert: "We couldn't find a sale for that email. Please try a different email or contact support@smallbets.com."
-    end
-  rescue ActiveRecord::RecordNotUnique
-    user = User.find_by(email_address: user_params[:email_address])
-
-    if user
+      user.ensure_can_sign_in!
       start_otp_for user
       redirect_to new_auth_tokens_validations_path
-    else
-      # Perhaps a duplicate order_id, needs manual review
-      redirect_to account_join_code_url, alert: "We are having a problem logging you in. Please contact support@smallbets.com."
     end
   end
 

@@ -49,12 +49,9 @@ class User < ApplicationRecord
 
   def self.from_gumroad_sale(attributes)
     if ENV["GUMROAD_ON"] == "true"
-      return nil unless attributes[:email_address].present?
-
-      sale = GumroadAPI.sales(email: attributes[:email_address]).first
-      User.create!(attributes.merge(membership_started_at: sale["created_at"], order_id: sale["order_id"])) if sale
+      find_or_create_user_from_gumroad(attributes)
     else
-      User.create!(attributes)
+      find_or_create_user_locally(attributes)
     end
   end
 
@@ -116,8 +113,30 @@ class User < ApplicationRecord
   def suspend!
     update!(suspended_at: Time.current) unless suspended?
   end
+  
+  def ensure_can_sign_in!
+    update!(suspended_at: nil)
+  end
 
   private
+    def self.find_or_create_user_from_gumroad(attributes)
+      return nil unless attributes[:email_address].present?
+  
+      sale = GumroadAPI.sales(email: attributes[:email_address]).first
+      User.create!(attributes.merge(membership_started_at: sale["created_at"], order_id: sale["order_id"])) if sale
+    rescue ActiveRecord::RecordNotUnique
+      user = User.find_by(email_address: attributes[:email_address])
+      # Link the latest successful sale to user, but keep the old join date (`membership_started_at`) if present
+      user&.update!(order_id: sale["order_id"], membership_started_at: user.membership_started_at || sale["created_at"])
+      user
+    end
+  
+    def self.find_or_create_user_locally(attributes)
+      User.create!(attributes)
+    rescue ActiveRecord::RecordNotUnique
+      User.find_by(email_address: attributes[:email_address])
+    end
+  
     def grant_membership_to_open_rooms
       Membership.insert_all(Rooms::Open.pluck(:id).collect { |room_id| { room_id: room_id, user_id: id } })
       Rooms::Thread.joins(:parent_room).where(parent_room: { type: "Rooms::Open" }).find_each do |thread|
