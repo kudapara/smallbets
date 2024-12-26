@@ -19,13 +19,13 @@ class UsersController < ApplicationController
       return
     end
 
-    if @user.previously_new_record?
+    deliver_webhooks_to_bots(@user, :created) if @user.previously_new_record?
+
+    if @user.previously_new_record? || @user.imported_from_gumroad_and_unclaimed?
       start_new_session_for @user
-      deliver_webhooks_to_bots(@user, :created)
       redirect_to root_url
     else
-      user.ensure_can_sign_in!
-      start_otp_for user
+      start_otp_for @user
       redirect_to new_auth_tokens_validations_path
     end
   end
@@ -43,9 +43,9 @@ class UsersController < ApplicationController
     end
   
     def start_otp_if_user_exists
-      user = User.find_by(email_address: user_params[:email_address])
+      user = User.active.non_suspended.find_by(email_address: user_params[:email_address])
 
-      if user.present?
+      if user&.ever_authenticated?
         start_otp_for user
         redirect_to new_auth_tokens_validations_path
       end

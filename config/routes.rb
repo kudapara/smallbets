@@ -141,6 +141,7 @@ Rails.application.routes.draw do
   namespace :webhooks, defaults: { format: :json } do
     namespace :gumroad do
       post "/refunds/:webhook_secret", to: "refunds#create"
+      post "/users/:webhook_secret", to: "users#create"
     end
   end
 

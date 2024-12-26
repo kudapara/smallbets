@@ -6,6 +6,7 @@ class Session < ApplicationRecord
   belongs_to :user
 
   before_create { self.last_active_at ||= Time.now }
+  after_create_commit -> { user.update_column(:last_authenticated_at, Time.current) }
 
   def self.start!(user_agent:, ip_address:)
     create! user_agent: user_agent, ip_address: ip_address
