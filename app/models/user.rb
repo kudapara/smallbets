@@ -151,7 +151,7 @@ class User < ApplicationRecord
         # Link the latest successful sale to user,
         user.order_id = sale["order_id"]
         # but keep the old join date (`membership_started_at`) if present.
-        user.membership_started_at = user&.membership_started_at || sale["created_at"]
+        user.membership_started_at = user.membership_started_at || sale["created_at"]
         # We have found a successful gumroad sale, so make sure the user is not suspended for a full refund of a previous sale.
         user.suspended_at = nil
         user.save!

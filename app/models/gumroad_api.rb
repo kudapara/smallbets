@@ -7,7 +7,7 @@ class GumroadAPI
     def sales(params = {})
       all_sales = get("/sales", params.merge(product_id:))["sales"] || []
 
-      # Ignore gift sender purchases as these belong to the account by giftee email
+      # Ignore gift purchases as these are returned via match on buyer's email and not the giftee email
       all_sales.reject { |sale| sale["refunded"] || sale["chargedback"] || sale["is_gift_sender_purchase"] }
     end
 
