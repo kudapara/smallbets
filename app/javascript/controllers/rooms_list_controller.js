@@ -45,7 +45,13 @@ export default class extends Controller {
   }
 
   loaded() {
-    this.read({ detail: { roomId: Current.room.id } })
+    this.#readCurrentRoom()
+  }
+
+  roomTargetConnected(target) {
+    if (target.dataset.roomId == Current.room.id) {
+      this.#readCurrentRoom()
+    }
   }
 
   read({ detail: { roomId } }) {
@@ -130,5 +136,9 @@ export default class extends Controller {
 
   #findRoomTargets(roomId) {
     return this.roomTargets.filter(roomTarget => roomTarget.dataset.roomId == roomId)
+  }
+  
+  #readCurrentRoom() {
+    this.read({ detail: { roomId: Current.room.id } })
   }
 }
