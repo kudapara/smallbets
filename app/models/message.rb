@@ -1,7 +1,7 @@
 class Message < ApplicationRecord
   include Attachment, Broadcasts, Mentionee, Pagination, Searchable, Deactivatable
 
-  belongs_to :room, touch: :last_active_at, counter_cache: true
+  belongs_to :room, counter_cache: true
   belongs_to :creator, class_name: "User", default: -> { Current.user }
 
   has_many :boosts, -> { active }, class_name: "Boost"
@@ -12,6 +12,7 @@ class Message < ApplicationRecord
   has_rich_text :body
 
   before_create -> { self.client_message_id ||= Random.uuid } # Bots don't care
+  before_create :touch_room_activity
   after_create_commit -> { room.receive(self) }
   after_update_commit -> do
     if saved_change_to_attribute?(:active) && active?
@@ -74,5 +75,9 @@ class Message < ApplicationRecord
 
   def involve_author_in_thread
     room.involve_user(creator)
+  end
+
+  def touch_room_activity
+    room.touch(:last_active_at)
   end
 end
