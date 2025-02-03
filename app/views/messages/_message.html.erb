@@ -4,6 +4,10 @@
 <% is_first_unread_message = (message == local_assigns[:first_unread_message]) %>
 <% cache message_cache_key(message, room_id: current_room&.id, is_first_unread_message:) do %>
   <%= message_tag message do %>
+    <div class="message-separator message__loading-indicator">
+      <span class="busy txt-muted"></span>
+    </div>
+    
     <% if is_first_unread_message %>
       <h2 id="unread_separator" class="message-separator message__new-separator"><span>New since last visit</span></h2>
     <% end %>
@@ -36,5 +40,8 @@
         </div>
       </div>
     </turbo-frame>
+    <div class="message-separator message__loading-indicator">
+      <span class="busy txt-muted"></span>
+    </div>
   <% end %>
 <% end %>

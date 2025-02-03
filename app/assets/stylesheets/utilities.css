@@ -22,6 +22,7 @@
 .txt-primary { color: var(--color-text); }
 .txt-reversed { color: var(--color-text-reversed); }
 .txt-negative { color: var(--color-negative); }
+.txt-muted { color: var(--color-border-darkest); }
 .txt-subtle { color: var(--color-border-darker); }
 .txt-undecorated { text-decoration: none; }
 .txt-tight-lines { line-height: 1.2; }

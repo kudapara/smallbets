@@ -17,6 +17,8 @@ module MessagesHelper
       messages_me_class: "message--me",
       messages_mentioned_class: "message--mentioned",
       messages_threaded_class: "message--threaded",
+      messages_loading_up_class: "message--loading-up",
+      messages_loading_down_class: "message--loading-down",
       messages_page_url_value: room_messages_url(room)
     }, &
   end

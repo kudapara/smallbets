@@ -96,9 +96,11 @@
   grid-auto-columns: var(--inline-space-double) 1fr min-content;
   grid-auto-rows: min-content;
   grid-template-areas:
+    "loading_up loading_up loading_up"
     "new new new"
     "sep sep sep"
-    "avatar body body";
+    "avatar body body"
+    "loading_down loading_down loading_down";
   padding-inline: calc(var(--inline-space) + 1vw);
   position: relative;
   row-gap: var(--message-row-gap);
@@ -178,6 +180,29 @@
   &::after,
   &::before {
     content: "";
+  }
+}
+
+.message__loading-indicator {
+  display: none;
+  visibility: hidden;
+  margin-block: var(--message-space);
+
+  span {
+    background-color: var(--color-message-bg);
+  }
+  
+  &:first-of-type {
+     grid-area: loading_up;
+  }
+
+  &:last-of-type {
+     grid-area: loading_down;
+  }
+
+  .message--loading-up &:first-of-type, .message--loading-down &:last-of-type {
+    display: block;
+    visibility: visible;
   }
 }
 
@@ -599,9 +624,11 @@ img.message__attachment {
 .message--me {
   grid-auto-columns: min-content 1fr var(--inline-space-double);
   grid-template-areas:
+    "loading_up loading_up loading_up"
     "new new new"
     "sep sep sep"
-    "body body avatar";
+    "avatar body body"
+    "loading_down loading_down loading_down";
 
   :is(.message__body, .message__meta, .message__heading) {
     justify-self: end;

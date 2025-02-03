@@ -17,14 +17,16 @@ export default class MessagePaginator {
   #messageFormatter
   #allContentViewedCallback
   #scrollTracker
+  #classes
   #upToDate = true
 
-  constructor(container, url, messageFormatter, allContentViewedCallback) {
+  constructor(container, url, messageFormatter, allContentViewedCallback, classes) {
     this.#container = container
     this.#url = url
     this.#messageFormatter = messageFormatter
     this.#allContentViewedCallback = allContentViewedCallback
     this.#scrollTracker = new ScrollTracker(container, { lastChildRevealed: this.#messageBecameVisible.bind(this) })
+    this.#classes = classes
   }
 
 
@@ -65,14 +67,16 @@ export default class MessagePaginator {
 
   #messageBecameVisible(element) {
     const messageId = element.dataset.messageId
-    const firstMesage = element === this.#container.firstElementChild
+    const firstMessage = element === this.#container.firstElementChild
     const lastMessage = element === this.#container.lastElementChild
 
     if (messageId) {
-      if (firstMesage) {
+      if (firstMessage) {
+        element.classList.add(this.#classes.loadingUp)
         this.#addPage({ before: messageId }, true)
       }
       if (lastMessage && !this.upToDate) {
+        element.classList.add(this.#classes.loadingDown)
         this.#addPage({ after: messageId }, false)
       }
       if (lastMessage && this.upToDate) {
@@ -102,6 +106,7 @@ export default class MessagePaginator {
       const lastNewElement = page.lastElementChild
 
       keepScroll(this.#container, top, () => {
+        this.#hideLoadingIndicators()
         insertHTMLFragment(page, this.#container, top)
 
         // Ensure formatting is correct over page boundaries
@@ -112,6 +117,8 @@ export default class MessagePaginator {
 
       this.trimExcessMessages(!top)
     }
+
+    this.#hideLoadingIndicators()
   }
 
   async #fetchPage(params) {
@@ -132,5 +139,15 @@ export default class MessagePaginator {
     }
 
     return fragment
+  }
+  
+  #hideLoadingIndicators() {
+    this.#container.querySelectorAll(`.${this.#classes.loadingUp}`).forEach(el => {
+      el.classList.remove(this.#classes.loadingUp);
+    });
+
+    this.#container.querySelectorAll(`.${this.#classes.loadingDown}`).forEach(el => {
+      el.classList.remove(this.#classes.loadingDown);
+    });
   }
 }

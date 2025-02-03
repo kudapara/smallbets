@@ -4,7 +4,7 @@ import MessagePaginator from "models/message_paginator"
 
 export default class extends Controller {
   static targets = [ "messages" ]
-  static classes = [ "firstOfDay", "me", "threaded", "mentioned", "formatted" ]
+  static classes = [ "firstOfDay", "me", "threaded", "mentioned", "formatted", "loadingUp", "loadingDown" ]
   static values = { pageUrl: String }
 
   #paginator
@@ -21,7 +21,10 @@ export default class extends Controller {
   }
 
   connect() {
-    this.#paginator = new MessagePaginator(this.messagesTarget, this.pageUrlValue, this.#formatter)
+    this.#paginator = new MessagePaginator(this.messagesTarget, this.pageUrlValue, this.#formatter, () => {}, {
+      loadingUp: this.loadingUpClass,
+      loadingDown: this.loadingDownClass
+    })
     
     this.element.scrollTo({ top: this.element.scrollHeight })
     this.#paginator.monitor()

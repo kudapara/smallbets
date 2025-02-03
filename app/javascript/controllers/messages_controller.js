@@ -8,7 +8,7 @@ import ScrollTracker from "models/scroll_tracker"
 
 export default class extends Controller {
   static targets = [ "latest", "message", "body", "messages", "template" ]
-  static classes = [ "firstOfDay", "firstUnread", "formatted", "me", "mentioned", "threaded" ]
+  static classes = [ "firstOfDay", "firstUnread", "formatted", "me", "mentioned", "threaded", "loadingUp", "loadingDown" ]
   static values = { pageUrl: String }
 
   #clientMessage
@@ -31,7 +31,10 @@ export default class extends Controller {
 
   connect() {
     this.#clientMessage = new ClientMessage(this.templateTarget)
-    this.#paginator = new MessagePaginator(this.messagesTarget, this.pageUrlValue, this.#formatter, this.#allContentViewed.bind(this))
+    this.#paginator = new MessagePaginator(this.messagesTarget, this.pageUrlValue, this.#formatter, this.#allContentViewed.bind(this), {
+      loadingUp: this.loadingUpClass,
+      loadingDown: this.loadingDownClass
+    })
     this.#scrollManager = new ScrollManager(this.messagesTarget)
     this.#scrollTracker = new ScrollTracker(this.messagesTarget, { lastChildHidden: this.#showReturnToLatestButton.bind(this) })
 
