@@ -16,7 +16,6 @@ export default class extends Controller {
   }
 
   roomTargetDisconnected(element) {
-    this.initialRoomTargets?.delete(element)
     this.#toggleEmptySpace()
   }
 

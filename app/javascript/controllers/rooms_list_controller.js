@@ -7,6 +7,7 @@ export default class extends Controller {
   static classes = [ "unread", "badge" ]
 
   #disconnected = true
+  #keepCurrentRoomUnread = false
 
   async connect() {
     this.unreadsChannel ??= await cable.subscribeTo({ channel: "UnreadRoomsChannel" }, {
@@ -49,7 +50,7 @@ export default class extends Controller {
   }
 
   roomTargetConnected(target) {
-    if (target.dataset.roomId == Current.room.id) {
+    if (!this.#keepCurrentRoomUnread && target.dataset.roomId == Current.room.id) {
       this.#readCurrentRoom()
     }
   }
@@ -62,6 +63,9 @@ export default class extends Controller {
         room.dataset.sortedListPriority = "1"
       }
       room.classList.remove(this.unreadClass, this.badgeClass)
+      if (Current.room.id === roomId) {
+        this.#keepCurrentRoomUnread = false
+      }
       this.dispatch("read", { detail: { targetId: roomId } })
     })
   }
@@ -77,7 +81,7 @@ export default class extends Controller {
     this.#disconnected = true
   }
 
-  #unread({ roomId, roomSize, roomUpdatedAt }) {
+  #unread({ roomId, roomSize, roomUpdatedAt, forceUnread }) {
     const unreadRooms = this.#findRoomTargets(roomId)
 
     unreadRooms.forEach(unreadRoom => {
@@ -90,8 +94,12 @@ export default class extends Controller {
       sortedListTarget.dataset.updatedAt = roomUpdatedAt
       sortedListTarget.dataset.size = roomSize
       
-      if (Current.room.id != roomId) {
+      if (forceUnread || Current.room.id != roomId) {
         unreadRoom.classList.add(this.unreadClass)
+      }
+      
+      if (forceUnread) {
+        this.#keepCurrentRoomUnread = true
       }
     })
     

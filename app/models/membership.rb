@@ -139,7 +139,7 @@ class Membership < ApplicationRecord
   end
 
   def broadcast_unread_by_user
-    ActionCable.server.broadcast "user_#{user_id}_unreads", { roomId: room_id }
+    ActionCable.server.broadcast "user_#{user_id}_unreads", { roomId: room.id, roomSize: room.messages_count, roomUpdatedAt: room.last_active_at.iso8601, forceUnread: true }
     ActionCable.server.broadcast "user_#{user_id}_notifications", { roomId: room.id } if has_unread_notifications?
   end
 
