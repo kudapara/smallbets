@@ -170,7 +170,7 @@ class Room < ApplicationRecord
     end
 
     def broadcast_reactivation
-      [:inbox, :shared_rooms].each do |list_name|
+      [ :inbox, :starred_rooms, :shared_rooms ].each do |list_name|
         broadcast_append_to :rooms, target: list_name, partial: "users/sidebars/rooms/shared_with_threads", locals: { list_name:, room: self }, attributes: { maintain_scroll: true }
       end
     end

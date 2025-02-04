@@ -9,6 +9,7 @@
 }
 
 /* Text */
+.txt-x-small { font-size: 0.7rem; }
 .txt-small { font-size: 0.8rem; }
 .txt-medium { font-size: 1rem; }
 .txt-large { font-size: 1.4rem; }
@@ -22,6 +23,7 @@
 .txt-primary { color: var(--color-text); }
 .txt-reversed { color: var(--color-text-reversed); }
 .txt-negative { color: var(--color-negative); }
+.txt-lighter { color: var(--color-text-lighter); }
 .txt-muted { color: var(--color-border-darkest); }
 .txt-subtle { color: var(--color-border-darker); }
 .txt-undecorated { text-decoration: none; }

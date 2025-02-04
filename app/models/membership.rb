@@ -46,14 +46,14 @@ class Membership < ApplicationRecord
   scope :with_room_by_last_active_oldest_first, -> { includes(:room).joins(:room).order("rooms.last_active_at") }
   scope :with_room_by_last_active_newest_first, -> { includes(:room).joins(:room).order("rooms.last_active_at DESC") }
   scope :with_room_chronologically, -> { includes(:room).joins(:room).order("rooms.created_at") }
-  scope :with_room_by_user_sort_order, -> (user) {
-    case user.preference('all_rooms_sort_order')
+  scope :with_room_by_sort_preference, -> (preference) {
+    case preference
     when "alphabetical"
       with_ordered_room
-    when "last_updated"
-      with_room_by_last_active_newest_first
-    else
+    when "most_active"
       with_room_by_activity
+    else
+      with_room_by_last_active_newest_first
     end
   }
   scope :without_direct_rooms, -> { joins(:room).where.not(rooms: { type: "Rooms::Direct" }) }

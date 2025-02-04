@@ -3,14 +3,22 @@ module SidebarHelper
     sort_by_last_updated_oldest_first
   end
 
+  def starred_rooms_sort_order
+    sort_by_user_preference Current.user.preference("starred_rooms_sort_order")
+  end
+
   def all_rooms_sort_order
-    case Current.user.preference("all_rooms_sort_order")
+    sort_by_user_preference Current.user.preference("all_rooms_sort_order")
+  end
+
+  def sort_by_user_preference(preference)
+    case preference
     when "alphabetical"
       sort_alphabetically
-    when "last_updated"
-      sort_by_last_updated_newest_first
-    else
+    when "most_active"
       sort_by_most_active
+    else
+      sort_by_last_updated_newest_first
     end
   end
 

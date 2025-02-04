@@ -1,12 +1,6 @@
 module Rooms::InvolvementsHelper
-  def turbo_frame_for_involvement_tag(room, &)
-    turbo_frame_tag dom_id(room, :involvement), data: {
-      controller: "turbo-frame", action: "notifications:ready@window->turbo-frame#load", turbo_frame_url_param: room_involvement_path(room)
-    }, &
-  end
-
-  def button_to_change_involvement(room, involvement)
-    button_to room_involvement_path(room, involvement: next_involvement_for(room, involvement: involvement)),
+  def button_to_change_involvement(room, involvement, from_sidebar: false)
+    button_to room_involvement_path(room, involvement: next_involvement_for(room, involvement: involvement, from_sidebar:), from_sidebar:),
       method: :put,
       role: "checkbox", aria: { checked: true, labelledby: dom_id(room, :involvement_label) }, tabindex: 0,
       class: "btn #{involvement}" do
@@ -17,17 +11,20 @@ module Rooms::InvolvementsHelper
 
   private
     HUMANIZE_INVOLVEMENT = {
-      "mentions" => "Notifying about @ mentions",
-      "everything" => "Notifying about all messages",
-      "invisible" => "Notifications are off and room invisible in sidebar"
+      "mentions" => "Room in All Rooms",
+      "everything" => "Room in My Rooms",
+      "invisible" => "Room hidden from sidebar"
     }
 
     SHARED_INVOLVEMENT_ORDER = %w[ mentions everything invisible ]
+    SHARED_SIDEBAR_INVOLVEMENT_ORDER = %w[ mentions everything ]
     DIRECT_INVOLVEMENT_ORDER = %w[ everything nothing ]
 
-    def next_involvement_for(room, involvement:)
+    def next_involvement_for(room, involvement:, from_sidebar: false)
       if room.direct?
         DIRECT_INVOLVEMENT_ORDER[DIRECT_INVOLVEMENT_ORDER.index(involvement) + 1] || DIRECT_INVOLVEMENT_ORDER.first
+      elsif from_sidebar
+        SHARED_SIDEBAR_INVOLVEMENT_ORDER[(SHARED_SIDEBAR_INVOLVEMENT_ORDER.index(involvement) || 0) + 1] || SHARED_SIDEBAR_INVOLVEMENT_ORDER.first
       else
         SHARED_INVOLVEMENT_ORDER[SHARED_INVOLVEMENT_ORDER.index(involvement) + 1] || SHARED_INVOLVEMENT_ORDER.first
       end

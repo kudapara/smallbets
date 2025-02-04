@@ -6,9 +6,11 @@
 
 <div id="<%= dom_id(room, dom_prefix(list_name, :list_node)) %>" data-sorted-list-target="<%= "item" if indent == 0 %>"
      data-name="<%= room.sortable_name %>" data-size="<%= room.messages_count %>"
-     data-updated-at="<%= room.last_active_at.to_fs(:epoch) %>" 
-     data-sidebar-inbox-target="room" data-involvement="<%= involvement %>" class="flex flex-column gap" style="<%= "margin-left: var(--block-space);" if indent.between?(1, 3) %>">
-  <%= render "users/sidebars/rooms/shared", list_name:, room:, unread:, has_notifications: %>
+     data-updated-at="<%= room.last_active_at.iso8601 %>" 
+     data-sidebar-inbox-target="room" data-sidebar-starred-rooms-target="room" data-involvement="<%= involvement %>"
+     data-type="list_node"
+     class="flex flex-column gap" style="<%= "margin-left: var(--block-space);" if indent.between?(1, 3) %>">
+  <%= render "users/sidebars/rooms/shared", list_name:, room:, involvement:, unread:, has_notifications: %>
 
   <% (local_assigns[:thread_memberships] || []).each do |thread_membership| %>
     <% if thread_membership.room.parent_room == room %>

@@ -19,6 +19,7 @@
                locals: { current_room: @room, first_unread_message: @first_unread_message } %>
   <% end %>
 
+  <%= turbo_stream_from @membership %>
   <%= turbo_stream_from @room, :messages %>
   <%= turbo_stream_from Current.user, @room, :messages %>
   <%= button_to_jump_to_newest_message %>

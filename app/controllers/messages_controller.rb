@@ -48,7 +48,7 @@ class MessagesController < ApplicationController
 
   def destroy
     @message.threads.each do |thread|
-      [:inbox, :shared_rooms].each do |list_name|
+      for_each_sidebar_section do |list_name|
         broadcast_remove_to :rooms, target: [thread, helpers.dom_prefix(list_name, :list_node)]
       end
     end

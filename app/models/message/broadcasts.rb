@@ -1,7 +1,7 @@
 module Message::Broadcasts
   def broadcast_create
     broadcast_append_to room, :messages, target: [ room, :messages ], partial: "messages/message", locals: { current_room: room }
-    ActionCable.server.broadcast("unread_rooms", { roomId: room.id, roomSize: room.messages_count, roomUpdatedAt: created_at.to_fs(:epoch) })
+    ActionCable.server.broadcast("unread_rooms", { roomId: room.id, roomSize: room.messages_count, roomUpdatedAt: created_at.iso8601 })
 
     broadcast_notifications
   end

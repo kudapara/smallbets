@@ -51,7 +51,7 @@ class Rooms::ClosedsController < RoomsController
     end
 
     def broadcast_create_room(room)
-      [:inbox, :shared_rooms].each do |list_name|
+      for_each_sidebar_section do |list_name|
         each_user_and_html_for_create(room, list_name:) do |user, html|
           broadcast_append_to user, :rooms, target: list_name, html: html, attributes: { maintain_scroll: true }
         end
@@ -59,9 +59,9 @@ class Rooms::ClosedsController < RoomsController
     end
 
     def broadcast_update_room
-      [:inbox, :shared_rooms].each do |list_name|
+      for_each_sidebar_section do |list_name|
         each_user_and_html_for(@room, list_name:) do |user, html|
-          broadcast_replace_to user, :rooms, target: [@room, helpers.dom_prefix(list_name, :node_name)], html: html
+          broadcast_replace_to user, :rooms, target: [@room, helpers.dom_prefix(list_name, :node_content)], html: html
         end
       end
     end
@@ -82,6 +82,7 @@ class Rooms::ClosedsController < RoomsController
         yield membership.user, render_or_cached(html_cache,
                                                 partial: "users/sidebars/rooms/shared",
                                                 locals: { room: room,
+                                                          involvement: membership.involvement, 
                                                           unread: membership.unread?,
                                                           has_notifications: membership.preloaded_has_unread_notifications?}.merge(locals))
       end

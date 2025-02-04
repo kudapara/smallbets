@@ -7,7 +7,6 @@ class Room::MessagePusher
 
   def push
     build_payload.tap do |payload|
-      push_to_users_involved_in_everything(payload)
       push_to_users_involved_in_mentions(payload)
     end
   end
@@ -37,16 +36,8 @@ class Room::MessagePusher
       }
     end
 
-    def push_to_users_involved_in_everything(payload)
-      enqueue_payload_for_delivery payload, push_subscriptions_for_users_involved_in_everything
-    end
-
     def push_to_users_involved_in_mentions(payload)
       enqueue_payload_for_delivery payload, push_subscriptions_for_mentionable_users(message.mentionees)
-    end
-
-    def push_subscriptions_for_users_involved_in_everything
-      relevant_subscriptions.merge(Membership.involved_in_everything)
     end
 
     def push_subscriptions_for_mentionable_users(mentionees)

@@ -2,12 +2,13 @@ class Users::SidebarsController < ApplicationController
   DIRECT_PLACEHOLDERS = 10
 
   def show
-    memberships         = Current.user.memberships.visible.without_expired_threads
-    @direct_memberships = extract_direct_memberships(memberships)
-    @thread_memberships = extract_thread_memberships(memberships)
-    other_memberships   = memberships.without(@direct_memberships).without(@thread_memberships)
-    @all_memberships    = other_memberships.with_room_by_user_sort_order(Current.user)
-    @inbox_memberships  = other_memberships.with_room_by_last_active_oldest_first
+    memberships           = Current.user.memberships.visible.without_expired_threads
+    @direct_memberships   = extract_direct_memberships(memberships)
+    @thread_memberships   = extract_thread_memberships(memberships)
+    other_memberships     = memberships.without(@direct_memberships).without(@thread_memberships)
+    @all_memberships      = other_memberships.with_room_by_sort_preference(Current.user.preference("all_rooms_sort_order"))
+    @starred_memberships  = other_memberships.with_room_by_sort_preference(Current.user.preference("starred_rooms_sort_order"))
+    @inbox_memberships    = other_memberships.with_room_by_last_active_oldest_first
 
     @direct_memberships.select! { |m| m.room.messages_count > 0 }
     @direct_placeholder_users = find_direct_placeholder_users

@@ -1,4 +1,4 @@
-<div id="<%= list_name %>" contents data-sorted-list-target="container">
+<div id="<%= list_name %>" contents data-sorted-list-target="container" class="sidebar__list">
   <% memberships.each do |membership| %>
     <%= render "users/sidebars/rooms/shared_with_threads", list_name:, membership:, thread_memberships: %>
   <% end %>

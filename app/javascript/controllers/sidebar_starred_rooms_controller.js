@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = [ "room", "emptySpace" ]
+  static targets = [ "room" ]
 
   connect() {
     this.initialRoomTargets = new Set(this.roomTargets)
@@ -11,31 +11,27 @@ export default class extends Controller {
   roomTargetConnected(element) {
     if (this.initialRoomTargets && !this.initialRoomTargets.has(element)) {
       this.#toggleRoom(element)
-      this.#toggleEmptySpace()
+      this.#toggleSidebarSection()
     }
   }
 
   roomTargetDisconnected(element) {
     this.initialRoomTargets?.delete(element)
-    this.#toggleEmptySpace()
+    this.#toggleSidebarSection()
   }
 
   toggleRooms() {
     this.roomTargets.forEach((room) => {
-      this.#toggleRoom(room)
+      this.#toggleRoom(room) 
     })
-    this.#toggleEmptySpace()
+
+    this.#toggleSidebarSection()
   }
   
   #toggleRoom(room) {
     const involvement = room.dataset.involvement
-    const isUnread = room.querySelector(".unread") !== null
-    const hasBadge = room.querySelector(".badge") !== null
-
-    const isVisible =
-        (involvement === "everything" && isUnread) ||
-        (isUnread && hasBadge)
-
+    const isVisible = (involvement === "everything") 
+    
     if (isVisible) {
       room.removeAttribute("hidden")
       this.#showParentRooms(room)
@@ -44,22 +40,22 @@ export default class extends Controller {
     }
   }
 
-  #toggleEmptySpace() {
+  #toggleSidebarSection() {
     const hasVisibleRoom = this.roomTargets.some(room => !room.hasAttribute("hidden"))
 
     if (hasVisibleRoom) {
-      this.emptySpaceTarget.setAttribute("hidden", true)
+      this.element.removeAttribute("hidden")
     } else {
-      this.emptySpaceTarget.removeAttribute("hidden")
+      this.element.setAttribute("hidden", true)
     }
   }
 
   #showParentRooms(room) {
     let parentRoom = room.parentElement.closest("[data-sidebar-starred-rooms-target='room']")
-
+    
     while (parentRoom) {
       parentRoom.removeAttribute("hidden")
-      parentRoom = parentRoom.parentElement.closest("[data-sidebar-inbox-target='room']")
+      parentRoom = parentRoom.parentElement.closest("[data-sidebar-starred-rooms-target=room]")
     }
   }
 }

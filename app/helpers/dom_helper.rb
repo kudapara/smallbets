@@ -1,5 +1,5 @@
 module DomHelper
   def dom_prefix(*parts)
-    parts.join("_")
+    parts.compact_blank.join("_")
   end
 end

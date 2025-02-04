@@ -34,7 +34,7 @@
     background-color 300ms ease;
   z-index: 5;
 
-  #sidebar:where(:not(.open):has(.unread)) & {
+  #sidebar:where(:not(.open):has(#sidebar_inbox [data-type=list_node]:not([hidden]), #starred_rooms [data-type=list_node]:not([hidden]) .unread, .direct.unread)) & {
     &::after {
       --size: 1em;
 
@@ -51,7 +51,7 @@
     }
   }
 
-  #sidebar:where(:not(.open):has(#sidebar_inbox [data-sidebar-inbox-target]:not([hidden]), .direct.unread)) & {
+  #sidebar:where(:not(.open):has(#sidebar_inbox [data-type=list_node]:not([hidden]), .direct.unread)) & {
     &::after {
        background-color: var(--color-negative);
     }
@@ -215,7 +215,6 @@
 }
 
 .room {
-  background-color: var(--color-text-reversed);
   color: var(--color-text);
   font-weight: normal;
   justify-content: start;
@@ -227,30 +226,36 @@
   }
 
   &.unread {
-    --btn-border-color: var(--color-text);
     --hover-color: var(--color-text);
-
-    font-weight: 600;
-
-    &:not(:hover) {
-      box-shadow: 0 0 0 1px var(--color-text);
-    }
   }
 
-  &.badge {
-    &::after {
-       --size: 0.6em;
+  time {
+    opacity: 0.4;
+    font-weight: 500;
+  
+    .sidebar__list:not(#shared_rooms) .room.unread & {
+      opacity: 1;
+    }
+  
+    .sidebar__list:not(#shared_rooms) .room.unread.badge & {
+      padding-inline-start: calc(var(--inline-space) * 4 / 3);
     
-       aspect-ratio: 1;
-       background-color: var(--color-negative);
-       block-size: var(--size);
-       border-radius: calc(var(--size) * 2);
-       content: "";
-       flex-shrink: 0;
-       inline-size: var(--size);
-       inset-inline-end: calc(var(--size));
-       position: absolute;
-     }
+      &::after {
+         --size: 0.5em;
+      
+         aspect-ratio: 1;
+         background-color: var(--color-negative);
+         block-size: var(--size);
+         border-radius: calc(var(--size) * 2);
+         content: "";
+         flex-shrink: 0;
+         inline-size: var(--size);
+         position: absolute;
+         left: 0;
+         top: 50%;
+         transform: translateY(-50%);
+      }
+    }
   }
 }
 

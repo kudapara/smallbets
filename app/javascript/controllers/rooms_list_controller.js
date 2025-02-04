@@ -125,13 +125,13 @@ export default class extends Controller {
     const rooms = this.#findRoomTargets(roomId)
 
     rooms.forEach(room => {
-      const sidebarInboxTarget = room.closest('[data-sidebar-inbox-target="room"]')
-      if (!sidebarInboxTarget) return
+      const list_node = room.closest('[data-type=list_node]')
+      if (!list_node) return
 
-      sidebarInboxTarget.dataset.involvement = involvement
-
-      this.dispatch("involved", { detail: { targetId: room.id } })
+      list_node.dataset.involvement = involvement
     })
+    
+    this.dispatch("involved", { detail: { roomId: roomId } })
   }
 
   #findRoomTargets(roomId) {

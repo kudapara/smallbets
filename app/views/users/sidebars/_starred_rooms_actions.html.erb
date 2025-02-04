@@ -1,0 +1,26 @@
+<%= tag.details class: "position-relative", data: {
+  controller: "popup", popup_orientation_top_class: "",
+  action: "keydown.esc->popup#close toggle->popup#toggle click@document->popup#closeOnClickOutside"
+} do %>
+  <summary class="btn action-btn options-btn">
+    <%= image_tag "menu-dots-horizontal.svg", size: 18, class: "colorize--black", aria: { hidden: "true" } %>
+    <span class="for-screen-reader">My rooms options</span>
+  </summary>
+
+  <div class="popup-menu actions-menu border shadow" data-popup-target="menu">
+    <%= button_to preference_path, params: { preference: 'starred_rooms_sort_order', value: 'most_active' }, method: :patch, remote: true,
+                class: "btn action-btn full-width", data: { action: "click->popup#close", turbo_frame: "user_sidebar" } do %>
+      <span>Most active</span>
+    <% end %>
+
+    <%= button_to preference_path, params: { preference: 'starred_rooms_sort_order', value: 'last_updated' }, method: :patch, remote: true,
+                class: "btn action-btn full-width", data: { action: "click->popup#close", turbo_frame: "user_sidebar" } do %>
+      <span>Last updated</span>
+    <% end %>
+
+    <%= button_to preference_path, params: { preference: 'starred_rooms_sort_order', value: 'alphabetical' }, method: :patch, remote: true, 
+                class: "btn action-btn full-width", data: { action: "click->popup#close", turbo_frame: "user_sidebar" } do %>
+      <span>Alphabetical</span>
+    <% end %>
+  </div>
+<% end %>
