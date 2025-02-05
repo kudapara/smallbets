@@ -1,3 +1,4 @@
 require "objspace"
 
-ObjectSpace.trace_object_allocations_start
+# Uncomment line below to start tracing object allocation
+# ObjectSpace.trace_object_allocations_start
