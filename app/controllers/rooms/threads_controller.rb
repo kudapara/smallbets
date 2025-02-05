@@ -15,7 +15,7 @@ class Rooms::ThreadsController < RoomsController
   end
 
   def edit
-    @users = @room.visible_users
+    @users = @room.visible_users.active.includes(avatar_attachment: :blob).ordered
   end
 
   def update

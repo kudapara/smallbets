@@ -9,7 +9,6 @@ class Rooms::OpensController < RoomsController
 
   def new
     @room = Rooms::Open.new(name: DEFAULT_ROOM_NAME)
-    @users = User.active.ordered
   end
 
   def create
@@ -19,9 +18,7 @@ class Rooms::OpensController < RoomsController
     redirect_to room_url(@room)
   end
 
-  def edit
-    @users = User.active.includes(avatar_attachment: :blob).ordered
-  end
+  def edit ; end
 
   def update
     @room.update! room_params

@@ -9,7 +9,7 @@ class Rooms::ClosedsController < RoomsController
 
   def new
     @room  = Rooms::Closed.new(name: DEFAULT_ROOM_NAME)
-    @users = User.active.ordered
+    @users = User.active.includes(avatar_attachment: :blob).ordered
   end
 
   def create
@@ -21,7 +21,7 @@ class Rooms::ClosedsController < RoomsController
 
   def edit
     selected_user_ids = @room.users.pluck(:id)
-    @selected_users, @unselected_users = User.active.ordered.partition { |user| selected_user_ids.include?(user.id) }
+    @selected_users, @unselected_users = User.active.includes(avatar_attachment: :blob).ordered.partition { |user| selected_user_ids.include?(user.id) }
   end
 
   def update
