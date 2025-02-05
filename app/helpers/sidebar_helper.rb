@@ -37,4 +37,8 @@ module SidebarHelper
   def sort_alphabetically
     raw "data-sorted-list-attribute-value='name'"
   end
+
+  def sidebar_membership_cache_key(prefix, membership)
+    [ prefix, membership.room, membership.involvement, membership.unread?, membership.has_unread_notifications? ]
+  end
 end

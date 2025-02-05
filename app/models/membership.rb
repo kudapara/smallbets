@@ -93,7 +93,11 @@ class Membership < ApplicationRecord
   end
   
   def has_unread_notifications?
-    unread? && unread_notifications.any?
+    if attributes.has_key?("preloaded_has_unread_notifications")
+      ActiveRecord::Type::Boolean.new.cast(self[:preloaded_has_unread_notifications])
+    else
+      unread? && unread_notifications.any?
+    end
   end
   
   def receives_mentions?
@@ -126,10 +130,6 @@ class Membership < ApplicationRecord
       thread_membership.update(involvement: :mentions) if thread_membership.involved_in_everything?
       thread_membership.set_nested_involvements_to_mentions
     end
-  end
-
-  def preloaded_has_unread_notifications?
-    ActiveRecord::Type::Boolean.new.cast(self[:preloaded_has_unread_notifications])
   end
   
   private

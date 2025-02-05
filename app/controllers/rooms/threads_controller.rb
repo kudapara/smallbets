@@ -78,7 +78,7 @@ class Rooms::ThreadsController < RoomsController
                                               locals: { room: room,
                                                         involvement: membership.involvement,
                                                         unread: membership.unread?,
-                                                        has_notifications: membership.preloaded_has_unread_notifications?}.merge(locals))
+                                                        has_notifications: membership.has_unread_notifications? }.merge(locals))
     end
   end
 end

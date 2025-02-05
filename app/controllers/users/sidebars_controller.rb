@@ -2,7 +2,7 @@ class Users::SidebarsController < ApplicationController
   DIRECT_PLACEHOLDERS = 10
 
   def show
-    memberships           = Current.user.memberships.visible.without_expired_threads
+    memberships           = Current.user.memberships.visible.without_expired_threads.with_has_unread_notifications.includes(:room)
     @direct_memberships   = extract_direct_memberships(memberships)
     @thread_memberships   = extract_thread_memberships(memberships)
     other_memberships     = memberships.without(@direct_memberships).without(@thread_memberships)
