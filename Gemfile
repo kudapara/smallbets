@@ -63,3 +63,5 @@ gem "letter_opener", group: :development
 gem "stringex"
 
 gem 'aws-sdk-rails', '~> 4'
+
+gem "heapy", group: :development
