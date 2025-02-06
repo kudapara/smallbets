@@ -111,6 +111,18 @@
   }
 }
 
+.btn.everything {
+  border: 0;
+}
+
+.btn.mentions {
+  border: 0;
+}
+
+.btn.invisible {
+  border: 0;
+}
+
 /* Variants */
 .btn--reversed {
   --btn-background: var(--color-text);
