@@ -10,7 +10,7 @@
   <% end %>
   
   <span class="txt-small">
-    <%= turbo_frame_tag dom_id(room, dom_prefix(:involvement)) do %>
+    <%= turbo_frame_tag dom_id(room, dom_prefix(:sidebar, :involvement)) do %>
       <%= button_to_change_involvement(room, involvement, from_sidebar: true) %>
     <% end %>
   </span>
