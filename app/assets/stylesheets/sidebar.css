@@ -235,6 +235,7 @@
   
     .sidebar__list:not(#shared_rooms) .room.unread & {
       opacity: 1;
+      font-weight: 800;
     }
   
     .sidebar__list:not(#shared_rooms) .room.unread.badge & {
