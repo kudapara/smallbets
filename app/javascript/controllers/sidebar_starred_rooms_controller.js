@@ -4,15 +4,12 @@ export default class extends Controller {
   static targets = [ "room" ]
 
   connect() {
-    this.initialRoomTargets = new Set(this.roomTargets)
     this.toggleRooms()
   }
 
   roomTargetConnected(element) {
-    if (this.initialRoomTargets && !this.initialRoomTargets.has(element)) {
-      this.#toggleRoom(element)
-      this.#toggleSidebarSection()
-    }
+    this.#toggleRoom(element)
+    this.#toggleSidebarSection()
   }
 
   roomTargetDisconnected(element) {

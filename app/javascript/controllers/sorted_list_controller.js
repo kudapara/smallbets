@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
-import { throttle } from "helpers/timing_helpers"
+import { debounce, throttle } from "helpers/timing_helpers"
 
 export default class extends Controller {
   static targets = [ "item", "container" ]
@@ -16,7 +16,9 @@ export default class extends Controller {
   }
 
   itemTargetConnected(target) {
-    this.#throttledSort()
+    if (this.isSorting) return
+    
+    this.#scheduledSort()
   }
   
   reSort() {
@@ -24,6 +26,9 @@ export default class extends Controller {
   }
 
   sort() {
+    if (this.isSorting) return
+    this.isSorting = true
+
     const container = this.hasContainerTarget ? this.containerTarget : this.element
     
     const sortCriteria = [
@@ -34,6 +39,8 @@ export default class extends Controller {
     this.itemTargets
         .sort((a, b) => this.#compareItems(a, b, sortCriteria))
         .forEach(item => { container.appendChild(item) })
+
+    setTimeout(() => { this.isSorting = false }, 100)
   }
 
   #compareItems(a, b, criteria) {
@@ -61,4 +68,5 @@ export default class extends Controller {
   }
 
   #throttledSort = throttle(this.sort.bind(this))
+  #scheduledSort = debounce(this.sort.bind(this), 300)
 }
