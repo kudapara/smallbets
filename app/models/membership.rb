@@ -43,7 +43,6 @@ class Membership < ApplicationRecord
 
   scope :with_ordered_room, -> { includes(:room).joins(:room).order("rooms.sortable_name") }
   scope :with_room_by_activity, -> { includes(:room).joins(:room).order("rooms.messages_count DESC") }
-  scope :with_room_by_last_active_oldest_first, -> { includes(:room).joins(:room).order("rooms.last_active_at") }
   scope :with_room_by_last_active_newest_first, -> { includes(:room).joins(:room).order("rooms.last_active_at DESC") }
   scope :with_room_chronologically, -> { includes(:room).joins(:room).order("rooms.created_at") }
   scope :with_room_by_sort_preference, -> (preference) {

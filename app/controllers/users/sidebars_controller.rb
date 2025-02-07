@@ -8,7 +8,6 @@ class Users::SidebarsController < ApplicationController
     other_memberships     = memberships.without(@direct_memberships).without(@thread_memberships)
     @all_memberships      = other_memberships.with_room_by_sort_preference(Current.user.preference("all_rooms_sort_order"))
     @starred_memberships  = other_memberships.with_room_by_sort_preference(Current.user.preference("starred_rooms_sort_order"))
-    @inbox_memberships    = other_memberships.with_room_by_last_active_oldest_first
 
     @direct_memberships.select! { |m| m.room.messages_count > 0 }
     @direct_placeholder_users = find_direct_placeholder_users

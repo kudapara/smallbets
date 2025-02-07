@@ -22,10 +22,6 @@ module SidebarHelper
     raw "data-sorted-list-attribute-value='size' data-sorted-list-attribute-type-value='number' data-sorted-list-order-value='desc'"
   end
 
-  def sort_by_last_updated_oldest_first
-    raw "data-sorted-list-attribute-value='updatedAt'"
-  end
-
   def sort_by_last_updated_newest_first
     raw "data-sorted-list-attribute-value='updatedAt' data-sorted-list-order-value='desc'"
   end
