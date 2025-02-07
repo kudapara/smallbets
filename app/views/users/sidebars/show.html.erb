@@ -35,7 +35,7 @@
          data-controller="search-rooms"
          data-search-rooms-target="container"
          data-search-rooms-filter-class="display-none">
-      <div class="pad-inline-half">
+      <div>
         <label class="for-screen-reader" for="room-search">Search rooms</label>
         <input type="search" id="room-search" class="input input--search" placeholder="Search rooms..."
                data-search-rooms-target="input"
@@ -51,9 +51,9 @@
         </div>
 
         <%= render "users/sidebars/rooms/shared_rooms_list", list_name: :starred_rooms, memberships: @starred_memberships, thread_memberships: @thread_memberships %>
-      </div>
 
-      <div class="margin-block"></div>
+        <div class="margin-block"></div>
+      </div>
 
       <div class="flex gap-half margin-block-end align-center">
         <h1 class="txt-medium">All Rooms</h1>
