@@ -6,7 +6,7 @@ module Sidebar
   end
 
   def for_each_sidebar_section
-    [ :inbox, :starred_rooms, :shared_rooms ].each do |name|
+    [ :starred_rooms, :shared_rooms ].each do |name|
       yield name
     end
   end

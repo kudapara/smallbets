@@ -32,13 +32,12 @@
     </turbo-frame>
 
     <div class="rooms position-relative flex flex-column gap overflow-y">
-
-      <div data-controller="sidebar-starred-rooms sorted-list" <%= starred_rooms_sort_order %>
+      <div data-controller="sidebar-starred-rooms sorted-list" data-sorted-list-attribute-value="updatedAt" data-sorted-list-order-value="desc"
            data-action="rooms-list:involved@window->sidebar-starred-rooms#toggleRooms rooms-list:unread@window->sorted-list#reSort rooms-list:read@window->sorted-list#reSort rooms-list:renamed@window->sorted-list#reSort"
            class="flex position-relative flex-column gap overflow margin-block-end">
         <div class="flex gap-half align-center">
           <h1 class="txt-small">My Rooms</h1>
-          <%= render "users/sidebars/starred_rooms_actions" %>
+          <%= render "users/sidebars/inbox_actions" %>
         </div>
 
         <%= render "users/sidebars/rooms/shared_rooms_list", list_name: :starred_rooms, memberships: @starred_memberships, thread_memberships: @thread_memberships %>

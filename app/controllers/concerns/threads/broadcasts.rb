@@ -11,8 +11,7 @@ module Threads::Broadcasts
     memberships = memberships.without(thread_memberships)
 
     {
-      inbox: memberships.with_room_by_last_active_oldest_first,
-      starred_rooms: memberships.with_room_by_sort_preference(Current.user.preference("starred_rooms_sort_order")),
+      starred_rooms: memberships.with_room_by_last_active_oldest_first,
       shared_rooms: memberships.with_room_by_sort_preference(Current.user.preference("all_rooms_sort_order"))
     }.each do |list_name, memberships|
       user.broadcast_replace_to user, :rooms, target: list_name,

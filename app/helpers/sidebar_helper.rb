@@ -3,10 +3,6 @@ module SidebarHelper
     sort_by_last_updated_newest_first
   end
 
-  def starred_rooms_sort_order
-    sort_by_user_preference Current.user.preference("starred_rooms_sort_order")
-  end
-
   def all_rooms_sort_order
     sort_by_user_preference Current.user.preference("all_rooms_sort_order")
   end
