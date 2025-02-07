@@ -8,7 +8,7 @@ class Autocompletable::UsersController < ApplicationController
       exact_name_matches = users_scope.by_first_name(params[:query])
       all_matches = users_scope.filtered_by(params[:query]).limit(20)
 
-      (exact_name_matches + all_matches).uniq
+      (all_matches + exact_name_matches).uniq
     end
 
     def users_scope
