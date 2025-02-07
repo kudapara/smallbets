@@ -5,7 +5,7 @@
 <% has_notifications = local_assigns[:membership]&.has_unread_notifications? %>
 
 <div id="<%= dom_id(room, dom_prefix(list_name, :list_node)) %>" data-sorted-list-target="<%= "item" if indent == 0 %>"
-     data-name="<%= room.sortable_name %>" data-size="<%= room.messages_count %>"
+     data-name="<%= room.sortable_name %>" data-search-text="<%= room.sortable_name %>" data-size="<%= room.messages_count %>"
      data-updated-at="<%= room.last_active_at.iso8601 %>" 
      data-sidebar-inbox-target="room" data-sidebar-starred-rooms-target="room" data-involvement="<%= involvement %>"
      data-type="list_node"

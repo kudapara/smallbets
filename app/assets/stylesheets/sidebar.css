@@ -206,6 +206,11 @@
   padding-top: var(--block-space-half);
   padding-bottom: var(--block-space-half);
   padding-inline: var(--sidebar-inline-space);
+
+  input {
+    margin-bottom: var(--block-space);
+    font-size: 0.85rem;
+  }
 }
 
 .rooms__new-btn {

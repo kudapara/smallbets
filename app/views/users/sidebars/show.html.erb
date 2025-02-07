@@ -31,7 +31,17 @@
       </div>
     </turbo-frame>
 
-    <div class="rooms position-relative flex flex-column gap overflow-y">
+    <div class="rooms position-relative flex flex-column gap overflow-y" 
+         data-controller="search-rooms"
+         data-search-rooms-target="container"
+         data-search-rooms-filter-class="display-none">
+      <div class="pad-inline-half">
+        <label class="for-screen-reader" for="room-search">Search rooms</label>
+        <input type="search" id="room-search" class="input input--search" placeholder="Search rooms..."
+               data-search-rooms-target="input"
+               data-action="input->search-rooms#filter keyup->search-rooms#filter"
+               autocomplete="off">
+      </div>
       <div data-controller="sidebar-starred-rooms sorted-list" data-sorted-list-attribute-value="updatedAt" data-sorted-list-order-value="desc"
            data-action="rooms-list:involved@window->sidebar-starred-rooms#toggleRooms rooms-list:unread@window->sorted-list#reSort rooms-list:read@window->sorted-list#reSort rooms-list:renamed@window->sorted-list#reSort"
            class="flex position-relative flex-column gap overflow margin-block-end">
