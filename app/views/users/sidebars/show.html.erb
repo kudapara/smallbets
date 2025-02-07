@@ -44,22 +44,24 @@
       </div>
       <div data-controller="sidebar-starred-rooms sorted-list" data-sorted-list-attribute-value="updatedAt" data-sorted-list-order-value="desc"
            data-action="rooms-list:involved@window->sidebar-starred-rooms#toggleRooms rooms-list:unread@window->sorted-list#reSort rooms-list:read@window->sorted-list#reSort rooms-list:renamed@window->sorted-list#reSort"
-           class="flex position-relative flex-column gap overflow margin-block-end">
-        <div class="flex gap-half align-center">
-          <h1 class="txt-small">My Rooms</h1>
+           class="flex position-relative flex-column rooms-list overflow margin-block-end">
+        <div class="flex gap-half margin-block-end align-center">
+          <h1 class="txt-medium">My Rooms</h1>
           <%= render "users/sidebars/inbox_actions" %>
         </div>
 
         <%= render "users/sidebars/rooms/shared_rooms_list", list_name: :starred_rooms, memberships: @starred_memberships, thread_memberships: @thread_memberships %>
       </div>
 
-      <div class="flex gap-half align-center">
-        <h1 class="txt-small">All Rooms</h1>
+      <div class="margin-block"></div>
+
+      <div class="flex gap-half margin-block-end align-center">
+        <h1 class="txt-medium">All Rooms</h1>
         <%= render "users/sidebars/all_rooms_actions" %>
       </div>
       <div data-controller="sorted-list" <%= all_rooms_sort_order %>
            data-action="rooms-list:unread@window->sorted-list#reSort rooms-list:read@window->sorted-list#reSort rooms-list:renamed@window->sorted-list#reSort"
-           class="flex position-relative flex-column gap overflow">
+           class="flex position-relative flex-column rooms-list overflow">
         <%= render "users/sidebars/rooms/shared_rooms_list", list_name: :shared_rooms, memberships: @all_memberships, thread_memberships: @thread_memberships %>
       </div>
 

@@ -211,6 +211,10 @@
     margin-bottom: var(--block-space);
     font-size: 0.85rem;
   }
+
+  .rooms-list {
+    row-gap: 0;
+  }
 }
 
 .rooms__new-btn {
@@ -232,6 +236,18 @@
 
   &.unread {
     --hover-color: var(--color-text);
+  }
+
+  @media (any-hover: hover) {
+    &:hover {
+      background: linear-gradient(
+        to right,
+        rgba(255, 255, 0, 0.05) 0%,
+        rgba(255, 255, 0, 0.1) 10%,
+        rgba(255, 255, 0, 0) 80%
+      );
+      border-radius: 0.5em;
+    }
   }
 
   time {
