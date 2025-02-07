@@ -49,6 +49,7 @@ class User < ApplicationRecord
       .group(users_table[:id])
       .order(messages_table[:created_at].maximum.desc)
   end
+  scope :by_first_name, ->(first_name) { where("CASE WHEN instr(name, ' ') > 0 THEN substr(name, 1, instr(name, ' ')-1) ELSE name END = ?", first_name.to_s.strip) }
   scope :filtered_by, ->(query) { where("name like ? or ascii_name like ? or twitter_username like ? or linkedin_username like ?",
                                         "%#{query}%", "%#{query}%", "%#{query}%", "%#{query}%") if query.present? }
 

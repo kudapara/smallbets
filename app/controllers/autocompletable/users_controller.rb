@@ -1,15 +1,18 @@
 class Autocompletable::UsersController < ApplicationController
   def index
-    set_page_and_extract_portion_from find_autocompletable_users.with_attached_avatar, per_page: 20
+    @users = find_autocompletable_users
   end
 
   private
     def find_autocompletable_users
-      users_scope.active.without_default_names.filtered_by(params[:query])
+      exact_name_matches = users_scope.by_first_name(params[:query])
+      all_matches = users_scope.filtered_by(params[:query]).limit(20)
+
+      (exact_name_matches + all_matches).uniq
     end
 
     def users_scope
       scope = params[:room_id].present? ? Current.user.rooms.find(params[:room_id]).users : User.all
-      scope.recent_posters_first(params[:room_id])
+      scope.active.without_default_names.recent_posters_first(params[:room_id]).with_attached_avatar
     end
 end

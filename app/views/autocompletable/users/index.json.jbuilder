@@ -1,1 +1,1 @@
-json.partial! partial: "autocompletable/users/user", collection: @page.records, as: :user
+json.partial! partial: "autocompletable/users/user", collection: @users, as: :user
