@@ -8,6 +8,7 @@ const REFRESH_AFTER_HIDDEN_TIMEOUT = 60_000
 
 export default class extends Controller {
   static targets = [ "message" ]
+  static classes = [ "firstUnread" ]
   static values = { loadedAt: Number, url: String, }
 
   #lastLoadedAt
@@ -66,10 +67,17 @@ export default class extends Controller {
   }
 
   #refresh(reason) {
-    get(this.urlValue, { query: { since: this.#lastLoadedAt, reason: reason }, responseKind: "turbo-stream" })
+    get(this.urlValue, { query: { since: this.#lastLoadedAt, reason: reason, unread_at_message_id: this.#unreadAtMessageId || "" }, responseKind: "turbo-stream" })
   }
 
   #hiddenForTooLong() {
     return this.#hiddenAt && Date.now() - this.#hiddenAt > REFRESH_AFTER_HIDDEN_TIMEOUT
+  }
+
+  get #unreadAtMessageId() {
+    const firstUnreadMessage = this.messageTargets.find((element) =>
+        element.querySelector(`.${this.firstUnreadClass}`)
+    )
+    return firstUnreadMessage?.dataset?.messageId
   }
 }

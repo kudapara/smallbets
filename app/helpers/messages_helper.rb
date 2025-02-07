@@ -29,7 +29,8 @@ module MessagesHelper
       action: [ maintain_scroll_actions, refresh_room_actions ].join(" "),
       messages_target: "messages",
       refresh_room_loaded_at_value: room.updated_at.to_fs(:epoch),
-      refresh_room_url_value: room_refresh_url(room)
+      refresh_room_url_value: room_refresh_url(room),
+      refresh_room_first_unread_class: "message__new-separator"
     }, &
   end
 
