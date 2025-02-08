@@ -35,5 +35,11 @@ class StatsController < ApplicationController
                           .group('users.id')
                           .order('message_count DESC')
                           .limit(30)
+
+    @newest_members = User
+      .where(active: true)
+      .where(suspended_at: nil)
+      .order(created_at: :desc)
+      .limit(30)
   end
 end 
