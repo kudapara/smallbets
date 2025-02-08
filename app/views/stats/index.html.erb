@@ -7,6 +7,28 @@
 <% end %>
 
 <section class="panel flex flex-column gap">
+  <!-- Stats summary -->
+  <div class="margin-block pad-inline pad-block border-radius">
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1em;">
+      <div class="txt-center">
+        <div class="txt-h2 margin-block-end-sm"><%= number_with_delimiter(@total_users) %></div>
+        <div class="txt-small txt-uppercase txt-faded">Members</div>
+      </div>
+      <div class="txt-center">
+        <div class="txt-h2 margin-block-end-sm"><%= number_with_delimiter(@total_messages) %></div>
+        <div class="txt-small txt-uppercase txt-faded">Messages</div>
+      </div>
+      <div class="txt-center">
+        <div class="txt-h2 margin-block-end-sm"><%= number_with_delimiter(@total_boosts) %></div>
+        <div class="txt-small txt-uppercase txt-faded">Boosts</div>
+      </div>
+      <div class="txt-center">
+        <div class="txt-h2 margin-block-end-sm"><%= number_to_human_size(@database_size) %></div>
+        <div class="txt-small txt-uppercase txt-faded">Database Size</div>
+      </div>
+    </div>
+  </div>
+
   <!-- 24-hour top posters table -->
   <div class="margin-block pad-inline pad-block border-radius">
     <h2 class="txt-h3 margin-block-end">Top Chatters (24 hours)</h2>

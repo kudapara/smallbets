@@ -2,6 +2,13 @@ class StatsController < ApplicationController
   layout "application"
 
   def index
+    @total_users = User.where(active: true, suspended_at: nil).count
+    @total_messages = Message.count
+    @total_boosts = Boost.count
+    
+    db_path = ActiveRecord::Base.connection_db_config.configuration_hash[:database]
+    @database_size = File.size(db_path) rescue 0
+
     @daily_stats = Message.select("strftime('%Y-%m-%d', created_at) as date, count(*) as count")
                          .group('date')
                          .order('date DESC')
