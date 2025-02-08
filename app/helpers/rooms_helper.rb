@@ -6,7 +6,7 @@ module RoomsHelper
   end
 
   def link_to_edit_room(room)
-    member_count = room.memberships.visible.count
+    member_count = room.memberships.visible.joins(:user).where(users: { suspended_at: nil, active: true }).count
 
     link_to \
       [ :edit, @room ],
