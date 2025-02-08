@@ -65,12 +65,17 @@ jobs:
       - name: Execute SSH commands
         run: |
           sshpass -p ${{ secrets.DROPLET_PASSWORD }} ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} "
-            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} &&
-            docker pull smallbets/campfire:${{ github.ref_name }} &&
-            (docker stop campfire || true) &&
-            (docker rm campfire || true) &&
+            # Login and pull new image
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            docker pull smallbets/campfire:${{ github.ref_name }}
+
+            # Generate a timestamp for unique container naming
+            TIMESTAMP=\$(date +%Y%m%d_%H%M%S)
+            NEW_CONTAINER=campfire_\${TIMESTAMP}
+
+            # Start new container with temporary name but on the main ports
             docker run \
-              --name campfire \
+              --name \${NEW_CONTAINER} \
               --restart unless-stopped \
               -p 80:80 \
               -p 443:443 \
@@ -87,6 +92,27 @@ jobs:
               -e TLS_DOMAIN=${{ secrets.DOMAIN }} \
               -e APP_VERSION=${{ github.sha }} \
               -v /disk/campfire/:/rails/storage/ \
-              -d smallbets/campfire:${{ github.ref_name }}"
+              --health-cmd='curl -f http://localhost/up || exit 1' \
+              --health-interval=5s \
+              --health-retries=3 \
+              --health-timeout=2s \
+              -d smallbets/campfire:${{ github.ref_name }}
+
+            # Wait for the new container to be healthy
+            echo 'Waiting for new container to be healthy...'
+            while [ \$(docker inspect --format='{{.State.Health.Status}}' \${NEW_CONTAINER}) != 'healthy' ]; do
+              sleep 2
+            done
+            echo 'New container is healthy'
+
+            # Stop and remove the old container only after new one is healthy
+            OLD_CONTAINER=\$(docker ps -f name=campfire -q | grep -v \${NEW_CONTAINER})
+            if [ ! -z \"\${OLD_CONTAINER}\" ]; then
+              docker stop \${OLD_CONTAINER}
+              docker rm \${OLD_CONTAINER}
+            fi
+
+            # Rename new container to standard name
+            docker rename \${NEW_CONTAINER} campfire"
         env:
           SSH_PASSWORD: ${{ secrets.DROPLET_PASSWORD }}
