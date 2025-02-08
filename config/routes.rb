@@ -155,4 +155,6 @@ Rails.application.routes.draw do
   get 'library' => 'library#show'
 
   get "up" => "rails/health#show", as: :rails_health_check
+
+  get '/stats', to: 'stats#index'
 end

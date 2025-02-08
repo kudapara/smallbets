@@ -1,0 +1,312 @@
+<% @page_title = "Message Statistics" %>
+
+<% content_for :nav do %>
+  <div class="flex-item-justify-start">
+    <%= link_back %>
+  </div>
+<% end %>
+
+<section class="panel flex flex-column gap">
+  <!-- 24-hour top posters table -->
+  <div class="margin-block pad-inline pad-block border-radius">
+    <h2 class="txt-h3 margin-block-end">Top Chatters (24 hours)</h2>
+    <div class="overflow-x-auto">
+      <table style="border-collapse: collapse; width: 100%; font-size: 12px;">
+        <thead>
+          <tr>
+            <th class="txt-small txt-uppercase txt-faded" style="border: 1px solid var(--color-border-darker); padding: 0.2em 0.5em; font-size: 10px;">
+              User
+            </th>
+            <th class="txt-small txt-uppercase txt-faded" style="border: 1px solid var(--color-border-darker); padding: 0.2em 0.5em; text-align: right; font-size: 10px;">
+              Messages
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @top_posters_24h.each do |user| %>
+            <tr>
+              <td class="txt-medium" style="border: 1px solid var(--color-border-darker); padding: 0.2em 0.5em; font-size: 12px;">
+                <div class="flex gap-inline align-items-center">
+                  <%= link_to user_path(user), class: "flex gap-inline align-items-center hover-target", style: "text-decoration: none; font-size: 12px;" do %>
+                    <% if user.avatar.attached? %>
+                      <%= image_tag user.avatar, 
+                          class: "avatar",
+                          style: "width: 16px; height: 16px; border-radius: 50%; margin-right: 8px; transform: translateY(2px);",
+                          alt: user.name,
+                          loading: "lazy" %>
+                    <% else %>
+                      <div class="avatar" style="width: 16px; height: 16px; border-radius: 50%; font-size: 8px; margin-right: 8px; transform: translateY(2px);">
+                        <%= user.name.first.upcase %>
+                      </div>
+                    <% end %>
+                    <span class="txt-truncate" style="font-size: 12px;"><%= user.name %></span>
+                  <% end %>
+                </div>
+              </td>
+              <td class="txt-medium" style="border: 1px solid var(--color-border-darker); padding: 0.2em 0.5em; text-align: right; font-size: 12px;">
+                <%= number_with_delimiter(user.message_count) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Top posters table -->
+  <div class="margin-block pad-inline pad-block border-radius">
+    <h2 class="txt-h3 margin-block-end">Top Chatters (30 days)</h2>
+    <div class="overflow-x-auto">
+      <table style="border-collapse: collapse; width: 100%; font-size: 12px;">
+        <thead>
+          <tr>
+            <th class="txt-small txt-uppercase txt-faded" style="border: 1px solid var(--color-border-darker); padding: 0.2em 0.5em; font-size: 10px;">
+              User
+            </th>
+            <th class="txt-small txt-uppercase txt-faded" style="border: 1px solid var(--color-border-darker); padding: 0.2em 0.5em; text-align: right; font-size: 10px;">
+              Messages
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @top_posters.each do |user| %>
+            <tr>
+              <td class="txt-medium" style="border: 1px solid var(--color-border-darker); padding: 0.2em 0.5em; font-size: 12px;">
+                <div class="flex gap-inline align-items-center">
+                  <%= link_to user_path(user), class: "flex gap-inline align-items-center hover-target", style: "text-decoration: none; font-size: 12px;" do %>
+                    <% if user.avatar.attached? %>
+                      <%= image_tag user.avatar, 
+                          class: "avatar",
+                          style: "width: 16px; height: 16px; border-radius: 50%; margin-right: 8px; transform: translateY(2px);",
+                          alt: user.name,
+                          loading: "lazy" %>
+                    <% else %>
+                      <div class="avatar" style="width: 16px; height: 16px; border-radius: 50%; font-size: 8px; margin-right: 8px; transform: translateY(2px);">
+                        <%= user.name.first.upcase %>
+                      </div>
+                    <% end %>
+                    <span class="txt-truncate" style="font-size: 12px;"><%= user.name %></span>
+                  <% end %>
+                </div>
+              </td>
+              <td class="txt-medium" style="border: 1px solid var(--color-border-darker); padding: 0.2em 0.5em; text-align: right; font-size: 12px;">
+                <%= number_with_delimiter(user.message_count) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- After the first top posters table -->
+  <div class="margin-block pad-inline pad-block border-radius">
+    <h2 class="txt-h3 margin-block-end">Top Chatters (All Time)</h2>
+    <div class="overflow-x-auto">
+      <table style="border-collapse: collapse; width: 100%; font-size: 12px;">
+        <thead>
+          <tr>
+            <th class="txt-small txt-uppercase txt-faded" style="border: 1px solid var(--color-border-darker); padding: 0.2em 0.5em; font-size: 10px;">
+              User
+            </th>
+            <th class="txt-small txt-uppercase txt-faded" style="border: 1px solid var(--color-border-darker); padding: 0.2em 0.5em; text-align: right; font-size: 10px;">
+              Messages
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @top_posters_all_time.each do |user| %>
+            <tr>
+              <td class="txt-medium" style="border: 1px solid var(--color-border-darker); padding: 0.2em 0.5em; font-size: 12px;">
+                <div class="flex gap-inline align-items-center">
+                  <%= link_to user_path(user), class: "flex gap-inline align-items-center hover-target", style: "text-decoration: none; font-size: 12px;" do %>
+                    <% if user.avatar.attached? %>
+                      <%= image_tag user.avatar, 
+                          class: "avatar",
+                          style: "width: 16px; height: 16px; border-radius: 50%; margin-right: 8px; transform: translateY(2px);",
+                          alt: user.name,
+                          loading: "lazy" %>
+                    <% else %>
+                      <div class="avatar" style="width: 16px; height: 16px; border-radius: 50%; font-size: 8px; margin-right: 8px; transform: translateY(2px);">
+                        <%= user.name.first.upcase %>
+                      </div>
+                    <% end %>
+                    <span class="txt-truncate" style="font-size: 12px;"><%= user.name %></span>
+                  <% end %>
+                </div>
+              </td>
+              <td class="txt-medium" style="border: 1px solid var(--color-border-darker); padding: 0.2em 0.5em; text-align: right; font-size: 12px;">
+                <%= number_with_delimiter(user.message_count) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Daily stats table -->
+  <div class="margin-block pad-inline pad-block border-radius">
+    <h2 class="txt-h3 margin-block-end">Total Messages (30 days)</h2>
+    <div class="overflow-x-auto">
+      <table style="border-collapse: collapse; width: 100%; font-size: 12px;">
+        <thead>
+          <tr>
+            <th class="txt-small txt-uppercase txt-faded" style="border: 1px solid var(--color-border-darker); padding: 0.2em 0.5em; font-size: 10px;">
+              Date
+            </th>
+            <th class="txt-small txt-uppercase txt-faded" style="border: 1px solid var(--color-border-darker); padding: 0.2em 0.5em; text-align: right; font-size: 10px;">
+              Messages
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @daily_stats.each do |stat| %>
+            <tr>
+              <td class="txt-medium" style="border: 1px solid var(--color-border-darker); padding: 0.2em 0.5em; font-size: 12px;">
+                <%= stat.date %>
+              </td>
+              <td class="txt-medium" style="border: 1px solid var(--color-border-darker); padding: 0.2em 0.5em; text-align: right; font-size: 12px;">
+                <%= number_with_delimiter(stat.count) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Graph section -->
+  <div class="margin-block pad-inline pad-block border-radius">
+    <div style="height: 300px;">
+      <%
+        # Use all-time stats
+        max_count = @all_time_stats.map(&:count).max
+        total_days = @all_time_stats.length
+        
+        # Fixed dimensions
+        graph_height = 240
+        left_margin = 8
+        right_margin = 2
+        bottom_margin = 25
+        
+        # Calculate bar width and spacing
+        available_width = 100 - left_margin - right_margin
+        min_bar_width = 0.15
+        bar_spacing = 0.05
+        bar_width = [(available_width - (total_days * bar_spacing)) / total_days, min_bar_width].max
+        
+        # Show fewer labels for readability
+        label_interval = (total_days / 6.0).ceil
+      %>
+
+      <svg width="100%" height="100%" style="background: var(--color-bg); border-radius: 4px;">
+        <!-- Y-axis labels -->
+        <% 
+          # Calculate y-axis ticks at 100 message intervals
+          y_ticks = (0..max_count).step(100).to_a
+          
+          # Only add max if it's significantly different from the last tick
+          last_tick = y_ticks.last
+          if (max_count - last_tick) > 50
+            y_ticks << max_count
+          end
+          
+          # Remove any ticks that are too close together
+          y_ticks = y_ticks.each_with_index.reject do |tick, i|
+            next_tick = y_ticks[i + 1]
+            next_tick && (next_tick - tick) < 50
+          end.map(&:first)
+        %>
+
+        <!-- Horizontal grid lines -->
+        <% y_ticks.each do |tick| %>
+          <% y_pos = (graph_height - bottom_margin) - (tick.to_f / max_count * (graph_height - bottom_margin - 10)) %>
+          <line 
+            x1="<%= left_margin %>%" 
+            x2="<%= 100 - right_margin %>%" 
+            y1="<%= y_pos %>" 
+            y2="<%= y_pos %>" 
+            stroke="var(--color-border-darker)" 
+            stroke-width="1"
+            stroke-opacity="0.25"
+            stroke-dasharray="4,4"
+          />
+        <% end %>
+
+        <% y_ticks.each do |tick| %>
+          <% y_pos = (graph_height - bottom_margin) - (tick.to_f / max_count * (graph_height - bottom_margin - 10)) %>
+          
+          <!-- Tick mark -->
+          <line 
+            x1="<%= left_margin - 0.5 %>%" 
+            x2="<%= left_margin %>%" 
+            y1="<%= y_pos %>" 
+            y2="<%= y_pos %>" 
+            stroke="var(--color-border-darker)" 
+            stroke-width="1"
+          />
+          
+          <!-- Label -->
+          <text 
+            x="<%= left_margin - 1 %>%" 
+            y="<%= y_pos + 4 %>" 
+            text-anchor="end"
+            style="font-size: 10px; fill: var(--color-text);"
+          >
+            <%= number_with_delimiter(tick) %>
+          </text>
+        <% end %>
+
+        <!-- Y-axis -->
+        <line 
+          x1="<%= left_margin %>%" 
+          y1="10" 
+          x2="<%= left_margin %>%" 
+          y2="<%= graph_height - bottom_margin %>" 
+          stroke="var(--color-border-darker)" 
+          stroke-width="1"
+        />
+
+        <!-- Bars -->
+        <% @all_time_stats.each_with_index do |stat, index| %>
+          <% 
+            bar_height = (stat.count.to_f / max_count * (graph_height - bottom_margin - 10)).round
+            x_pos = left_margin + (index * (bar_width + bar_spacing))
+          %>
+          
+          <rect 
+            x="<%= x_pos %>%" 
+            y="<%= graph_height - bottom_margin - bar_height %>" 
+            width="<%= bar_width %>%"
+            height="<%= bar_height %>"
+            fill="var(--color-border-darker)"
+          />
+
+          <!-- X-axis labels -->
+          <% if index % label_interval == 0 %>
+            <text 
+              x="<%= x_pos %>%" 
+              y="<%= graph_height - 5 %>" 
+              text-anchor="start"
+              style="font-size: 10px; fill: var(--color-text);"
+              transform="rotate(-45, <%= x_pos %>%, <%= graph_height - 5 %>)"
+            >
+              <%= stat.date.split('-')[1..2].join('/') %>
+            </text>
+          <% end %>
+        <% end %>
+
+        <!-- X-axis line -->
+        <line 
+          x1="<%= left_margin %>%" 
+          y1="<%= graph_height - bottom_margin %>" 
+          x2="<%= 100 - right_margin %>%" 
+          y2="<%= graph_height - bottom_margin %>" 
+          stroke="var(--color-border-darker)" 
+          stroke-width="1"
+        />
+      </svg>
+    </div>
+  </div>
+</section> 
