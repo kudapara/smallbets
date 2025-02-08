@@ -10,7 +10,7 @@ module EmojiHelper
     "🌶️" => "Pepper",
     "🎉" => "Party popper",
 
-    "😂" => "Face with tears of joy",
+    "😂" => "Tears of joy",
     "😅" => "Sweat",
     "🤯" => "Exploding brain",
     "🤔" => "Thinking",
