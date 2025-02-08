@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Small Bets</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, interactive-widget=resizes-content">
+    <meta name="view-transition" content="same-origin">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <%= stylesheet_link_tag *Stylesheets.from("marketing"), "data-turbo-track": "reload" %>
+
+    <%= yield :head %>
+</head>
+
+<body>
+    <main id="main-content">
+        <%= yield %>
+    </main>
+</body>
+</html>
