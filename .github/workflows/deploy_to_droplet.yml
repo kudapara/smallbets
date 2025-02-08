@@ -47,8 +47,8 @@ jobs:
           sshpass -p ${{ secrets.DROPLET_PASSWORD }} ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} "
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }} &&
             docker pull smallbets/campfire:${{ github.ref_name }} &&
-            docker stop campfire &&
-            docker rm campfire &&
+            docker stop campfire || true &&
+            docker rm campfire || true &&
             docker run \
               --name campfire \
               --restart unless-stopped \
