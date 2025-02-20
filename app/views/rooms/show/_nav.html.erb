@@ -13,5 +13,7 @@
 
   <%= link_to_edit_room(room) %>
 
-  <%= render "rooms/involvements/bell", room: room %>
+  <% unless hotwire_native_app? %>
+    <%= render "rooms/involvements/bell", room: room %>
+  <% end %>
 <% end %>

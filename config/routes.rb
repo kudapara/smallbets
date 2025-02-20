@@ -148,6 +148,10 @@ Rails.application.routes.draw do
 
   resource :unfurl_link, only: :create
 
+  resources :configurations, only: [] do
+    get :ios_v1, on: :collection
+  end
+
   get "webmanifest"    => "pwa#manifest"
   get "service-worker" => "pwa#service_worker"
 

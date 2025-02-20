@@ -76,7 +76,7 @@
     </button>
   </div>
 
-  <div class="flex align-end sidebar__tools gap justify-end">
+  <div class="flex align-end sidebar__tools gap justify-end d-hotwire-native-none">
     <%= link_to user_profile_path, class: "btn avatar flex-item-no-shrink sidebar__tool" do %>
       <%= avatar_image_tag(Current.user, size: 48, style: "view-transition-name: avatar-#{Current.user.id}") %>
       <span class="for-screen-reader"><%= Current.user.name %></span>

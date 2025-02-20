@@ -2,7 +2,7 @@
   <div class="directs directs--new flex flex-column gap">
     <%= form_with model: @room, class: "flex gap flex-item-grow", data: {
           controller: "form", action: "keydown.esc->form#cancel" } do |form| %>
-      <%= link_to user_sidebar_path, class: "btn flex-item-no-shrink", data: { turbo_frame: "user_sidebar", form_target: "cancel" } do %>
+      <%= link_to user_sidebar_path, class: "btn flex-item-no-shrink d-hotwire-native-none", data: { turbo_frame: "user_sidebar", form_target: "cancel" } do %>
         <%= image_tag "arrow-left.svg", aria: { hidden: "true" } %>
         <span class="for-screen-reader">Cancel changes</span>
       <% end %>

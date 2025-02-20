@@ -21,6 +21,9 @@
     <%= tag.link rel: "apple-touch-icon", href: fresh_account_logo_path %>
 
     <%= stylesheet_link_tag *(Stylesheets.from("application") + Stylesheets.vendor_stylesheets), "data-turbo-track": "reload" %>
+    <% if hotwire_native_app? %>
+      <%= stylesheet_link_tag "native", "data-turbo-track": "reload" %>
+    <% end %>
     <%= custom_styles_tag %>
 
     <%= javascript_importmap_tags %>

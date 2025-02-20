@@ -61,7 +61,7 @@
 <% content_for :footer do %>
   <div class="composer flex align-end gap">
     <%= link_to room_path(@return_to_room),
-            class: "btn flex-item-no-shrink margin-block-end", style: "view-transition-name: input-switcher; --btn-border-radius: 0.5em" do %>
+            class: "btn flex-item-no-shrink margin-block-end d-hotwire-native-none", style: "view-transition-name: input-switcher; --btn-border-radius: 0.5em" do %>
       <%= image_tag "arrow-left.svg", aria: { hidden: "true" } %>
       <span class="for-screen-reader">Exit search </span>
     <% end %>

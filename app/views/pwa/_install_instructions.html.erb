@@ -1,4 +1,4 @@
-<% unless platform.chrome? || (platform.firefox? && !platform.android?) %>
+<% unless platform.chrome? || (platform.firefox? && !platform.android?) || hotwire_native_app? %>
   <details class="notifications-help pwa__instructions hide-in-pwa" data-controller="pwa-install" data-pwa-install-prompting-class="pwa--can-install" data-notifications-target="details">
     <summary class="btn">
       <%= image_tag "external/install.svg", aria: { hidden: "true" }, size: 20 %>

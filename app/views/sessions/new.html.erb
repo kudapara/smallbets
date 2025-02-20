@@ -11,7 +11,7 @@
         <div class="txt-medium">You can find your invite in your membership email receipt. If you need help finding it, contact support@smallbets.com.</div>
       </fieldset>
   
-      <%= form_with url: auth_tokens_url, class: "flex flex-column gap", data: { turbo: false } do |form| %>
+      <%= form_with url: auth_tokens_url, class: "flex flex-column gap", data: { turbo: hotwire_native_app? } do |form| %>
         <fieldset class="flex flex-column gap center-block upad">
           <legend class="txt-large txt-align-center"><strong>Member Login</strong></legend>
   
@@ -26,10 +26,14 @@
               <%= image_tag "email.svg", role: "presentation", size: 24, class: "colorize--black" %>
             </label>
           </div>
-  
-          <%= form.button class: "btn btn--reversed center txt-large", type: "submit", name: "log_in" do %>
-            <%= image_tag "arrow-right.svg", role: "presentation" %>
-            <span class="for-screen-reader">Go</span>
+
+          <% if hotwire_native_app? %>
+            <%= form.submit "Sign in", class: "btn btn-primary w-100", data: { controller: "bridge--button", bridge_title: "Submit" } %>
+          <% else %>
+            <%= form.button class: "btn btn--reversed center txt-large", type: "submit", name: "log_in" do %>
+              <%= image_tag "arrow-right.svg", role: "presentation" %>
+              <span class="for-screen-reader">Go</span>
+            <% end %>
           <% end %>
         </fieldset>
       <% end %>

@@ -1,7 +1,7 @@
 <% content_for :nav do %>
   <div class="searches__query flex align-center gap pad-block-start-half">
     <%= link_to room_path(last_room_visited),
-                class: "btn", style: "--btn-border-radius: 0.5em" do %>
+                class: "btn d-hotwire-native-none", style: "--btn-border-radius: 0.5em" do %>
       <%= image_tag "arrow-left.svg", aria: { hidden: "true" } %>
       <span class="for-screen-reader">Back</span>
     <% end %>
