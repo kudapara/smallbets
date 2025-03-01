@@ -56,7 +56,7 @@ ARG GIT_REVISION
 ENV GIT_REVISION=$GIT_REVISION
 
 # Expose app ports
-EXPOSE 80 443 3000
+EXPOSE 3000
 
 COPY script/admin/full-backup /etc/cron.daily/
 COPY script/admin/db-backup /etc/cron.hourly/

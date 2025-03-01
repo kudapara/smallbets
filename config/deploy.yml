@@ -24,9 +24,6 @@ env:
   clear:
     DISABLE_SSL: "true"
     RAILS_ENV: "production"
-    GUMROAD_ON: "true"
-    AWS_DEFAULT_REGION: "us-east-1"
-    GUMROAD_PRODUCT_ID: "wcsyxHMxHPOn2PNrBLmKsw=="
 
   secret:
     - SECRET_KEY_BASE
@@ -34,7 +31,10 @@ env:
     - VAPID_PRIVATE_KEY
     - AWS_ACCESS_KEY_ID
     - AWS_SECRET_ACCESS_KEY
+    - AWS_DEFAULT_REGION
     - GUMROAD_ACCESS_TOKEN
+    - GUMROAD_ON
+    - GUMROAD_PRODUCT_ID
     - WEBHOOK_SECRET
 
 volumes:

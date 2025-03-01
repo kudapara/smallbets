@@ -15,3 +15,6 @@ dump.rdb
 # Ignore Kamal secrets
 .kamal/secrets
 
+
+# Ignore local GitHub Actions files
+.github/.env
