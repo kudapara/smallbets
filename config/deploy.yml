@@ -26,6 +26,7 @@ env:
     RAILS_ENV: "production"
 
   secret:
+    - APP_VERSION
     - SECRET_KEY_BASE
     - VAPID_PUBLIC_KEY
     - VAPID_PRIVATE_KEY
