@@ -8,7 +8,7 @@ servers:
 
 proxy:
   ssl: true
-  host: chat2.smallbets.com
+  host: chat.smallbets.com
   app_port: 3000
 
 registry:
