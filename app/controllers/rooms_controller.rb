@@ -3,7 +3,6 @@ class RoomsController < ApplicationController
   before_action :set_membership, only: %i[ show ]
   before_action :ensure_has_real_name, only: %i[ show ]
   before_action :ensure_can_administer, only: %i[ update destroy ]
-  before_action :remember_last_room_visited, only: :show
 
   def index
     redirect_to room_url(Current.user.rooms.last)
