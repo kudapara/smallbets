@@ -46,6 +46,7 @@ jobs:
       - name: Add host key to known hosts
         run: |
           mkdir -p ~/.ssh
+          echo "StrictHostKeyChecking=no" >> ~/.ssh/config
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
       - name: Create Kamal secrets file
