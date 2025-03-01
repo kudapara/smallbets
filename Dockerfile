@@ -55,11 +55,15 @@ ENV APP_VERSION=$APP_VERSION
 ARG GIT_REVISION
 ENV GIT_REVISION=$GIT_REVISION
 
-# Expose ports for HTTP and HTTPS
-EXPOSE 80 443
+# Expose app ports
+EXPOSE 80 443 3000
 
 COPY script/admin/full-backup /etc/cron.daily/
 COPY script/admin/db-backup /etc/cron.hourly/
+
+# Add health check to verify the application is running
+HEALTHCHECK --interval=5s --timeout=3s --start-period=30s --retries=3 \
+  CMD curl -f http://localhost:3000/up || exit 1
 
 # Start the server by default, this can be overwritten at runtime
 CMD service cron start && bin/configure && bin/boot

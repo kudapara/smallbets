@@ -11,3 +11,7 @@ tmp/
 .ruby-gemset
 .env
 dump.rdb
+
+# Ignore Kamal secrets
+.kamal/secrets
+

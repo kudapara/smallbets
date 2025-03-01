@@ -1,0 +1,41 @@
+service: campfire
+
+image: smallbets/campfire
+
+servers:
+  web:
+    - 5.161.17.168
+
+proxy:
+  ssl: true
+  host: chat2.smallbets.com
+  app_port: 3000
+
+registry:
+  username: dvassallo
+
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+builder:
+  arch: amd64
+
+env:
+  clear:
+    DISABLE_SSL: "true"
+    RAILS_ENV: "production"
+    GUMROAD_ON: "true"
+    AWS_DEFAULT_REGION: "us-east-1"
+    GUMROAD_PRODUCT_ID: "wcsyxHMxHPOn2PNrBLmKsw=="
+
+  secret:
+    - SECRET_KEY_BASE
+    - VAPID_PUBLIC_KEY
+    - VAPID_PRIVATE_KEY
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+    - GUMROAD_ACCESS_TOKEN
+    - WEBHOOK_SECRET
+
+volumes:
+  - "/disk/campfire/:/rails/storage/"
