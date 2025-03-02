@@ -4,15 +4,15 @@ image: smallbets/campfire
 
 servers:
   web:
-    - ${SERVER_IP}
+    - <%= ENV.fetch("SERVER_IP") %>
 
 proxy:
   ssl: true
-  host: ${PROXY_HOST}
+  host: <%= ENV.fetch("PROXY_HOST") %>
   app_port: 3000
 
 registry:
-  username: ${REGISTRY_USERNAME}
+  username: <%= ENV.fetch("REGISTRY_USERNAME") %>
 
   password:
     - KAMAL_REGISTRY_PASSWORD
