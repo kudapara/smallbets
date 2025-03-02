@@ -75,8 +75,14 @@ jobs:
         run: kamal setup
         env:
           KAMAL_REGISTRY_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          SERVER_IP: ${{ secrets.SERVER_IP }}
+          PROXY_HOST: ${{ secrets.DOMAIN }}
+          REGISTRY_USERNAME: ${{ secrets.DOCKER_USERNAME }}
 
       - name: Deploy with Kamal
         run: kamal deploy
         env:
           KAMAL_REGISTRY_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          SERVER_IP: ${{ secrets.SERVER_IP }}
+          PROXY_HOST: ${{ secrets.DOMAIN }}
+          REGISTRY_USERNAME: ${{ secrets.DOCKER_USERNAME }}

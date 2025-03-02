@@ -4,15 +4,15 @@ image: smallbets/campfire
 
 servers:
   web:
-    - 5.161.17.168
+    - ${SERVER_IP}
 
 proxy:
   ssl: true
-  host: chat.smallbets.com
+  host: ${PROXY_HOST}
   app_port: 3000
 
 registry:
-  username: dvassallo
+  username: ${REGISTRY_USERNAME}
 
   password:
     - KAMAL_REGISTRY_PASSWORD
