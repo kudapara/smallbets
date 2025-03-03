@@ -23,6 +23,8 @@ module Users::AvatarsHelper
   end
   
   def avatar_image_tag(user, **options)
+    # Override any loading option to use eager loading instead of lazy loading
+    options[:loading] = :eager
     image_tag user_image_path(user), aria: { hidden: "true" }, **options
   end
   
