@@ -47,7 +47,6 @@
            class="flex position-relative flex-column rooms-list overflow margin-block-end">
         <div class="flex gap-half margin-block-end align-center">
           <h1 class="txt-medium">My Rooms</h1>
-          <%= render "users/sidebars/inbox_actions" %>
         </div>
 
         <%= render "users/sidebars/rooms/shared_rooms_list", list_name: :starred_rooms, memberships: @starred_memberships %>

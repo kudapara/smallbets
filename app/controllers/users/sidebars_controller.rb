@@ -5,7 +5,7 @@ class Users::SidebarsController < ApplicationController
     memberships           = Current.user.memberships.visible.without_thread_rooms.with_has_unread_notifications.includes(:room)
     @direct_memberships   = extract_direct_memberships(memberships)
     other_memberships     = memberships.without(@direct_memberships)
-    @all_memberships      = other_memberships.with_room_by_sort_preference(Current.user.preference("all_rooms_sort_order"))
+    @all_memberships      = other_memberships.with_room_by_last_active_newest_first
     @starred_memberships  = other_memberships.with_room_by_last_active_newest_first
 
     @direct_memberships.select! { |m| m.room.messages_count > 0 }

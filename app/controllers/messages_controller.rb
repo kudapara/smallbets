@@ -89,7 +89,7 @@ class MessagesController < ApplicationController
       memberships = user.memberships.shared.visible
       {
         starred_rooms: memberships.with_room_by_last_active_newest_first,
-        shared_rooms: memberships.with_room_by_sort_preference(Current.user.preference("all_rooms_sort_order"))
+        shared_rooms: memberships.with_room_by_last_active_newest_first
       }.each do |list_name, memberships|
         user.broadcast_replace_to user, :rooms, target: list_name,
                                   partial: "users/sidebars/rooms/shared_rooms_list",
