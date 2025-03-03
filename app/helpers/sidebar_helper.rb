@@ -31,6 +31,6 @@ module SidebarHelper
   end
 
   def sidebar_membership_cache_key(prefix, membership)
-    "#{prefix}/#{membership.id}/#{membership.room.updated_at.to_i}/#{membership.room.messages_count}/#{membership.unread_at&.to_i}/#{membership.has_unread_notifications?}"
+    [ prefix, membership.room, membership.involvement, membership.unread?, membership.has_unread_notifications? ]
   end
 end
