@@ -14,6 +14,12 @@
   <%= link_to_edit_room(room) %>
 
   <% unless hotwire_native_app? %>
-    <%= render "rooms/involvements/bell", room: room %>
+    <div class="flex gap-half align-center">
+      <%= turbo_frame_tag dom_id(room, :involvement) do %>
+        <%= button_to_change_involvement(room, @membership.involvement) %>
+      <% end %>
+      
+      <%= render "rooms/involvements/notification_warning", room: room %>
+    </div>
   <% end %>
 <% end %>
