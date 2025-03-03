@@ -111,15 +111,17 @@
   }
 }
 
-.btn.everything {
-  border: 0;
-}
-
-.btn.mentions {
-  border: 0;
-}
-
+/* Default state: buttons have borders */
+.btn.everything,
+.btn.mentions,
 .btn.invisible {
+  border: var(--btn-border-size, 1px) solid var(--btn-border-color, var(--color-border-darker));
+}
+
+/* Remove borders only for involvement buttons in the sidebar */
+[data-type="list_node"] .btn.everything,
+[data-type="list_node"] .btn.mentions,
+[data-type="list_node"] .btn.invisible {
   border: 0;
 }
 
