@@ -18,21 +18,14 @@ class Membership < ApplicationRecord
         EXISTS (
           SELECT 1
           FROM messages
+          JOIN mentions ON mentions.message_id = messages.id
           WHERE messages.room_id = memberships.room_id
-            AND messages.created_at > COALESCE(memberships.unread_at, '1970-01-01')
-            AND (
-              memberships.involvement = 'everything'
-              OR (
-                memberships.involvement = 'mentions'
-                AND EXISTS (
-                  SELECT 1
-                  FROM mentions
-                  WHERE mentions.message_id = messages.id
-                    AND mentions.user_id = memberships.user_id
-                )
-              )
+            AND memberships.involvement NOT IN ('invisible')
+            AND mentions.user_id = memberships.user_id
+            AND messages.created_at >= COALESCE(
+              memberships.unread_at,
+              '#{Time.current.utc.iso8601}'
             )
-          LIMIT 1
         )
       SQL
     )
