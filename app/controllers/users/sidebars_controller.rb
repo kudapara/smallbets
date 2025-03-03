@@ -18,10 +18,18 @@ class Users::SidebarsController < ApplicationController
     end
 
     def find_direct_placeholder_users
-      exclude_user_ids = user_ids_already_in_direct_rooms_with_current_user.including(Current.user.id)
+      exclude_user_ids = Membership.active
+                         .joins("JOIN rooms ON memberships.room_id = rooms.id")
+                         .where(rooms: { type: "Rooms::Direct" })
+                         .where("rooms.id IN (SELECT room_id FROM memberships WHERE user_id = ? AND active = TRUE)", Current.user.id)
+                         .pluck(:user_id)
+                         .uniq
+                         .push(Current.user.id)
+      
       User.active.where.not(id: exclude_user_ids).order(:created_at).limit([ DIRECT_PLACEHOLDERS - exclude_user_ids.count, 0 ].max)
     end
 
+    # This method is no longer used, but kept for reference
     def user_ids_already_in_direct_rooms_with_current_user
       Membership.active.where(room_id: Current.user.rooms.directs.pluck(:id)).pluck(:user_id).uniq
     end
