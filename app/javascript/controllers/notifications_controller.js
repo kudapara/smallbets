@@ -13,7 +13,6 @@ export default class extends Controller {
     if (!pageIsTurboPreview()) {
       if (window.notificationsPreviouslyReady) {
         onNextEventLoopTick(() => this.dispatch("ready"))
-        this.element.style.display = "none";
       } else {
         const firstTimeReady = await this.isEnabled()
 
@@ -22,17 +21,14 @@ export default class extends Controller {
         if (firstTimeReady) {
           onNextEventLoopTick(() => this.dispatch("ready"))
           window.notificationsPreviouslyReady = true
-          this.element.style.display = "none";
         } else {
           this.#showBellAlert()
-          this.element.style.display = "inline-flex";
         }
       }
     }
   }
 
   async attemptToSubscribe() {
-    // Check if we're in a local development environment (http:)
     if (window.location.protocol === 'http:') {
       // For local development, just show the dialog without attempting to subscribe
       this.#revealNotAllowedNotice()

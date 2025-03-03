@@ -19,7 +19,9 @@
         <%= button_to_change_involvement(room, @membership.involvement) %>
       <% end %>
       
-      <%= render "rooms/involvements/notification_warning", room: room %>
+      <% if Current.user&.administrator? %>
+        <%= render "rooms/involvements/bell", room: room %>
+      <% end %> 
     </div>
   <% end %>
 <% end %>
