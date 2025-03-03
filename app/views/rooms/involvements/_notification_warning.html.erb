@@ -1,3 +1,4 @@
+<% if Current.user&.administrator? %>
 <span class="notification-warning"
     data-controller="notifications" data-notifications-subscriptions-url-value="<%= user_push_subscriptions_path %>" data-notifications-attention-class="btn--pulsing">
   <button class="btn btn--pulsing" data-action="click->notifications#attemptToSubscribe" data-notifications-target="bell">
@@ -40,4 +41,5 @@
       </form>
     </div>
   </dialog>
-</span> 
+</span>
+<% end %> 
