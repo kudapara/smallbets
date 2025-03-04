@@ -13,18 +13,16 @@ export default class extends Controller {
     if (!pageIsTurboPreview()) {
       if (window.notificationsPreviouslyReady) {
         onNextEventLoopTick(() => this.dispatch("ready"))
-        this.#hideNotificationBell()
+        this.#hideNotificationContainer()
       } else {
         const firstTimeReady = await this.isEnabled()
-
-        this.#pulseBellButton()
 
         if (firstTimeReady) {
           onNextEventLoopTick(() => this.dispatch("ready"))
           window.notificationsPreviouslyReady = true
-          this.#hideNotificationBell()
+          this.#hideNotificationContainer()
         } else {
-          this.#showBellAlert()
+          this.#showNotificationBell()
         }
       }
     }
@@ -88,13 +86,21 @@ export default class extends Controller {
     }
   }
 
-  #showBellAlert() {
+  #showNotificationBell() {
+    // Show the bell and the alert icon
     this.bellTarget.querySelectorAll("img").forEach(img => img.toggleAttribute("hidden"))
-  }
-
-  #pulseBellButton() {
+    
+    // Add the pulsing effect if it's the first run
     if (!this.#hasSeenFirstRun) {
       this.bellTarget.classList.add(this.attentionClass)
+    }
+  }
+
+  #hideNotificationContainer() {
+    // Hide the entire container when notifications are enabled
+    const container = document.getElementById('notification_bell_container')
+    if (container) {
+      container.style.display = 'none'
     }
   }
 
@@ -109,15 +115,8 @@ export default class extends Controller {
       .then(subscription => {
         this.#syncPushSubscription(subscription)
         this.dispatch("ready")
-        this.#hideNotificationBell()
+        this.#hideNotificationContainer()
       })
-  }
-
-  #hideNotificationBell() {
-    // Hide the bell when notifications are enabled
-    if (this.bellTarget) {
-      this.bellTarget.style.display = 'none'
-    }
   }
 
   async #syncPushSubscription(subscription) {

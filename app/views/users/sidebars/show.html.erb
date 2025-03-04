@@ -82,9 +82,7 @@
     <% end %>
 
     <% if Current.user&.administrator? %>
-      <span class="sidebar__tool">
-        <%= render "users/sidebars/bell" %>
-      </span>
+      <%= render "users/sidebars/bell" %>
     <% end %>
 
     <%= link_to inbox_path, class: "btn align-center gap txt-reversed sidebar__tool" do %>
