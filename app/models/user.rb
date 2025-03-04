@@ -146,7 +146,7 @@ class User < ApplicationRecord
     end
   
     def self.find_or_create_user_from_gumroad(attributes)
-      sale = GumroadAPI.sales(email: attributes[:email_address]).first
+      sale = GumroadAPI.successful_membership_sale(email: attributes[:email_address])
       User.create!(attributes.merge(membership_started_at: sale["created_at"], order_id: sale["order_id"])) if sale
     rescue ActiveRecord::RecordNotUnique
       user = User.active.find_by(email_address: attributes[:email_address])

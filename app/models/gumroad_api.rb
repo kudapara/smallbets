@@ -4,8 +4,12 @@ class GumroadAPI
   class << self
     attr_accessor :access_token
 
-    def sales(params = {})
-      all_sales = get("/sales", params.merge(product_id:))["sales"] || []
+    def successful_membership_sale(email:)
+      product_ids.lazy.map { |product_id| successful_sales(email:, product_id:).first }.find(&:itself)
+    end
+
+    def successful_sales(params = {})
+      all_sales = get("/sales", params)["sales"] || []
 
       # Ignore gift purchases as these are returned via match on buyer's email and not the giftee email
       all_sales.reject { |sale| sale["refunded"] || sale["chargedback"] || sale["is_gift_sender_purchase"] }
@@ -24,6 +28,10 @@ class GumroadAPI
 
     def unsubscribe(subscription_id)
       delete("/resource_subscriptions/#{subscription_id}")
+    end
+
+    def product_ids
+      ENV.fetch("GUMROAD_PRODUCT_IDS", "").split(",").map(&:strip).compact_blank
     end
 
     private
@@ -80,10 +88,6 @@ class GumroadAPI
       else
         { "success" => false, "error" => response.message, "code" => response.code }
       end
-    end
-
-    def product_id
-      ENV["GUMROAD_PRODUCT_ID"]
     end
   end
 end

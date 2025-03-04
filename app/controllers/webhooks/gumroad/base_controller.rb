@@ -15,7 +15,7 @@ class Webhooks::Gumroad::BaseController < ApplicationController
   end
 
   def ignore_unrelated_products
-    if params["product_id"].to_s != ENV["GUMROAD_PRODUCT_ID"].to_s
+    unless GumroadAPI.product_ids.include?(params["product_id"].to_s)
       Rails.logger.info("Ignored webhook for unrelated product_id: #{params["product_id"]}")
       render(json: { status: "ignored" }, status: :ok)
     end
