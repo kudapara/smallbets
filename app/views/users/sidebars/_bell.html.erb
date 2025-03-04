@@ -1,12 +1,11 @@
 <span>
   <span class="button_to_change_notifying"
       data-controller="notifications" data-notifications-subscriptions-url-value="<%= user_push_subscriptions_path %>" data-notifications-attention-class="btn--pulsing">
-    <%= turbo_frame_tag dom_id(room, :notifications), data: {
-          controller: "turbo-frame", action: "notifications:ready@window->turbo-frame#load", turbo_frame_url_param: notifications_ready_room_involvement_path(room) } do %>
-      <button class="btn" data-action="click->notifications#attemptToSubscribe" data-notifications-target="bell">
+    <%= turbo_frame_tag "global_notifications" do %>
+      <button class="btn align-center gap txt-reversed" data-action="click->notifications#attemptToSubscribe" data-notifications-target="bell">
         <%= image_tag "notification-bell-loading.svg", size: 20, aria: { hidden: "true" } %>
         <%= image_tag "notification-bell-alert.svg", size: 20, aria: { hidden: "true" }, hidden: true %>
-        <span class="for-screen-reader">Enable notifications for this <%= room.direct? ? "Ping" : "room" %></span>
+        <span class="for-screen-reader">Enable notifications for all rooms</span>
       </button>
     <% end %>
 
@@ -35,4 +34,4 @@
       </div>
     </dialog>
   </span>
-</span>
+</span> 

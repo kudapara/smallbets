@@ -13,6 +13,7 @@ export default class extends Controller {
     if (!pageIsTurboPreview()) {
       if (window.notificationsPreviouslyReady) {
         onNextEventLoopTick(() => this.dispatch("ready"))
+        this.#hideNotificationBell()
       } else {
         const firstTimeReady = await this.isEnabled()
 
@@ -21,6 +22,7 @@ export default class extends Controller {
         if (firstTimeReady) {
           onNextEventLoopTick(() => this.dispatch("ready"))
           window.notificationsPreviouslyReady = true
+          this.#hideNotificationBell()
         } else {
           this.#showBellAlert()
         }
@@ -107,7 +109,15 @@ export default class extends Controller {
       .then(subscription => {
         this.#syncPushSubscription(subscription)
         this.dispatch("ready")
+        this.#hideNotificationBell()
       })
+  }
+
+  #hideNotificationBell() {
+    // Hide the bell when notifications are enabled
+    if (this.bellTarget) {
+      this.bellTarget.style.display = 'none'
+    }
   }
 
   async #syncPushSubscription(subscription) {

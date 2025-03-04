@@ -81,6 +81,12 @@
       <span class="for-screen-reader"><%= Current.user.name %></span>
     <% end %>
 
+    <% if Current.user&.administrator? %>
+      <span class="sidebar__tool">
+        <%= render "users/sidebars/bell" %>
+      </span>
+    <% end %>
+
     <%= link_to inbox_path, class: "btn align-center gap txt-reversed sidebar__tool" do %>
       <%= image_tag "inbox.svg", size: 20, aria: { hidden: "true" } %>
       <span class="for-screen-reader">Inbox</span>
