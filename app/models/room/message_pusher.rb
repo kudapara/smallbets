@@ -6,20 +6,14 @@ class Room::MessagePusher
   end
 
   def push
-    build_payload.tap do |payload|
-      push_to_users_involved_in_mentions(payload)
+    if room.direct?
+      push_to_everyone_in_room(build_direct_payload)
+    else
+      push_to_mentionees(build_shared_payload)
     end
   end
 
   private
-    def build_payload
-      if room.direct?
-        build_direct_payload
-      else
-        build_shared_payload
-      end
-    end
-
     def build_direct_payload
       {
         title: message.creator.name,
@@ -36,7 +30,11 @@ class Room::MessagePusher
       }
     end
 
-    def push_to_users_involved_in_mentions(payload)
+    def push_to_everyone_in_room(payload)
+      enqueue_payload_for_delivery payload, relevant_subscriptions
+    end
+
+    def push_to_mentionees(payload)
       enqueue_payload_for_delivery payload, push_subscriptions_for_mentionable_users(message.mentionees)
     end
 
