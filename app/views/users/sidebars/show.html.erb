@@ -75,7 +75,7 @@
     </button>
   </div>
 
-  <div class="flex align-end sidebar__tools gap justify-end d-hotwire-native-none">
+  <div class="flex align-end sidebar__tools gap-half justify-end d-hotwire-native-none">
     <%= link_to user_profile_path, class: "btn avatar flex-item-no-shrink sidebar__tool" do %>
       <%= avatar_image_tag(Current.user, size: 48, style: "view-transition-name: avatar-#{Current.user.id}") %>
       <span class="for-screen-reader"><%= Current.user.name %></span>
@@ -98,9 +98,11 @@
       <span class="for-screen-reader">Stats</span>
     <% end %>
 
-    <%= link_to edit_account_path, class: "btn align-center gap txt-reversed sidebar__tool" do %>
-      <%= image_tag "settings.svg", size: 20, aria: { hidden: "true" }, style: "view-transition-name: account-settings" %>
-      <span class="for-screen-reader">Account Settings</span>
+    <% if Current.user&.administrator? %>
+      <%= link_to edit_account_path, class: "btn align-center gap txt-reversed sidebar__tool" do %>
+        <%= image_tag "settings.svg", size: 20, aria: { hidden: "true" }, style: "view-transition-name: account-settings" %>
+        <span class="for-screen-reader">Account Settings</span>
+      <% end %>
     <% end %>
   </div>
 <% end %>
