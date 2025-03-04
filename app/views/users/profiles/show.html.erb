@@ -71,7 +71,7 @@
 
         <label class="flex align-center gap flex-item-grow input input--actor">
           <%= form.email_field :email_address, class: "input txt-large", value: @user.email_address, autocomplete: "username",
-                               placeholder: "Enter your email address", required: false, disabled: true %>
+                               placeholder: "Enter your email address", required: true %>
           <%= image_tag "email.svg", role: "presentation", size: 24, class: "colorize--black" %>
         </label>
       </div>
