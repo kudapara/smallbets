@@ -4,6 +4,9 @@ class Users::AvatarsController < ApplicationController
   rescue_from(ActiveSupport::MessageVerifier::InvalidSignature) { head :not_found }
 
   def show
+    # Skip session cookies for avatar requests
+    request.session_options[:skip] = true
+    
     @user = User.from_avatar_token(params[:user_id])
 
     if stale?(etag: @user)
