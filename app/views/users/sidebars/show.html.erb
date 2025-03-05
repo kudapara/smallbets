@@ -24,10 +24,6 @@
              >
           <%= render partial: "users/sidebars/rooms/direct", collection: @direct_memberships, as: :membership, cached: true %>
         </div>
-
-        <div contents>
-          <%= render partial: "users/sidebars/rooms/direct_placeholder", collection: @direct_placeholder_users, as: :user %>
-        </div>
       </div>
     </turbo-frame>
 
