@@ -16,6 +16,7 @@
 /* Attachments */
 .composer__attachment-btn {
   --hover-filter: brightness(0.85);
+  margin-inline-end: -0.5em;
 
   @media (any-hover: hover) {
     &:where(:not(:active):hover) {
@@ -80,7 +81,8 @@
 .composer__rich-text-btn {
   --hover-filter: brightness(0.85);
 
-  display: none;
+  display: inline-flex;
+  margin-inline-start: -0.5em;
 
   @media (any-hover: hover) {
     &:where(:not(:active):hover) {
@@ -94,27 +96,22 @@
   }
 }
 
-@media (min-width: 135ch) and (any-hover: hover) and (pointer: fine) {
-  .composer__rich-text-btn {
-    display: inline-flex;
+/* Rich text editor styling for all devices */
+.composer--rich-text {
+  trix-toolbar {
+    display: block;
   }
 
-  .composer--rich-text {
-    trix-toolbar {
-      display: block;
-    }
-
-    trix-editor.input {
-      margin-block-start: var(--block-space-half);
-    }
+  trix-editor.input {
+    margin-block-start: var(--block-space-half);
   }
+}
 
-  .composer--edit trix-toolbar {
-    border-block-end: 1px solid var(--color-border);
-    margin-inline: -0.8em;
-    padding-inline: 0.3em;
-    padding-block-end: 0.5em;
-  }
+.composer--edit trix-toolbar {
+  border-block-end: 1px solid var(--color-border);
+  margin-inline: -0.8em;
+  padding-inline: 0.3em;
+  padding-block-end: 0.5em;
 }
 
 /* Typing indicator */
