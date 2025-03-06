@@ -7,7 +7,7 @@
 .composer__input-hint,
 .composer__context-btn {
   .composer:has(.composer__input:focus-within) & {
-    @media (max-width: 135ch) {
+    @media (max-width: 120ch) {
       display: none;
     }
   }
@@ -124,7 +124,7 @@
               opacity 300ms ease;
 
   .sidebar & {
-    @media (min-width: 135ch) {
+    @media (min-width: 120ch) {
       margin-inline-start: 2vw;
     }
   }
@@ -152,5 +152,11 @@
   .composer__rich-text-btn,
   label:has(input[type="file"]) {
     cursor: pointer;
+  }
+}
+
+@media (min-width: 120ch) and (any-hover: hover) and (pointer: fine) {
+  .composer__rich-text-btn {
+    display: inline-flex;
   }
 }

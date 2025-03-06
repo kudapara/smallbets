@@ -214,13 +214,13 @@
 
 /* Screen sizes */
 .hide-on-mobile {
-  @media (max-width: 135ch) {
+  @media (max-width: 120ch) {
     display: none;
   }
 }
 
 .hide-on-desktop {
-  @media (min-width: 135ch) {
+  @media (min-width: 120ch) {
     display: none;
   }
 }

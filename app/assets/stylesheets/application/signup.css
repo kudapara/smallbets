@@ -12,7 +12,7 @@
   overflow: unset;
   padding: var(--nametag-padding);
 
-  @media (max-width: 135ch) {
+  @media (max-width: 120ch) {
     --nametag-padding: calc(var(--block-space) * 1.5);
   }
 }

@@ -18,7 +18,7 @@
   padding-inline: var(--sidebar-inline-space);
   position: fixed;
 
-  @media (min-width: 135ch) {
+  @media (min-width: 120ch) {
     inline-size: calc(var(--sidebar-width));
     inset-inline-start: auto;
   }
@@ -57,7 +57,7 @@
     }
   }
 
-  @media (min-width: 135ch) {
+  @media (min-width: 120ch) {
     display: none;
     inset-block-start: var(--block-space);
   }
@@ -65,7 +65,7 @@
   .open & {
     inset-block-start: var(--block-space);
 
-    @media (max-width: 135ch) {
+    @media (max-width: 120ch) {
       inset-inline-start: var(--sidebar-inline-space);
 
       & img {
@@ -101,7 +101,7 @@
   z-index: 3;
 
   .open & {
-    @media (max-width: 135ch) {
+    @media (max-width: 120ch) {
       -webkit-mask-image: linear-gradient(to left, oklch(0% 0 0 / 1) 85%, oklch(0% 0 0 / 0) 99%);
       mask-image: linear-gradient(to left, oklch(0% 0 0 / 1) 85%, oklch(0% 0 0 / 0) 99%);
       padding-inline-start: calc(var(--btn-size) + var(--sidebar-inline-space) + (var(--column-gap) * 2.5));
@@ -295,7 +295,7 @@
 
     max-inline-size: calc(100dvw - (var(--btn-size) * var(--num-buttons)) - (var(--btn-size) + max(var(--inline-space), 1vw)) - ((var(--inline-space) + 1.8em) * 2) - var(--sidebar-width) - var(--inline-space) * var(--num-buttons) - 1.2em);
 
-    @media (max-width: 135ch) {
+    @media (max-width: 120ch) {
       --num-buttons: 2;
 
       .account-has-logo & {
@@ -331,7 +331,7 @@
   mask-image: var(--mask);
   position: relative;
 
-  @media (max-width: 135ch) {
+  @media (max-width: 120ch) {
     display: flex;
   }
 
