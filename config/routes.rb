@@ -88,7 +88,6 @@ Rails.application.routes.draw do
         get :notifications_ready, on: :member
       end
       resources :merges, only: :create
-      resources :visits, only: :create
     end
 
     get "@:message_id", to: "rooms#show", as: :at_message

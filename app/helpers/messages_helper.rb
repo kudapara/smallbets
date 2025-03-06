@@ -9,7 +9,7 @@ module MessagesHelper
   
   def message_area_tag(room, &)
     tag.div id: "message-area", class: "message-area", contents: true, data: {
-      controller: "messages presence drop-target room-tracker",
+      controller: "messages presence drop-target",
       action: [ messages_actions, drop_target_actions, presence_actions ].join(" "),
       messages_first_of_day_class: "message--first-of-day",
       messages_first_unread_class: "message__new-separator",
@@ -19,9 +19,7 @@ module MessagesHelper
       messages_threaded_class: "message--threaded",
       messages_loading_up_class: "message--loading-up",
       messages_loading_down_class: "message--loading-down",
-      messages_page_url_value: room_messages_url(room),
-      room_tracker_room_id_value: room.id,
-      room_tracker_url_value: room_visits_url(room)
+      messages_page_url_value: room_messages_url(room)
     }, &
   end
 
