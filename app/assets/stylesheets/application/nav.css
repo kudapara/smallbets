@@ -13,7 +13,7 @@
   &:has(.room--current) {
     padding-inline: var(--inline-space);
 
-    @media (min-width: 100ch) {
+    @media (min-width: 135ch) {
       margin-inline-start: 5vw;
 
       .room--current {
@@ -31,7 +31,7 @@
   }
 
   .sidebar & {
-    @media (max-width: 100ch) {
+    @media (max-width: 135ch) {
       padding-block: var(--block-space-half);
 
       &::before {

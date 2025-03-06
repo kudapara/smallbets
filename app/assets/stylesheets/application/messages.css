@@ -82,7 +82,7 @@
   position: relative;
   row-gap: var(--message-space);
 
-  @media (max-width: 100ch) {
+  @media (max-width: 135ch) {
     padding-block-start: var(--navbar-height);
   }
 }
@@ -309,7 +309,7 @@
   }
 
   .message__actions {
-    @media (max-width: 100ch) {
+    @media (max-width: 135ch) {
       .message__options-btn {
         --btn-padding: 0 0.5em;
 
@@ -319,7 +319,7 @@
       }
     }
 
-    @media (min-width: 100ch) {
+    @media (min-width: 135ch) {
       inset-block-start: 50%;
       inset-inline-start: calc(100% + var(--message-column-gap) / 2);
       position: absolute;
@@ -382,7 +382,7 @@
     }
   }
 
-  @media (max-width: 100ch) {
+  @media (max-width: 135ch) {
     max-inline-size: 100%;
   }
 }
@@ -650,7 +650,7 @@ img.message__attachment {
   .message__actions {
     justify-content: end;
 
-    @media (min-width: 100ch) {
+    @media (min-width: 135ch) {
       inset-inline-end: calc(100% + var(--message-column-gap) / 2);
       inset-inline-start: auto;
     }

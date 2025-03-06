@@ -7,7 +7,7 @@
   max-inline-size: 100vw;
   padding: var(--panel-padding);
 
-  @media (min-width: 100ch) {
+  @media (min-width: 135ch) {
     --panel-padding: 2em;
 
     box-shadow:

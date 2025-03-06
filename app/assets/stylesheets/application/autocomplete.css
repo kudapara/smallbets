@@ -142,7 +142,7 @@ suggestion-option {
 .autocomplete__container {
   --input-padding: 0.3em 0;
 
-  @media (min-width: 100ch) {
+  @media (min-width: 135ch) {
     max-inline-size: calc(var(--sidebar-width) - (var(--btn-size) * 2) - (var(--column-gap) * 2) - (var(--sidebar-inline-space) * 2));
   }
 }

@@ -16,7 +16,7 @@ body {
   max-block-size: 100dvh;
 
   &.sidebar {
-    @media (min-width: 100ch) {
+    @media (min-width: 135ch) {
       --sidebar-width: 26vw;
     }
   }
@@ -25,7 +25,7 @@ body {
 #app-logo {
   display: none;
 
-  @media (min-width: 100ch) {
+  @media (min-width: 135ch) {
     block-size: var(--footer-height);
     display: grid;
     filter: saturate(0);
@@ -66,7 +66,7 @@ body {
   .sidebar & {
     justify-content: end;
 
-    @media (min-width: 100ch) {
+    @media (min-width: 135ch) {
       border-inline: 1px solid var(--color-border-darker);
       margin-inline: 5vw 0;
     }
@@ -86,7 +86,7 @@ body {
     max-block-size: 100dvh;
     z-index: 3;
 
-    @media (max-width: 100ch) {
+    @media (max-width: 135ch) {
       inset: 0;
       position: fixed;
       transform: translate(100%);
@@ -94,7 +94,7 @@ body {
   }
 
   &.open {
-    @media (max-width: 100ch) {
+    @media (max-width: 135ch) {
       transform: translate(0);
     }
   }

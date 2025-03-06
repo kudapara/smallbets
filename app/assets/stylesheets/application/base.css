@@ -240,7 +240,7 @@ pre {
   position: absolute;
   z-index: 3;
 
-  @media (max-width: 100ch) {
+  @media (max-width: 135ch) {
     max-inline-size: calc(var(--max-width) - var(--inline-space));
   }
 }
