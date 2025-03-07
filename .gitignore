@@ -18,3 +18,4 @@ dump.rdb
 
 # Ignore local GitHub Actions files
 .github/.env
+.DS_Store
