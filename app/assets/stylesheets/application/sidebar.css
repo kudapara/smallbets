@@ -185,7 +185,7 @@
       --size: 0.6em;
 
       aspect-ratio: 1;
-      background-color: var(--color-text);
+      background-color: var(--color-negative);
       block-size: var(--size);
       border-radius: calc(var(--size) * 2);
       content: "";
