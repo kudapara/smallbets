@@ -53,28 +53,13 @@ export default class extends Controller {
   }
 
   updateTitle() {
-    // First check for any dot conditions
-    const hasDot = this.#checkForAnyDot()
-    
-    // Then check if it should be a red dot
-    const hasRedDot = this.#checkForRedDot()
-    
-    // Update the title with appropriate indicator
-    if (hasRedDot) {
+    if (this.#checkForRedDot()) {
       document.title = `🔴 ${this.originalTitleValue}`
-    } else if (hasDot) {
+    } else if (this.#checkForBlackDot()) {
       document.title = `⚫ ${this.originalTitleValue}`
     } else {
       document.title = this.originalTitleValue
     }
-  }
-  
-  #checkForAnyDot() {
-    const hasStarredUnread = document.querySelector("#starred_rooms [data-type=list_node]:not([hidden]) .unread") !== null
-    const hasDirectUnread = document.querySelector(".direct.unread") !== null
-    const hasRoomUnread = document.querySelector(".room.unread:not(.room--current)") !== null
-    
-    return hasStarredUnread || hasDirectUnread || hasRoomUnread
   }
   
   #checkForRedDot() {
@@ -82,5 +67,9 @@ export default class extends Controller {
     const hasRoomMention = document.querySelector(".room.badge") !== null
     
     return hasDirectUnread || hasRoomMention
+  }
+  
+  #checkForBlackDot() {
+    return document.querySelector("#starred_rooms [data-type=list_node]:not([hidden]) .unread") !== null
   }
 } 

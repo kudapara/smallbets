@@ -34,7 +34,7 @@
     background-color 300ms ease;
   z-index: 5;
 
-  #sidebar:where(:not(.open):has(#starred_rooms [data-type=list_node]:not([hidden]) .unread, .direct.unread, .room.unread:not(.room--current))) & {
+  #sidebar:where(:not(.open):has(#sidebar_inbox [data-type=list_node]:not([hidden]), #starred_rooms [data-type=list_node]:not([hidden]) .unread, .direct.unread)) & {
     &::after {
       --size: 1em;
 
@@ -51,7 +51,7 @@
     }
   }
 
-  #sidebar:where(:not(.open):has(.direct.unread, .direct.badge, .room.badge)) & {
+  #sidebar:where(:not(.open):has(.badge, .direct.unread)) & {
     &::after {
        background-color: var(--color-negative);
     }
