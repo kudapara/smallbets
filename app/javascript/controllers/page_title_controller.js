@@ -57,7 +57,7 @@ export default class extends Controller {
     const hasDot = this.#checkForAnyDot()
     
     // Then check if it should be a red dot
-    const hasRedDot = hasDot && this.#checkForRedDot()
+    const hasRedDot = this.#checkForRedDot()
     
     // Update the title with appropriate indicator
     if (hasRedDot) {
@@ -72,13 +72,15 @@ export default class extends Controller {
   #checkForAnyDot() {
     const hasStarredUnread = document.querySelector("#starred_rooms [data-type=list_node]:not([hidden]) .unread") !== null
     const hasDirectUnread = document.querySelector(".direct.unread") !== null
+    const hasRoomUnread = document.querySelector(".room.unread:not(.room--current)") !== null
     
-    return hasStarredUnread || hasDirectUnread
+    return hasStarredUnread || hasDirectUnread || hasRoomUnread
   }
   
   #checkForRedDot() {
     const hasDirectUnread = document.querySelector(".direct.unread") !== null
+    const hasRoomMention = document.querySelector(".room.badge") !== null
     
-    return hasDirectUnread
+    return hasDirectUnread || hasRoomMention
   }
 } 
