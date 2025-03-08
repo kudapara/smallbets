@@ -1,6 +1,6 @@
-<section class="txt-align-center">
+<section class="txt-align-center" style="min-width: 300px; width: 300px; max-width: 300px;">
   <div class="flex flex-column gap">
-    <div class="avatar txt-x-large center relative" style="background: white">
+    <div class="avatar txt-xx-large center relative" style="background: white">
       <%= avatar_image_tag(user, class: "avatar", alt: "Profile avatar") %>
     </div>
 
@@ -18,7 +18,7 @@
       </div>
     <% else %>
       <% if user.active? %>
-        <div class="flex flex-column gap" style="--row-gap: var(--block-space-half)">
+        <div class="flex flex-column gap" style="--row-gap: calc(var(--block-space) / 3);">
           <h1 class="txt-large txt-tight-lines margin-none">
             <%= link_to user_path(user), title: user.title, style: "color: var(--color-txt)", data: { turbo_frame: "_top" } do %>
               <%= user.name %>
@@ -41,13 +41,27 @@
             </div>
           <% end %>
 
-          <%= link_to user_messages_path(user), class: "btn full-width txt-medium", data: { turbo_frame: "_top" } do %>
-            <%= image_tag "message_log.svg", aria: { hidden: "true" } %>
-          <% end %>
-          
           <%= button_to rooms_directs_path(user_ids: [ user.id ]), class: "btn btn--reversed full-width txt-medium", data: { turbo_frame: "_top" } do %>
             <%= image_tag "messages.svg", aria: { hidden: "true", label: "Ping #{user.name}" } %>
           <% end %>
+          
+          <div class="txt-small txt-subtle">
+            <% rank = user.message_rank %>
+            <% if rank == 1 %>
+              🥇 <%= pluralize(number_with_delimiter(user.message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
+            <% elsif rank == 2 %>
+              🥈 <%= pluralize(number_with_delimiter(user.message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
+            <% elsif rank == 3 %>
+              🥉 <%= pluralize(number_with_delimiter(user.message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
+            <% else %>
+              <%= pluralize(number_with_delimiter(user.message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
+            <% end %>
+          </div>
+
+          <div class="txt-align-center">
+            <%= link_to "All messages from #{user.name}...", user_messages_path(user), class: "txt-small", style: "color: var(--color-txt)", data: { turbo_frame: "_top" } %>
+          </div>
+          
         </div>
       <% else %>
         <div>
@@ -58,3 +72,20 @@
     <% end %>
   </div>
 </section>
+
+<style>
+  .message__avatar-menu,
+  .popup-menu,
+  .border.shadow[data-popup-target="menu"] {
+    width: 320px !important;
+    min-width: 320px !important;
+    max-width: 320px !important;
+    padding: 1rem !important;
+  }
+  
+  .txt-align-center[style*="width: 300px"] {
+    width: 280px !important;
+    min-width: 280px !important;
+    max-width: 280px !important;
+  }
+</style>

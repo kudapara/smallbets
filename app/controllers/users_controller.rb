@@ -31,6 +31,7 @@ class UsersController < ApplicationController
   end
 
   def show
+    @recent_messages = Current.user.reachable_messages.created_by(@user).with_creator.ordered.last(5).reverse
   end
 
   private

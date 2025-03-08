@@ -137,6 +137,14 @@ class User < ApplicationRecord
     update!(suspended_at: nil)
   end
 
+  def message_count
+    messages.count
+  end
+
+  def message_rank
+    User.active.where("(SELECT COUNT(*) FROM messages WHERE messages.creator_id = users.id AND messages.active = true) > ?", message_count).count + 1
+  end
+
   private
     def self.find_and_initialize_unclaimed_gumroad_import(attributes)
       unclaimed_gumroad_import = User.active.non_suspended.unclaimed_gumroad_imports.find_by(email_address: attributes[:email_address])

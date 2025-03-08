@@ -54,15 +54,46 @@
           <% end %>
         </div>
 
-        <div class="pad-inline-double margin-inline margin-block-start">
-          <%= link_to user_messages_path(@user), class: "btn full-width txt-large" do %>
-            <%= image_tag "message_log.svg", aria: { hidden: "true" } %>
-          <% end %>
-        </div>
         <div class="pad-inline-double margin-inline">
           <%= button_to rooms_directs_path(user_ids: [ @user.id ]), class: "btn btn--reversed full-width txt-large" do %>
             <%= image_tag "messages.svg", aria: { hidden: "true", label: "Ping #{@user.name}" } %>
           <% end %>
+        </div>
+
+        <div class="pad-inline-double margin-inline margin-block-start">
+          <div>
+            <% rank = @user.message_rank %>
+            <% if rank == 1 %>
+              🥇 <%= pluralize(number_with_delimiter(@user.message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
+            <% elsif rank == 2 %>
+              🥈 <%= pluralize(number_with_delimiter(@user.message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
+            <% elsif rank == 3 %>
+              🥉 <%= pluralize(number_with_delimiter(@user.message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
+            <% else %>
+              <%= pluralize(number_with_delimiter(@user.message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
+            <% end %>
+          </div>
+        </div>
+
+        <% if @recent_messages.any? %>
+          <div class="pad-inline-double margin-inline margin-block-start" style="text-align: left !important;">
+            <h2 class="txt-large txt-tight-lines margin-none margin-block-end txt-align-left" style="margin-bottom: 0.8rem;">Recent Messages</h2>
+            <div class="flex flex-column gap" style="align-items: flex-start; --row-gap: calc(var(--block-space) / 4);">
+              <% @recent_messages.each do |message| %>
+                <div class="txt-align-left" style="width: 100%; text-align: left !important; padding-top: 0.3rem; padding-bottom: 0.3rem;">
+                  <div class="txt-small txt-subdued">
+                    <%= link_to message.room.name, message.room %>
+                    · <%= time_ago_in_words(message.created_at) %> ago
+                  </div>
+                  <div class="break-word"><%= truncate(message.body.to_plain_text, length: 100) %></div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="pad-inline-double margin-inline margin-block-start" style="text-align: left !important;">
+          <%= link_to "All messages from #{@user.name}...", user_messages_path(@user), class: "txt-medium", style: "color: var(--lch-black)" %>
         </div>
 
         <% if Current.user.can_administer? %>
