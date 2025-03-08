@@ -341,29 +341,41 @@
                   <script>
                     document.addEventListener('DOMContentLoaded', function() {
                       const deployTimeEl = document.getElementById('last-deploy-time');
-                      const utcTime = deployTimeEl.getAttribute('data-utc-time');
+                      const utcTimeStr = deployTimeEl.getAttribute('data-utc-time');
+                      
                       try {
-                        // Safari-friendly date parsing
-                        // Replace spaces with 'T' and ensure proper UTC format
-                        const formattedUtcTime = utcTime.replace(/(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})/, '$1T$2');
-                        const date = new Date(formattedUtcTime);
+                        // Parse the UTC time string manually
+                        // Expected format: "YYYY-MM-DD HH:MM:SS UTC"
+                        const parts = utcTimeStr.match(/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/);
                         
-                        if (!isNaN(date.getTime())) {
-                          // Format date manually to ensure cross-browser compatibility
-                          const year = date.getFullYear();
-                          const month = String(date.getMonth() + 1).padStart(2, '0');
-                          const day = String(date.getDate()).padStart(2, '0');
+                        if (parts) {
+                          // Create date using UTC values (months are 0-indexed in JS)
+                          const year = parseInt(parts[1], 10);
+                          const month = parseInt(parts[2], 10) - 1;
+                          const day = parseInt(parts[3], 10);
+                          const hour = parseInt(parts[4], 10);
+                          const minute = parseInt(parts[5], 10);
                           
-                          // Convert to 12-hour format with AM/PM
-                          let hours = date.getHours();
-                          const ampm = hours >= 12 ? 'PM' : 'AM';
-                          hours = hours % 12;
-                          hours = hours ? hours : 12; // the hour '0' should be '12'
-                          const minutes = String(date.getMinutes()).padStart(2, '0');
+                          // Create a UTC date
+                          const date = new Date(Date.UTC(year, month, day, hour, minute));
                           
-                          // Format: YYYY-MM-DD h:MM AM/PM (local time)
-                          const localTime = `${year}-${month}-${day} ${hours}:${minutes} ${ampm}`;
-                          deployTimeEl.textContent = localTime;
+                          if (!isNaN(date.getTime())) {
+                            // Get local date components
+                            const localYear = date.getFullYear();
+                            const localMonth = String(date.getMonth() + 1).padStart(2, '0');
+                            const localDay = String(date.getDate()).padStart(2, '0');
+                            
+                            // Convert to 12-hour format with AM/PM
+                            let localHours = date.getHours();
+                            const ampm = localHours >= 12 ? 'PM' : 'AM';
+                            localHours = localHours % 12;
+                            localHours = localHours ? localHours : 12; // the hour '0' should be '12'
+                            const localMinutes = String(date.getMinutes()).padStart(2, '0');
+                            
+                            // Format: YYYY-MM-DD h:MM AM/PM
+                            const localTime = `${localYear}-${localMonth}-${localDay} ${localHours}:${localMinutes} ${ampm}`;
+                            deployTimeEl.textContent = localTime;
+                          }
                         }
                       } catch (e) {
                         console.error('Error formatting date:', e);
