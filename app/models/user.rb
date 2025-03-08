@@ -137,12 +137,22 @@ class User < ApplicationRecord
     update!(suspended_at: nil)
   end
 
-  def message_count
-    messages.count
+  def total_message_count
+    Message.active
+           .joins(:room)
+           .where(creator_id: id)
+           .where('rooms.type != ?', 'Rooms::Direct')
+           .count
   end
 
   def message_rank
-    User.active.where("(SELECT COUNT(*) FROM messages WHERE messages.creator_id = users.id AND messages.active = true) > ?", message_count).count + 1
+    User.active
+        .joins(messages: :room)
+        .where('rooms.type != ?', 'Rooms::Direct')
+        .group('users.id')
+        .having('COUNT(messages.id) > ?', total_message_count)
+        .count
+        .size + 1
   end
 
   private

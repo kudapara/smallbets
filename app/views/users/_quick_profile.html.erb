@@ -48,13 +48,13 @@
           <div class="txt-small txt-subtle">
             <% rank = user.message_rank %>
             <% if rank == 1 %>
-              🥇 <%= pluralize(number_with_delimiter(user.message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
+              🥇 <%= pluralize(number_with_delimiter(user.total_message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
             <% elsif rank == 2 %>
-              🥈 <%= pluralize(number_with_delimiter(user.message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
+              🥈 <%= pluralize(number_with_delimiter(user.total_message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
             <% elsif rank == 3 %>
-              🥉 <%= pluralize(number_with_delimiter(user.message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
+              🥉 <%= pluralize(number_with_delimiter(user.total_message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
             <% else %>
-              <%= pluralize(number_with_delimiter(user.message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
+              <%= pluralize(number_with_delimiter(user.total_message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
             <% end %>
           </div>
 
