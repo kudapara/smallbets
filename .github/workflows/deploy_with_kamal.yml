@@ -29,6 +29,12 @@ jobs:
         with:
           fetch-depth: 0  # Fetch all history for git operations
 
+      - name: Get short SHA
+        uses: benjlevesque/short-sha@v3.0
+        id: short-sha
+        with:
+          length: 7
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -49,6 +55,9 @@ jobs:
           echo "StrictHostKeyChecking=no" >> ~/.ssh/config
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
+      - name: Set deployment timestamp
+        run: echo "DEPLOY_TIME=$(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_ENV
+
       - name: Create Kamal secrets file
         run: |
           mkdir -p .kamal
@@ -57,7 +66,8 @@ jobs:
           KAMAL_REGISTRY_PASSWORD=${{ secrets.DOCKER_PASSWORD }}
 
           # Application secrets
-          APP_VERSION=${{ github.sha }}
+          APP_VERSION=${{ steps.short-sha.outputs.sha }}
+          LAST_DEPLOY=${{ env.DEPLOY_TIME }}
           SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }}
           VAPID_PUBLIC_KEY=${{ secrets.VAPID_PUBLIC_KEY }}
           VAPID_PRIVATE_KEY=${{ secrets.VAPID_PRIVATE_KEY }}

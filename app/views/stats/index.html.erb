@@ -297,7 +297,7 @@
     <!-- Stats summary -->
     <div class="card flex-grow" style="min-width: 300px;">
       <div class="card-header">
-        <h2 class="txt-h3 margin-none">Metrics</h2>
+        <h2 class="txt-h3 margin-none">Info</h2>
       </div>
       <div class="card-body compact">
         <div class="overflow-x-auto">
@@ -327,6 +327,18 @@
                 <td>Database</td>
                 <td class="txt-right"><%= number_to_human_size(@database_size) %></td>
               </tr>
+              <% if ENV["APP_VERSION"].present? %>
+              <tr>
+                <td>Version</td>
+                <td class="txt-right"><%= ENV["APP_VERSION"] %></td>
+              </tr>
+              <% end %>
+              <% if ENV["LAST_DEPLOY"].present? %>
+              <tr>
+                <td>Last Deploy</td>
+                <td class="txt-right"><%= ENV["LAST_DEPLOY"] %></td>
+              </tr>
+              <% end %>
               <% if @cpu_util && @cpu_cores %>
               <tr>
                 <td>CPU</td>

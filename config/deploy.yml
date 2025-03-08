@@ -27,6 +27,7 @@ env:
 
   secret:
     - APP_VERSION
+    - LAST_DEPLOY
     - SECRET_KEY_BASE
     - VAPID_PUBLIC_KEY
     - VAPID_PRIVATE_KEY
