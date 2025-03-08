@@ -74,16 +74,18 @@
 </section>
 
 <style>
+  /* Target only profile popups with more specific selectors */
   .message__avatar-menu,
-  .popup-menu,
-  .border.shadow[data-popup-target="menu"] {
+  div[data-popup-target="menu"]:has(.avatar.txt-xx-large) {
     width: 320px !important;
     min-width: 320px !important;
     max-width: 320px !important;
     padding: 1rem !important;
   }
   
-  .txt-align-center[style*="width: 300px"] {
+  /* Target only the inner content of profile popups */
+  .message__avatar-menu .txt-align-center[style*="width: 300px"],
+  div[data-popup-target="menu"]:has(.avatar.txt-xx-large) .txt-align-center[style*="width: 300px"] {
     width: 280px !important;
     min-width: 280px !important;
     max-width: 280px !important;
