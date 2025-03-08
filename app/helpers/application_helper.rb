@@ -1,4 +1,6 @@
 module ApplicationHelper
+  include RoomsHelper
+
   def page_title_tag
     tag.title @page_title || "Campfire"
   end
@@ -23,7 +25,14 @@ module ApplicationHelper
   end
 
   def link_back
-    link_back_to request.referrer || root_path
+    # Check for from= query string parameter
+    if params[:from].present?
+      # Use the from parameter as the back destination
+      link_back_to params[:from]
+    else
+      # Otherwise, return to the last room visited
+      link_back_to_last_room_visited
+    end
   end
 
   def link_home

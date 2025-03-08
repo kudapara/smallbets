@@ -20,16 +20,27 @@ module RoomsHelper
   end
 
   def link_back_to_last_room_visited
-    if last_room = last_room_visited
-      link_back_to room_path(last_room)
+    if controller.respond_to?(:last_room_visited)
+      # Use the controller's method if available
+      if last_room = controller.last_room_visited
+        link_back_to room_path(last_room)
+      else
+        link_back_to root_path
+      end
     else
-      link_back_to root_path
+      # Fallback implementation if controller method is not available
+      last_room_id = cookies[:last_room]
+      if last_room_id.present? && (last_room = Room.find_by(id: last_room_id))
+        link_back_to room_path(last_room)
+      else
+        link_back_to root_path
+      end
     end
   end
 
   def button_to_delete_room(room, url: nil)
     button_to room, method: :delete, class: "btn btn--negative max-width", aria: { label: "Delete #{room.name}" },
-        data: { turbo_confirm: "Are you sure you want to delete this room and all messages in it? This can’t be undone." } do
+        data: { turbo_confirm: "Are you sure you want to delete this room and all messages in it? This can't be undone." } do
       image_tag("trash.svg", aria: { hidden: "true" }, size: 20) +
       tag.span(room_display_name(room), class: "overflow-ellipsis")
     end
