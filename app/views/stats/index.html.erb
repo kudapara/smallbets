@@ -336,7 +336,32 @@
               <% if ENV["LAST_DEPLOY"].present? %>
               <tr>
                 <td>Last Deploy</td>
-                <td class="txt-right"><%= ENV["LAST_DEPLOY"] %></td>
+                <td class="txt-right">
+                  <span id="last-deploy-time" data-utc-time="<%= ENV["LAST_DEPLOY"] %>"><%= ENV["LAST_DEPLOY"] %></span>
+                  <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                      const deployTimeEl = document.getElementById('last-deploy-time');
+                      const utcTime = deployTimeEl.getAttribute('data-utc-time');
+                      try {
+                        const date = new Date(utcTime);
+                        if (!isNaN(date)) {
+                          // Format: YYYY-MM-DD HH:MM (local time)
+                          const localTime = date.toLocaleString(navigator.language, {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false
+                          }).replace(',', '');
+                          deployTimeEl.textContent = localTime;
+                        }
+                      } catch (e) {
+                        console.error('Error formatting date:', e);
+                      }
+                    });
+                  </script>
+                </td>
               </tr>
               <% end %>
               <% if @cpu_util && @cpu_cores %>
