@@ -17,60 +17,103 @@ class StatsController < ApplicationController
     
     # System metrics
     begin
-      # CPU utilization and cores
-      cpu_output = `top -l 1 -n 0 | grep "CPU usage"`.strip
-      @cpu_util = cpu_output.match(/(\d+\.\d+)% user/)[1].to_f rescue nil
+      # CPU metrics
+      os = RbConfig::CONFIG['host_os']
       
-      # Get number of CPU cores
-      @cpu_cores = `sysctl -n hw.ncpu`.strip.to_i rescue nil
+      if os =~ /darwin/i
+        # macOS
+        @cpu_util = `top -l 1 | grep "CPU usage" | awk '{print $3}' | tr -d '%'`.to_f
+        @cpu_cores = `sysctl -n hw.ncpu`.to_i
+      elsif os =~ /linux/i
+        # Linux (Ubuntu, etc.)
+        cpu_info = `cat /proc/stat | grep '^cpu '`.split
+        user = cpu_info[1].to_i
+        nice = cpu_info[2].to_i
+        system = cpu_info[3].to_i
+        idle = cpu_info[4].to_i
+        iowait = cpu_info[5].to_i
+        irq = cpu_info[6].to_i
+        softirq = cpu_info[7].to_i
+        steal = cpu_info[8].to_i if cpu_info.size > 8
+        steal ||= 0
+        
+        total = user + nice + system + idle + iowait + irq + softirq + steal
+        used = total - idle - iowait
+        @cpu_util = (used.to_f / total * 100).round(1)
+        @cpu_cores = `nproc`.to_i
+      end
       
-      # Memory usage - improved for macOS
-      begin
-        memory_info = {}
-        `vm_stat`.split("\n").drop(1).each do |line|
-          if line =~ /^(.+):\s+(\d+)\.$/
-            memory_info[$1.strip] = $2.to_i
-          end
-        end
+      # Memory metrics
+      if os =~ /darwin/i
+        # macOS
+        vm_stat = `vm_stat`
+        matches = vm_stat.match(/Pages free:\s+(\d+)/)
+        free_pages = matches ? matches[1].to_i : 0
         
-        # Calculate free memory percentage
-        page_size = 4096  # Default page size in bytes
-        free_pages = memory_info["Pages free"] || 0
-        inactive_pages = memory_info["Pages inactive"] || 0
-        speculative_pages = memory_info["Pages speculative"] || 0
-        wired_pages = memory_info["Pages wired down"] || 0
-        active_pages = memory_info["Pages active"] || 0
-        compressed_pages = memory_info["Pages occupied by compressor"] || 0
+        matches = vm_stat.match(/Pages inactive:\s+(\d+)/)
+        inactive_pages = matches ? matches[1].to_i : 0
         
-        total_pages = free_pages + inactive_pages + active_pages + speculative_pages + wired_pages + compressed_pages
-        available_pages = free_pages + inactive_pages + speculative_pages
+        matches = vm_stat.match(/Pages speculative:\s+(\d+)/)
+        speculative_pages = matches ? matches[1].to_i : 0
         
-        @free_memory_percent = ((available_pages.to_f / total_pages) * 100).round(1) if total_pages > 0
+        matches = vm_stat.match(/Pages wired down:\s+(\d+)/)
+        wired_pages = matches ? matches[1].to_i : 0
+        
+        matches = vm_stat.match(/Pages active:\s+(\d+)/)
+        active_pages = matches ? matches[1].to_i : 0
+        
+        # Calculate total memory
+        total_memory = `sysctl -n hw.memsize`.to_i
+        @total_memory_gb = (total_memory / 1024.0 / 1024.0 / 1024.0).round(1)
+        
+        # Calculate available memory (free + inactive + speculative)
+        page_size = 4096 # Default page size on macOS
+        available_memory = (free_pages + inactive_pages + speculative_pages) * page_size
+        @free_memory_percent = (available_memory.to_f / total_memory * 100).round(1)
+      elsif os =~ /linux/i
+        # Linux (Ubuntu, etc.)
+        mem_info = `cat /proc/meminfo`
+        
+        # Extract memory information
+        total_kb = mem_info.match(/MemTotal:\s+(\d+)/)[1].to_i
+        free_kb = mem_info.match(/MemFree:\s+(\d+)/)[1].to_i
+        buffers_kb = mem_info.match(/Buffers:\s+(\d+)/)[1].to_i
+        cached_kb = mem_info.match(/Cached:\s+(\d+)/)[1].to_i
         
         # Calculate total memory in GB
-        @total_memory_gb = (`sysctl -n hw.memsize`.to_i / 1024.0 / 1024.0 / 1024.0).round(1) rescue nil
-      rescue => e
-        Rails.logger.error("Error parsing memory info: #{e.message}")
-        @free_memory_percent = nil
-        @total_memory_gb = nil
+        @total_memory_gb = (total_kb / 1024.0 / 1024.0).round(1)
+        
+        # Calculate available memory (free + buffers + cached)
+        available_kb = free_kb + buffers_kb + cached_kb
+        @free_memory_percent = (available_kb.to_f / total_kb * 100).round(1)
       end
       
-      # Disk usage
-      begin
-        disk_output = `df -h /`.strip
-        disk_line = disk_output.split("\n").last
-        disk_parts = disk_line.split(/\s+/)
-        
-        @free_disk_percent = 100 - disk_parts[4].to_i rescue nil
-        @total_disk_gb = disk_parts[1].gsub(/[A-Za-z]/, '').to_f rescue nil
-      rescue => e
-        Rails.logger.error("Error parsing disk info: #{e.message}")
-        @free_disk_percent = nil
-        @total_disk_gb = nil
+      # Disk metrics
+      if os =~ /darwin/i
+        # macOS
+        df_output = `df -h /`
+        df_lines = df_output.split("\n")
+        if df_lines.length > 1
+          disk_info = df_lines[1].split
+          @free_disk_percent = 100 - disk_info[4].to_i
+          @total_disk_gb = disk_info[1].gsub(/[^\d.]/, '').to_f
+        end
+      elsif os =~ /linux/i
+        # Linux (Ubuntu, etc.)
+        df_output = `df -h /`
+        df_lines = df_output.split("\n")
+        if df_lines.length > 1
+          disk_info = df_lines[1].split
+          # Format can be different on various Linux distributions
+          # Typically: Filesystem Size Used Avail Use% Mounted on
+          @total_disk_gb = disk_info[1].gsub(/[^\d.]/, '').to_f
+          @free_disk_percent = disk_info[4].gsub('%', '').to_i
+          @free_disk_percent = 100 - @free_disk_percent # Convert from used% to free%
+        end
       end
     rescue => e
-      # Silently fail if we can't get system metrics
-      Rails.logger.error("Error getting system metrics: #{e.message}")
+      # Log error but don't crash
+      Rails.logger.error "Error getting system metrics: #{e.message}"
     end
 
     @daily_stats = Message.select("strftime('%Y-%m-%d', created_at) as date, count(*) as count")
