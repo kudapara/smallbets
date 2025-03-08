@@ -336,13 +336,13 @@
               <% if @free_memory_percent && @total_memory_gb %>
               <tr>
                 <td>Memory</td>
-                <td class="txt-right"><%= number_to_percentage(@free_memory_percent, precision: 0) %> of <%= @total_memory_gb.to_i %>GB</td>
+                <td class="txt-right"><%= number_to_percentage(@memory_util_percent, precision: 0) %> of <%= @total_memory_gb.to_i %>GB</td>
               </tr>
               <% end %>
               <% if @free_disk_percent && @total_disk_gb %>
               <tr>
                 <td>Disk</td>
-                <td class="txt-right"><%= number_to_percentage(@free_disk_percent, precision: 0) %> of <%= @total_disk_gb.to_i %>GB</td>
+                <td class="txt-right"><%= number_to_percentage(@disk_util_percent, precision: 0) %> of <%= @total_disk_gb.to_i %>GB</td>
               </tr>
               <% end %>
             </tbody>
@@ -685,5 +685,19 @@
   
   .compact-rows th, .compact-rows td {
     padding: 0.25rem 0.5rem;
+  }
+  
+  /* Stats page link styles */
+  .full-width a {
+    color: #000;
+    text-decoration: none;
+  }
+  
+  .full-width a:visited {
+    color: #000;
+  }
+  
+  .full-width a:hover {
+    text-decoration: underline;
   }
 </style> 
