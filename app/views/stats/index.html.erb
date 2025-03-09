@@ -397,7 +397,6 @@
                   <% deploy_time = Time.parse(ENV["LAST_DEPLOY"]) rescue nil %>
                   <% if deploy_time.present? %>
                     <%= time_ago_in_words(deploy_time) %> ago
-                    <span class="txt-small txt-faded">(<%= deploy_time.strftime("%Y-%m-%d %I:%M %p") %> UTC)</span>
                   <% else %>
                     <span class="txt-faded">Unknown</span>
                   <% end %>
