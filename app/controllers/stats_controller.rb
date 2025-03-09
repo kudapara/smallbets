@@ -63,7 +63,7 @@ class StatsController < ApplicationController
         
         # Calculate total memory
         total_memory = `sysctl -n hw.memsize`.to_i
-        @total_memory_gb = (total_memory / 1024.0 / 1024.0 / 1024.0).round(1)
+        @total_memory_gb = (total_memory / 1024.0 / 1024.0).round(1)
         
         # Calculate available memory (free + inactive + speculative)
         page_size = 4096 # Default page size on macOS
@@ -81,23 +81,8 @@ class StatsController < ApplicationController
         cached_kb = mem_info.match(/Cached:\s+(\d+)/)[1].to_i
         
         # Calculate total memory in GB
-        # Note: We use the configured value if available to match what users expect
-        # Otherwise, we convert from KB to GB with proper rounding
-        # The discrepancy between configured and reported memory is due to:
-        # 1. Binary vs decimal units (1 GiB = 1.074 GB)
-        # 2. Memory reserved by BIOS and hardware
-        @total_memory_gb = if total_kb > 60_000_000 && total_kb < 63_000_000
-                            64 # Use the configured value for 64GB systems
-                          elsif total_kb > 30_000_000 && total_kb < 33_000_000
-                            32 # Use the configured value for 32GB systems
-                          elsif total_kb > 15_000_000 && total_kb < 17_000_000
-                            16 # Use the configured value for 16GB systems
-                          elsif total_kb > 7_000_000 && total_kb < 9_000_000
-                            8  # Use the configured value for 8GB systems
-                          else
-                            (total_kb / 1024.0 / 1024.0).round(1)
-                          end
-        
+        @total_memory_gb = (total_kb / 1024.0 / 1024.0).round(1)
+
         # Calculate available memory (free + buffers + cached)
         available_kb = free_kb + buffers_kb + cached_kb
         @free_memory_percent = (available_kb.to_f / total_kb * 100).round(1)
@@ -205,7 +190,7 @@ class StatsController < ApplicationController
   def today
     @page_title = "Daily Stats"
     
-    # Get all days with messages (no time limit)
+    # Get all days with messages (no time limit), using simple strftime
     @days = Message.select("strftime('%Y-%m-%d', created_at) as date")
                   .group("date")
                   .order("date DESC")

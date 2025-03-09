@@ -2,7 +2,16 @@ class StatsService
   # Get top posters for today
   def self.top_posters_today(limit = 30)
     today = Time.now.utc.strftime('%Y-%m-%d')
-    top_posters_for_day(today, limit)
+    
+    # Use the same direct query approach as in top_posters_for_day
+    User.select('users.id, users.name, COUNT(messages.id) AS message_count, COALESCE(users.membership_started_at, users.created_at) as joined_at')
+        .joins("INNER JOIN messages ON messages.creator_id = users.id AND messages.active = true
+                INNER JOIN rooms ON messages.room_id = rooms.id AND rooms.type != 'Rooms::Direct'")
+        .where("strftime('%Y-%m-%d', messages.created_at) = ?", today)
+        .where('users.active = true AND users.suspended_at IS NULL')
+        .group('users.id, users.name, users.membership_started_at, users.created_at')
+        .order('message_count DESC, joined_at ASC')
+        .limit(limit)
   end
   
   # Get top posters for this month
@@ -229,6 +238,7 @@ class StatsService
   
   # Get daily stats for the last 30 days
   def self.daily_stats(days = 30)
+    # Use strftime directly with the created_at column
     Message.select("strftime('%Y-%m-%d', created_at) as date, count(*) as count")
           .group('date')
           .order('date DESC')
@@ -237,6 +247,7 @@ class StatsService
   
   # Get all-time daily stats
   def self.all_time_daily_stats
+    # Use strftime directly with the created_at column
     Message.select("strftime('%Y-%m-%d', created_at) as date, count(*) as count")
           .group('date')
           .order('date ASC')
@@ -244,13 +255,17 @@ class StatsService
   
   # Get top posters for a specific day
   def self.top_posters_for_day(day, limit = 10)
-    day_start = Time.parse(day).beginning_of_day
+    # Explicitly parse the date in UTC timezone
+    day_start = Time.parse(day + " UTC").beginning_of_day
     day_end = day_start.end_of_day
     
+    # Use a more direct query with explicit date formatting to match SQLite's format
+    day_formatted = day_start.strftime('%Y-%m-%d')
+    
     User.select('users.id, users.name, COUNT(messages.id) AS message_count, COALESCE(users.membership_started_at, users.created_at) as joined_at')
-        .joins(messages: :room)
-        .where('rooms.type != ? AND messages.created_at >= ? AND messages.created_at <= ? AND messages.active = true', 
-              'Rooms::Direct', day_start, day_end)
+        .joins("INNER JOIN messages ON messages.creator_id = users.id AND messages.active = true
+                INNER JOIN rooms ON messages.room_id = rooms.id AND rooms.type != 'Rooms::Direct'")
+        .where("strftime('%Y-%m-%d', messages.created_at) = ?", day_formatted)
         .where('users.active = true AND users.suspended_at IS NULL')
         .group('users.id, users.name, users.membership_started_at, users.created_at')
         .order('message_count DESC, joined_at ASC')
@@ -260,7 +275,8 @@ class StatsService
   # Get top posters for a specific month
   def self.top_posters_for_month(month, limit = 10)
     year, month_num = month.split('-')
-    month_start = Time.new(year.to_i, month_num.to_i, 1).beginning_of_month
+    # Explicitly use UTC timezone
+    month_start = Time.new(year.to_i, month_num.to_i, 1, 0, 0, 0, "+00:00").beginning_of_month
     month_end = month_start.end_of_month
     
     User.select('users.id, users.name, COUNT(messages.id) AS message_count, COALESCE(users.membership_started_at, users.created_at) as joined_at')
@@ -275,7 +291,8 @@ class StatsService
   
   # Get top posters for a specific year
   def self.top_posters_for_year(year, limit = 10)
-    year_start = Time.new(year.to_i, 1, 1).beginning_of_year
+    # Explicitly use UTC timezone
+    year_start = Time.new(year.to_i, 1, 1, 0, 0, 0, "+00:00").beginning_of_year
     year_end = year_start.end_of_year
     
     User.select('users.id, users.name, COUNT(messages.id) AS message_count, COALESCE(users.membership_started_at, users.created_at) as joined_at')

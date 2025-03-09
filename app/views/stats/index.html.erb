@@ -394,51 +394,13 @@
               <tr>
                 <td>Last Deploy</td>
                 <td class="txt-right">
-                  <span id="last-deploy-time" data-utc-time="<%= ENV["LAST_DEPLOY"] %>"><%= ENV["LAST_DEPLOY"] %></span>
-                  <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                      const deployTimeEl = document.getElementById('last-deploy-time');
-                      const utcTimeStr = deployTimeEl.getAttribute('data-utc-time');
-                      
-                      try {
-                        // Parse the UTC time string manually
-                        // Expected format: "YYYY-MM-DD HH:MM:SS UTC"
-                        const parts = utcTimeStr.match(/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/);
-                        
-                        if (parts) {
-                          // Create date using UTC values (months are 0-indexed in JS)
-                          const year = parseInt(parts[1], 10);
-                          const month = parseInt(parts[2], 10) - 1;
-                          const day = parseInt(parts[3], 10);
-                          const hour = parseInt(parts[4], 10);
-                          const minute = parseInt(parts[5], 10);
-                          
-                          // Create a UTC date
-                          const date = new Date(Date.UTC(year, month, day, hour, minute));
-                          
-                          if (!isNaN(date.getTime())) {
-                            // Get local date components
-                            const localYear = date.getFullYear();
-                            const localMonth = String(date.getMonth() + 1).padStart(2, '0');
-                            const localDay = String(date.getDate()).padStart(2, '0');
-                            
-                            // Convert to 12-hour format with AM/PM
-                            let localHours = date.getHours();
-                            const ampm = localHours >= 12 ? 'PM' : 'AM';
-                            localHours = localHours % 12;
-                            localHours = localHours ? localHours : 12; // the hour '0' should be '12'
-                            const localMinutes = String(date.getMinutes()).padStart(2, '0');
-                            
-                            // Format: YYYY-MM-DD h:MM AM/PM
-                            const localTime = `${localYear}-${localMonth}-${localDay} ${localHours}:${localMinutes} ${ampm}`;
-                            deployTimeEl.textContent = localTime;
-                          }
-                        }
-                      } catch (e) {
-                        console.error('Error formatting date:', e);
-                      }
-                    });
-                  </script>
+                  <% deploy_time = Time.parse(ENV["LAST_DEPLOY"]) rescue nil %>
+                  <% if deploy_time.present? %>
+                    <%= local_datetime_tag deploy_time, style: :relative %>
+                    <span class="txt-small txt-faded">(<%= local_datetime_tag deploy_time, style: :datetime %>)</span>
+                  <% else %>
+                    <span class="txt-faded">Unknown</span>
+                  <% end %>
                 </td>
               </tr>
               <% end %>
@@ -634,7 +596,7 @@
                 />
 
                 <!-- X-axis labels -->
-                <% if index % label_interval == 0 %>
+                <% if index % label_interval == 0 && stat.date.present? %>
                   <text 
                     x="<%= x_pos %>%" 
                     y="<%= graph_height - 5 %>" 
