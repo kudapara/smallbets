@@ -159,5 +159,10 @@ Rails.application.routes.draw do
 
   get "up" => "rails/health#show", as: :rails_health_check
 
+  # Stats
   get '/stats', to: 'stats#index'
+  get "stats/daily", to: "stats#today"
+  get "stats/monthly", to: "stats#month"
+  get "stats/yearly", to: "stats#year"
+  get "stats/all", to: "stats#all"
 end

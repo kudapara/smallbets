@@ -3,14 +3,13 @@ class StatsController < ApplicationController
   include AccountsHelper
 
   def index
-    @total_users = User.where(active: true, suspended_at: nil).count
-    @total_messages = Message.count
-    @total_boosts = Boost.count
+    # Get total counts
+    counts = StatsService.total_counts
+    @total_users = counts[:total_users]
+    @total_messages = counts[:total_messages]
+    @total_boosts = counts[:total_boosts]
+    @total_posters = counts[:total_posters]
     @online_users = online_users_count
-    @total_posters = User.active.joins(messages: :room)
-                         .where('rooms.type != ?', 'Rooms::Direct')
-                         .where('messages.active = ?', true)
-                         .distinct.count
     
     db_path = ActiveRecord::Base.connection_db_config.configuration_hash[:database]
     @database_size = File.size(db_path) rescue 0
@@ -134,302 +133,145 @@ class StatsController < ApplicationController
       Rails.logger.error "Error getting system metrics: #{e.message}"
     end
 
-    @daily_stats = Message.select("strftime('%Y-%m-%d', created_at) as date, count(*) as count")
-                         .group('date')
-                         .order('date DESC')
-                         .limit(30)
+    # Get daily and all-time stats
+    @daily_stats = StatsService.daily_stats(30)
+    @all_time_stats = StatsService.all_time_daily_stats
 
-    @all_time_stats = Message.select("strftime('%Y-%m-%d', created_at) as date, count(*) as count")
-                            .group('date')
-                            .order('date ASC')
-
-    # Today (UTC)
-    today_start = Time.now.utc.beginning_of_day
-    @top_posters_today = User.select('users.id, users.name, COUNT(messages.id) AS message_count, COALESCE(users.membership_started_at, users.created_at) as joined_at')
-                           .joins(messages: :room)
-                           .where('rooms.type != ? AND messages.created_at >= ? AND messages.active = true', 
-                                 'Rooms::Direct', 
-                                 today_start)
-                           .where('users.active = true AND users.suspended_at IS NULL')
-                           .group('users.id, users.name, users.membership_started_at, users.created_at')
-                           .order('message_count DESC, joined_at ASC')
-                           .limit(30)
+    # Get top posters for different time periods
+    @top_posters_today = StatsService.top_posters_today(30)
+    @top_posters_month = StatsService.top_posters_month(30)
+    @top_posters_year = StatsService.top_posters_year(30)
+    @top_posters_all_time = StatsService.top_posters_all_time(30)
     
     # Get current user's stats for today if not in top 10
     if Current.user
       current_user_in_top_10_today = @top_posters_today.first(10).any? { |user| user.id == Current.user.id }
       
       if !current_user_in_top_10_today
-        today_start_formatted = today_start.strftime('%Y-%m-%d %H:%M:%S')
-        @current_user_today_stats = User.select('users.id, users.name, COALESCE(COUNT(messages.id), 0) AS message_count')
-                                    .joins("LEFT JOIN messages ON messages.creator_id = users.id AND messages.created_at >= '#{today_start_formatted}' AND messages.active = true
-                                           LEFT JOIN rooms ON messages.room_id = rooms.id AND rooms.type != 'Rooms::Direct'")
-                                    .where('users.id = ?', Current.user.id)
-                                    .group('users.id')
-                                    .first
-        
-        # Always ensure we have stats for the current user
-        if @current_user_today_stats.nil?
-          @current_user_today_stats = User.select('users.id, users.name, 0 AS message_count')
-                                      .where('users.id = ?', Current.user.id)
-                                      .first
-        end
+        @current_user_today_stats = StatsService.user_stats_for_period(Current.user.id, :today)
         
         if @current_user_today_stats
-          # Get total number of active users for proper ranking context
-          @total_active_users = User.where(active: true, suspended_at: nil).count
-          
-          # Count users with more messages
-          users_with_more_messages = User.joins(messages: :room)
-                                       .where('rooms.type != ? AND messages.created_at >= ? AND messages.active = true', 
-                                             'Rooms::Direct', today_start)
-                                       .where('users.active = true AND users.suspended_at IS NULL')
-                                       .group('users.id')
-                                       .having('COUNT(messages.id) > ?', @current_user_today_stats.message_count.to_i)
-                                       .count.size
-          
-          # Count users with same number of messages but earlier join date
-          if @current_user_today_stats.message_count.to_i > 0
-            users_with_same_messages_earlier_join = User.joins(messages: :room)
-                                                     .where('rooms.type != ? AND messages.created_at >= ? AND messages.active = true', 
-                                                           'Rooms::Direct', today_start)
-                                                     .where('users.active = true AND users.suspended_at IS NULL')
-                                                     .group('users.id')
-                                                     .having('COUNT(messages.id) = ?', @current_user_today_stats.message_count.to_i)
-                                                     .where('COALESCE(users.membership_started_at, users.created_at) < ?', 
-                                                           Current.user.membership_started_at || Current.user.created_at)
-                                                     .count.size
-          else
-            # For users with 0 messages, count users with earlier join date
-            users_with_same_messages_earlier_join = User.where('COALESCE(membership_started_at, created_at) < ?', 
-                                                             Current.user.membership_started_at || Current.user.created_at)
-                                                     .where('active = true AND suspended_at IS NULL')
-                                                     .count
-          end
-          
-          @current_user_today_rank = users_with_more_messages + users_with_same_messages_earlier_join + 1
-          
-          # Sanity check: rank should never exceed total active users
-          @current_user_today_rank = [@current_user_today_rank, @total_active_users].min
+          @current_user_today_rank = StatsService.calculate_user_rank(Current.user.id, :today)
+          @total_active_users = @total_users # Already calculated above
         end
       end
     end
 
-    # This Month (UTC)
-    month_start = Time.now.utc.beginning_of_month
-    @top_posters_month = User.select('users.id, users.name, COUNT(messages.id) AS message_count, COALESCE(users.membership_started_at, users.created_at) as joined_at')
-                           .joins(messages: :room)
-                           .where('rooms.type != ? AND messages.created_at >= ? AND messages.active = true', 
-                                 'Rooms::Direct', 
-                                 month_start)
-                           .where('users.active = true AND users.suspended_at IS NULL')
-                           .group('users.id, users.name, users.membership_started_at, users.created_at')
-                           .order('message_count DESC, joined_at ASC')
-                           .limit(30)
-    
     # Get current user's stats for month if not in top 10
     if Current.user
       current_user_in_top_10_month = @top_posters_month.first(10).any? { |user| user.id == Current.user.id }
       
       if !current_user_in_top_10_month
-        month_start_formatted = month_start.strftime('%Y-%m-%d %H:%M:%S')
-        @current_user_month_stats = User.select('users.id, users.name, COALESCE(COUNT(messages.id), 0) AS message_count')
-                                    .joins("LEFT JOIN messages ON messages.creator_id = users.id AND messages.created_at >= '#{month_start_formatted}' AND messages.active = true
-                                           LEFT JOIN rooms ON messages.room_id = rooms.id AND rooms.type != 'Rooms::Direct'")
-                                    .where('users.id = ?', Current.user.id)
-                                    .group('users.id')
-                                    .first
-        
-        # Always ensure we have stats for the current user
-        if @current_user_month_stats.nil?
-          @current_user_month_stats = User.select('users.id, users.name, 0 AS message_count')
-                                      .where('users.id = ?', Current.user.id)
-                                      .first
-        end
+        @current_user_month_stats = StatsService.user_stats_for_period(Current.user.id, :month)
         
         if @current_user_month_stats
-          # Get total number of active users for proper ranking context
-          @total_active_users ||= User.where(active: true, suspended_at: nil).count
-          
-          # Count users with more messages
-          users_with_more_messages = User.joins(messages: :room)
-                                       .where('rooms.type != ? AND messages.created_at >= ? AND messages.active = true', 
-                                             'Rooms::Direct', month_start)
-                                       .where('users.active = true AND users.suspended_at IS NULL')
-                                       .group('users.id')
-                                       .having('COUNT(messages.id) > ?', @current_user_month_stats.message_count.to_i)
-                                       .count.size
-          
-          # Count users with same number of messages but earlier join date
-          if @current_user_month_stats.message_count.to_i > 0
-            users_with_same_messages_earlier_join = User.joins(messages: :room)
-                                                     .where('rooms.type != ? AND messages.created_at >= ? AND messages.active = true', 
-                                                           'Rooms::Direct', month_start)
-                                                     .where('users.active = true AND users.suspended_at IS NULL')
-                                                     .group('users.id')
-                                                     .having('COUNT(messages.id) = ?', @current_user_month_stats.message_count.to_i)
-                                                     .where('COALESCE(users.membership_started_at, users.created_at) < ?', 
-                                                           Current.user.membership_started_at || Current.user.created_at)
-                                                     .count.size
-          else
-            # For users with 0 messages, count users with earlier join date
-            users_with_same_messages_earlier_join = User.where('COALESCE(membership_started_at, created_at) < ?', 
-                                                             Current.user.membership_started_at || Current.user.created_at)
-                                                     .where('active = true AND suspended_at IS NULL')
-                                                     .count
-          end
-          
-          @current_user_month_rank = users_with_more_messages + users_with_same_messages_earlier_join + 1
-          
-          # Sanity check: rank should never exceed total active users
-          @current_user_month_rank = [@current_user_month_rank, @total_active_users].min
+          @current_user_month_rank = StatsService.calculate_user_rank(Current.user.id, :month)
+          @total_active_users ||= @total_users # Already calculated above
         end
       end
     end
 
-    # This Year (UTC)
-    year_start = Time.now.utc.beginning_of_year
-    @top_posters_year = User.select('users.id, users.name, COUNT(messages.id) AS message_count, COALESCE(users.membership_started_at, users.created_at) as joined_at')
-                          .joins(messages: :room)
-                          .where('rooms.type != ? AND messages.created_at >= ? AND messages.active = true', 
-                                'Rooms::Direct', 
-                                year_start)
-                          .where('users.active = true AND users.suspended_at IS NULL')
-                          .group('users.id, users.name, users.membership_started_at, users.created_at')
-                          .order('message_count DESC, joined_at ASC')
-                          .limit(30)
-    
     # Get current user's stats for year if not in top 10
     if Current.user
       current_user_in_top_10_year = @top_posters_year.first(10).any? { |user| user.id == Current.user.id }
       
       if !current_user_in_top_10_year
-        year_start_formatted = year_start.strftime('%Y-%m-%d %H:%M:%S')
-        @current_user_year_stats = User.select('users.id, users.name, COALESCE(COUNT(messages.id), 0) AS message_count')
-                                   .joins("LEFT JOIN messages ON messages.creator_id = users.id AND messages.created_at >= '#{year_start_formatted}' AND messages.active = true
-                                          LEFT JOIN rooms ON messages.room_id = rooms.id AND rooms.type != 'Rooms::Direct'")
-                                   .where('users.id = ?', Current.user.id)
-                                   .group('users.id')
-                                   .first
-        
-        # Always ensure we have stats for the current user
-        if @current_user_year_stats.nil?
-          @current_user_year_stats = User.select('users.id, users.name, 0 AS message_count')
-                                     .where('users.id = ?', Current.user.id)
-                                     .first
-        end
+        @current_user_year_stats = StatsService.user_stats_for_period(Current.user.id, :year)
         
         if @current_user_year_stats
-          # Get total number of active users for proper ranking context
-          @total_active_users ||= User.where(active: true, suspended_at: nil).count
-          
-          # Count users with more messages
-          users_with_more_messages = User.joins(messages: :room)
-                                      .where('rooms.type != ? AND messages.created_at >= ? AND messages.active = true', 
-                                            'Rooms::Direct', year_start)
-                                      .where('users.active = true AND users.suspended_at IS NULL')
-                                      .group('users.id')
-                                      .having('COUNT(messages.id) > ?', @current_user_year_stats.message_count.to_i)
-                                      .count.size
-          
-          # Count users with same number of messages but earlier join date
-          if @current_user_year_stats.message_count.to_i > 0
-            users_with_same_messages_earlier_join = User.joins(messages: :room)
-                                                    .where('rooms.type != ? AND messages.created_at >= ? AND messages.active = true', 
-                                                          'Rooms::Direct', year_start)
-                                                    .where('users.active = true AND users.suspended_at IS NULL')
-                                                    .group('users.id')
-                                                    .having('COUNT(messages.id) = ?', @current_user_year_stats.message_count.to_i)
-                                                    .where('COALESCE(users.membership_started_at, users.created_at) < ?', 
-                                                          Current.user.membership_started_at || Current.user.created_at)
-                                                    .count.size
-          else
-            # For users with 0 messages, count users with earlier join date
-            users_with_same_messages_earlier_join = User.where('COALESCE(membership_started_at, created_at) < ?', 
-                                                            Current.user.membership_started_at || Current.user.created_at)
-                                                    .where('active = true AND suspended_at IS NULL')
-                                                    .count
-          end
-          
-          @current_user_year_rank = users_with_more_messages + users_with_same_messages_earlier_join + 1
-          
-          # Sanity check: rank should never exceed total active users
-          @current_user_year_rank = [@current_user_year_rank, @total_active_users].min
+          @current_user_year_rank = StatsService.calculate_user_rank(Current.user.id, :year)
+          @total_active_users ||= @total_users # Already calculated above
         end
       end
     end
 
-    # All Time
-    @top_posters_all_time = User.select('users.id, users.name, COUNT(messages.id) AS message_count, COALESCE(users.membership_started_at, users.created_at) as joined_at')
-                              .joins(messages: :room)
-                              .where('rooms.type != ? AND messages.active = true', 'Rooms::Direct')
-                              .where('users.active = true AND users.suspended_at IS NULL')
-                              .group('users.id, users.name, users.membership_started_at, users.created_at')
-                              .order('message_count DESC, joined_at ASC')
-                              .limit(30)
-    
     # Get current user's stats for all time if not in top 10
     if Current.user
       current_user_in_top_10_all_time = @top_posters_all_time.first(10).any? { |user| user.id == Current.user.id }
       
       if !current_user_in_top_10_all_time
-        @current_user_all_time_stats = User.select('users.id, users.name, COALESCE(COUNT(messages.id), 0) AS message_count')
-                                       .joins("LEFT JOIN messages ON messages.creator_id = users.id AND messages.active = true
-                                              LEFT JOIN rooms ON messages.room_id = rooms.id AND rooms.type != 'Rooms::Direct'")
-                                       .where('users.id = ?', Current.user.id)
-                                       .group('users.id')
-                                       .first
-        
-        # Always ensure we have stats for the current user
-        if @current_user_all_time_stats.nil?
-          @current_user_all_time_stats = User.select('users.id, users.name, 0 AS message_count')
-                                         .where('users.id = ?', Current.user.id)
-                                         .first
-        end
+        @current_user_all_time_stats = StatsService.user_stats_for_period(Current.user.id, :all_time)
         
         if @current_user_all_time_stats
-          # Get total number of active users for proper ranking context
-          @total_active_users ||= User.where(active: true, suspended_at: nil).count
-          
-          # Count users with more messages
-          users_with_more_messages = User.joins(messages: :room)
-                                      .where('rooms.type != ? AND messages.active = true', 'Rooms::Direct')
-                                      .where('users.active = true AND users.suspended_at IS NULL')
-                                      .group('users.id')
-                                      .having('COUNT(messages.id) > ?', @current_user_all_time_stats.message_count.to_i)
-                                      .count.size
-          
-          # Count users with same number of messages but earlier join date
-          if @current_user_all_time_stats.message_count.to_i > 0
-            users_with_same_messages_earlier_join = User.joins(messages: :room)
-                                                    .where('rooms.type != ? AND messages.active = true', 'Rooms::Direct')
-                                                    .where('users.active = true AND users.suspended_at IS NULL')
-                                                    .group('users.id')
-                                                    .having('COUNT(messages.id) = ?', @current_user_all_time_stats.message_count.to_i)
-                                                    .where('COALESCE(users.membership_started_at, users.created_at) < ?', 
-                                                          Current.user.membership_started_at || Current.user.created_at)
-                                                    .count.size
-          else
-            # For users with 0 messages, count users with earlier join date
-            users_with_same_messages_earlier_join = User.where('COALESCE(membership_started_at, created_at) < ?', 
-                                                            Current.user.membership_started_at || Current.user.created_at)
-                                                    .where('active = true AND suspended_at IS NULL')
-                                                    .count
-          end
-          
-          @current_user_all_time_rank = users_with_more_messages + users_with_same_messages_earlier_join + 1
-          
-          # Sanity check: rank should never exceed total active users
-          @current_user_all_time_rank = [@current_user_all_time_rank, @total_active_users].min
+          @current_user_all_time_rank = StatsService.calculate_all_time_rank(Current.user.id)
+          @total_active_users ||= @total_users # Already calculated above
         end
       end
     end
 
-    @newest_members = User
-      .select("users.*, COALESCE(users.membership_started_at, users.created_at) as joined_at")
-      .where(active: true)
-      .where(suspended_at: nil)
-      .order("joined_at DESC")
-      .limit(30)
+    @newest_members = StatsService.newest_members(30)
+  end
+
+  def today
+    @page_title = "Daily Stats"
+    
+    # Get all days with messages (no time limit)
+    @days = Message.select("strftime('%Y-%m-%d', created_at) as date")
+                  .group("date")
+                  .order("date DESC")
+                  .map(&:date)
+    
+    # For each day, get the top 10 posters
+    @daily_stats = {}
+    @days.each do |day|
+      @daily_stats[day] = StatsService.top_posters_for_day(day, 10)
+    end
+    
+    render 'stats/today'
+  end
+  
+  def month
+    @page_title = "Monthly Stats"
+    
+    # Get all months with messages
+    @months = Message.select("strftime('%Y-%m', created_at) as month")
+                    .group("month")
+                    .order("month DESC")
+                    .map(&:month)
+    
+    # For each month, get the top 10 posters
+    @monthly_stats = {}
+    @months.each do |month|
+      @monthly_stats[month] = StatsService.top_posters_for_month(month, 10)
+    end
+    
+    render 'stats/month'
+  end
+  
+  def year
+    @page_title = "Yearly Stats"
+    
+    # Get all years with messages
+    @years = Message.select("strftime('%Y', created_at) as year")
+                   .group("year")
+                   .order("year DESC")
+                   .map(&:year)
+    
+    # For each year, get the top 10 posters
+    @yearly_stats = {}
+    @years.each do |year|
+      @yearly_stats[year] = StatsService.top_posters_for_year(year, 10)
+    end
+    
+    render 'stats/year'
+  end
+  
+  def all
+    @page_title = "All-Time Stats"
+    
+    # Get all active users with their message counts (at least 1 message)
+    @all_time_stats = StatsService.all_users_with_messages
+    
+    # Precompute all user ranks to avoid N+1 queries
+    @precomputed_ranks = StatsService.precompute_all_time_ranks
+    
+    # No need to sort here - the database query already returns data in the correct order
+    # @all_time_stats is already ordered by message_count DESC, joined_at ASC
+    
+    # Get total count for context
+    @total_users_with_messages = @all_time_stats.length
+    @total_active_users = User.where(active: true, suspended_at: nil).count
+    
+    render 'stats/all'
   end
 end 

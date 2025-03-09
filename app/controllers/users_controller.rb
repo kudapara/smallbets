@@ -32,6 +32,21 @@ class UsersController < ApplicationController
 
   def show
     @recent_messages = Current.user.reachable_messages.created_by(@user).with_creator.ordered.last(5).reverse
+    
+    # Get user stats for different time periods
+    @today_stats = StatsService.user_stats_for_period(@user.id, :today)
+    @month_stats = StatsService.user_stats_for_period(@user.id, :month)
+    @year_stats = StatsService.user_stats_for_period(@user.id, :year)
+    @all_time_stats = StatsService.user_stats_for_period(@user.id, :all_time)
+    
+    # Calculate user ranks for different time periods
+    @today_rank = StatsService.calculate_user_rank(@user.id, :today)
+    @month_rank = StatsService.calculate_user_rank(@user.id, :month)
+    @year_rank = StatsService.calculate_user_rank(@user.id, :year)
+    @all_time_rank = StatsService.calculate_all_time_rank(@user.id)
+    
+    # Get total active users for context
+    @total_active_users = User.where(active: true, suspended_at: nil).count
   end
 
   private

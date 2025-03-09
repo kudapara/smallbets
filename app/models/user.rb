@@ -146,13 +146,8 @@ class User < ApplicationRecord
   end
 
   def message_rank
-    User.active
-        .joins(messages: :room)
-        .where('rooms.type != ?', 'Rooms::Direct')
-        .group('users.id')
-        .having('COUNT(messages.id) > ?', total_message_count)
-        .count
-        .size + 1
+    # Use the centralized ranking method from StatsService
+    StatsService.calculate_all_time_rank(id)
   end
 
   private

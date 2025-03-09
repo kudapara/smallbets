@@ -45,19 +45,6 @@
             <%= image_tag "messages.svg", aria: { hidden: "true", label: "Ping #{user.name}" } %>
           <% end %>
           
-          <div class="txt-small txt-subtle">
-            <% rank = user.message_rank %>
-            <% if rank == 1 %>
-              🥇 <%= pluralize(number_with_delimiter(user.total_message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
-            <% elsif rank == 2 %>
-              🥈 <%= pluralize(number_with_delimiter(user.total_message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
-            <% elsif rank == 3 %>
-              🥉 <%= pluralize(number_with_delimiter(user.total_message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
-            <% else %>
-              <%= pluralize(number_with_delimiter(user.total_message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
-            <% end %>
-          </div>
-
           <div class="txt-align-center">
             <%= link_to "All messages from #{user.name}...", user_messages_path(user), class: "txt-small", style: "color: var(--color-txt)", data: { turbo_frame: "_top" } %>
           </div>
