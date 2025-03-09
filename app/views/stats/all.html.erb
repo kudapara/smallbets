@@ -29,7 +29,7 @@
           <table class="table full-width">
             <tbody>
               <% if @all_time_stats.present? %>
-                <% @all_time_stats.each_with_index do |user, index| %>
+                <% @all_time_stats.each do |user| %>
                   <% is_current = user.id == Current.user&.id %>
                   <tr class="<%= 'current-user' if is_current %>">
                     <td class="txt-right txt-small txt-faded" style="width: 20px;"><%= @precomputed_ranks[user.id] %></td>
@@ -50,7 +50,7 @@
                       </div>
                     </td>
                     <td class="txt-right">
-                      <%= number_with_delimiter(user.message_count) %>
+                      <%= number_with_delimiter(user.total_message_count) %>
                     </td>
                   </tr>
                 <% end %>

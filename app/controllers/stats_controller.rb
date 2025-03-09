@@ -119,18 +119,18 @@ class StatsController < ApplicationController
     end
 
     # Get daily and all-time stats
-    @daily_stats = StatsService.daily_stats(30)
+    @daily_stats = StatsService.daily_stats
     @all_time_stats = StatsService.all_time_daily_stats
 
     # Get top posters for different time periods
-    @top_posters_today = StatsService.top_posters_today(30)
-    @top_posters_month = StatsService.top_posters_month(30)
-    @top_posters_year = StatsService.top_posters_year(30)
-    @top_posters_all_time = StatsService.top_posters_all_time(30)
+    @top_posters_today = StatsService.top_posters_today
+    @top_posters_month = StatsService.top_posters_month
+    @top_posters_year = StatsService.top_posters_year
+    @top_posters_all_time = StatsService.top_posters_all_time
     
     # Get current user's stats for today if not in top 10
     if Current.user
-      current_user_in_top_10_today = @top_posters_today.first(10).any? { |user| user.id == Current.user.id }
+      current_user_in_top_10_today = @top_posters_today.any? { |user| user.id == Current.user.id }
       
       if !current_user_in_top_10_today
         @current_user_today_stats = StatsService.user_stats_for_period(Current.user.id, :today)
@@ -144,7 +144,7 @@ class StatsController < ApplicationController
 
     # Get current user's stats for month if not in top 10
     if Current.user
-      current_user_in_top_10_month = @top_posters_month.first(10).any? { |user| user.id == Current.user.id }
+      current_user_in_top_10_month = @top_posters_month.any? { |user| user.id == Current.user.id }
       
       if !current_user_in_top_10_month
         @current_user_month_stats = StatsService.user_stats_for_period(Current.user.id, :month)
@@ -158,7 +158,7 @@ class StatsController < ApplicationController
 
     # Get current user's stats for year if not in top 10
     if Current.user
-      current_user_in_top_10_year = @top_posters_year.first(10).any? { |user| user.id == Current.user.id }
+      current_user_in_top_10_year = @top_posters_year.any? { |user| user.id == Current.user.id }
       
       if !current_user_in_top_10_year
         @current_user_year_stats = StatsService.user_stats_for_period(Current.user.id, :year)
@@ -172,7 +172,7 @@ class StatsController < ApplicationController
 
     # Get current user's stats for all time if not in top 10
     if Current.user
-      current_user_in_top_10_all_time = @top_posters_all_time.first(10).any? { |user| user.id == Current.user.id }
+      current_user_in_top_10_all_time = @top_posters_all_time.any? { |user| user.id == Current.user.id }
       
       if !current_user_in_top_10_all_time
         @current_user_all_time_stats = StatsService.user_stats_for_period(Current.user.id, :all_time)
@@ -184,7 +184,8 @@ class StatsController < ApplicationController
       end
     end
 
-    @newest_members = StatsService.newest_members(30)
+    # Get newest members
+    @newest_members = StatsService.newest_members
   end
 
   def today
@@ -199,7 +200,7 @@ class StatsController < ApplicationController
     # For each day, get the top 10 posters
     @daily_stats = {}
     @days.each do |day|
-      @daily_stats[day] = StatsService.top_posters_for_day(day, 10)
+      @daily_stats[day] = StatsService.top_posters_for_day(day)
     end
     
     render 'stats/today'
@@ -217,7 +218,7 @@ class StatsController < ApplicationController
     # For each month, get the top 10 posters
     @monthly_stats = {}
     @months.each do |month|
-      @monthly_stats[month] = StatsService.top_posters_for_month(month, 10)
+      @monthly_stats[month] = StatsService.top_posters_for_month(month)
     end
     
     render 'stats/month'
@@ -235,7 +236,7 @@ class StatsController < ApplicationController
     # For each year, get the top 10 posters
     @yearly_stats = {}
     @years.each do |year|
-      @yearly_stats[year] = StatsService.top_posters_for_year(year, 10)
+      @yearly_stats[year] = StatsService.top_posters_for_year(year)
     end
     
     render 'stats/year'
@@ -244,17 +245,31 @@ class StatsController < ApplicationController
   def all
     @page_title = "All-Time Stats"
     
-    # Get all active users with their message counts (at least 1 message)
-    @all_time_stats = StatsService.all_users_with_messages
+    # Precompute all user ranks
+    all_ranks = StatsService.precompute_all_time_ranks
     
-    # Precompute all user ranks to avoid N+1 queries
-    @precomputed_ranks = StatsService.precompute_all_time_ranks
+    # Get users with at least one message and their ranks
+    users_with_ranks = all_ranks.map do |user_id, rank|
+      [user_id, rank]
+    end
     
-    # No need to sort here - the database query already returns data in the correct order
-    # @all_time_stats is already ordered by message_count DESC, joined_at ASC
+    # Filter out users with no messages by checking the rank
+    # (lower ranks = more messages, so users with messages will have ranks <= total users with messages)
+    total_users_with_messages = StatsService.all_users_with_messages.select { |u| u.message_count.to_i > 0 }.count
+    users_with_messages = users_with_ranks.select { |user_id, rank| rank <= total_users_with_messages }
+    
+    # Sort by rank (ascending)
+    sorted_user_ids = users_with_messages.sort_by { |user_id, rank| rank }.map(&:first)
+    
+    # Fetch the users in the correct order
+    @all_time_stats = User.where(id: sorted_user_ids).includes(:avatar_attachment)
+                          .index_by(&:id).slice(*sorted_user_ids).values
+    
+    # Add the precomputed ranks to the view
+    @precomputed_ranks = all_ranks
     
     # Get total count for context
-    @total_users_with_messages = @all_time_stats.length
+    @total_users_with_messages = users_with_messages.length
     @total_active_users = User.where(active: true, suspended_at: nil).count
     
     render 'stats/all'

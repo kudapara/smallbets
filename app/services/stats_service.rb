@@ -1,6 +1,6 @@
 class StatsService
   # Get top posters for today
-  def self.top_posters_today(limit = 30)
+  def self.top_posters_today(limit = 10)
     today = Time.now.utc.strftime('%Y-%m-%d')
     
     # Use the same direct query approach as in top_posters_for_day
@@ -10,42 +10,43 @@ class StatsService
         .where("strftime('%Y-%m-%d', messages.created_at) = ?", today)
         .where('users.active = true AND users.suspended_at IS NULL')
         .group('users.id, users.name, users.membership_started_at, users.created_at')
-        .order('message_count DESC, joined_at ASC')
+        .order('message_count DESC, joined_at ASC, users.id ASC')
         .limit(limit)
   end
   
   # Get top posters for this month
-  def self.top_posters_month(limit = 30)
+  def self.top_posters_month(limit = 10)
     current_month = Time.now.utc.strftime('%Y-%m')
     top_posters_for_month(current_month, limit)
   end
   
   # Get top posters for this year
-  def self.top_posters_year(limit = 30)
+  def self.top_posters_year(limit = 10)
     current_year = Time.now.utc.year.to_s
     top_posters_for_year(current_year, limit)
   end
   
   # Get top posters for all time
-  def self.top_posters_all_time(limit = 30)
+  def self.top_posters_all_time(limit = 10)
     User.select('users.id, users.name, COUNT(messages.id) AS message_count, COALESCE(users.membership_started_at, users.created_at) as joined_at')
         .joins(messages: :room)
         .where('rooms.type != ? AND messages.active = true', 'Rooms::Direct')
         .where('users.active = true AND users.suspended_at IS NULL')
         .group('users.id, users.name, users.membership_started_at, users.created_at')
-        .order('message_count DESC, joined_at ASC')
+        .order('message_count DESC, joined_at ASC, users.id ASC')
         .limit(limit)
   end
   
   # Get all users with at least one message (for all-time stats page)
+  # Note: Despite the name, this now includes all users, even those with no messages
   def self.all_users_with_messages
-    User.select('users.id, users.name, COUNT(messages.id) AS message_count, COALESCE(users.membership_started_at, users.created_at) as joined_at')
-        .joins("INNER JOIN messages ON messages.creator_id = users.id AND messages.active = true
-               INNER JOIN rooms ON messages.room_id = rooms.id AND rooms.type != 'Rooms::Direct'")
+    # Use the same query structure as precompute_all_time_ranks for consistency
+    User.select('users.*, COALESCE(COUNT(CASE WHEN messages.id IS NOT NULL AND messages.active = true AND rooms.type != \'Rooms::Direct\' THEN messages.id END), 0) AS message_count, COALESCE(users.membership_started_at, users.created_at) as joined_at')
+        .joins('LEFT JOIN messages ON messages.creator_id = users.id')
+        .joins('LEFT JOIN rooms ON messages.room_id = rooms.id')
         .where('users.active = true AND users.suspended_at IS NULL')
-        .group('users.id, users.name, users.membership_started_at, users.created_at')
-        .having('COUNT(messages.id) > 0')
-        .order('message_count DESC, joined_at ASC')
+        .group('users.id')
+        .order('message_count DESC, joined_at ASC, users.id ASC')
   end
   
   # Get user stats for a specific time period
@@ -236,13 +237,13 @@ class StatsService
     [rank, total_active_users].min
   end
   
-  # Get daily stats for the last 30 days
-  def self.daily_stats(days = 30)
+  # Get daily stats for the last 7 days
+  def self.daily_stats(limit = 7)
     # Use strftime directly with the created_at column
     Message.select("strftime('%Y-%m-%d', created_at) as date, count(*) as count")
           .group('date')
           .order('date DESC')
-          .limit(days)
+          .limit(limit)
   end
   
   # Get all-time daily stats
@@ -268,7 +269,7 @@ class StatsService
         .where("strftime('%Y-%m-%d', messages.created_at) = ?", day_formatted)
         .where('users.active = true AND users.suspended_at IS NULL')
         .group('users.id, users.name, users.membership_started_at, users.created_at')
-        .order('message_count DESC, joined_at ASC')
+        .order('message_count DESC, joined_at ASC, users.id ASC')
         .limit(limit)
   end
   
@@ -285,7 +286,7 @@ class StatsService
               'Rooms::Direct', month_start, month_end)
         .where('users.active = true AND users.suspended_at IS NULL')
         .group('users.id, users.name, users.membership_started_at, users.created_at')
-        .order('message_count DESC, joined_at ASC')
+        .order('message_count DESC, joined_at ASC, users.id ASC')
         .limit(limit)
   end
   
@@ -301,12 +302,12 @@ class StatsService
               'Rooms::Direct', year_start, year_end)
         .where('users.active = true AND users.suspended_at IS NULL')
         .group('users.id, users.name, users.membership_started_at, users.created_at')
-        .order('message_count DESC, joined_at ASC')
+        .order('message_count DESC, joined_at ASC, users.id ASC')
         .limit(limit)
   end
   
   # Get newest members
-  def self.newest_members(limit = 30)
+  def self.newest_members(limit = 10)
     User.select("users.*, COALESCE(users.membership_started_at, users.created_at) as joined_at")
         .where(active: true)
         .where(suspended_at: nil)
@@ -327,66 +328,44 @@ class StatsService
     }
   end
   
-  # Calculate a user's rank in the all-time leaderboard
-  # This is the canonical ranking method to be used by both stats pages and user profiles
-  def self.calculate_all_time_rank(user_id)
-    user = User.find_by(id: user_id)
-    return nil unless user
-    
-    # Use a window function to calculate ranks directly in the database
-    sql = <<-SQL
-      SELECT rank
-      FROM (
-        SELECT 
-          users.id, 
-          RANK() OVER (ORDER BY COUNT(messages.id) DESC, COALESCE(users.membership_started_at, users.created_at) ASC) as rank
-        FROM users
-        INNER JOIN messages ON messages.creator_id = users.id AND messages.active = true
-        INNER JOIN rooms ON messages.room_id = rooms.id AND rooms.type != 'Rooms::Direct'
-        WHERE users.active = true AND users.suspended_at IS NULL
-        GROUP BY users.id, users.membership_started_at, users.created_at
-        HAVING COUNT(messages.id) > 0
-      ) AS ranked_users
-      WHERE id = ?
-    SQL
-    
-    # Execute the query and return the rank
-    result = ActiveRecord::Base.connection.execute(
-      ActiveRecord::Base.sanitize_sql_array([sql, user_id])
-    ).first
-    result ? result['rank'] : nil
-  end
-  
   # Precompute all user ranks for the all-time stats page
   # Returns a hash mapping user_id to rank
   def self.precompute_all_time_ranks
-    # Use a window function to calculate ranks directly in the database
-    # This is much more efficient than calculating ranks in Ruby
+    # Use a query that includes all users, even those with no messages
     sql = <<-SQL
       WITH user_stats AS (
         SELECT 
           users.id, 
-          COUNT(messages.id) AS message_count,
+          COALESCE(COUNT(CASE WHEN messages.id IS NOT NULL AND messages.active = true AND rooms.type != 'Rooms::Direct' THEN messages.id END), 0) AS message_count,
           COALESCE(users.membership_started_at, users.created_at) as joined_at
         FROM users
-        INNER JOIN messages ON messages.creator_id = users.id AND messages.active = true
-        INNER JOIN rooms ON messages.room_id = rooms.id AND rooms.type != 'Rooms::Direct'
+        LEFT JOIN messages ON messages.creator_id = users.id
+        LEFT JOIN rooms ON messages.room_id = rooms.id
         WHERE users.active = true AND users.suspended_at IS NULL
         GROUP BY users.id, users.membership_started_at, users.created_at
-        HAVING COUNT(messages.id) > 0
       )
       SELECT 
         id,
-        RANK() OVER (ORDER BY message_count DESC, joined_at ASC) as rank
+        RANK() OVER (ORDER BY message_count DESC, joined_at ASC, id ASC) as rank
       FROM user_stats
     SQL
     
     # Execute the query and build a hash of user_id => rank
     ranks = {}
     ActiveRecord::Base.connection.execute(sql).each do |row|
-      ranks[row['id']] = row['rank']
+      ranks[row['id'].to_i] = row['rank']
     end
     
     ranks
+  end
+  
+  # Calculate a user's rank in the all-time leaderboard
+  # This is the canonical ranking method to be used by both stats pages and user profiles
+  def self.calculate_all_time_rank(user_id)
+    user = User.find_by(id: user_id)
+    return nil unless user
+    
+    # Use the precomputed ranks for consistency across the application
+    precompute_all_time_ranks[user_id]
   end
 end 

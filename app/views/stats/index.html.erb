@@ -36,7 +36,7 @@
           <table class="table full-width">
             <tbody>
               <% if @top_posters_today.any? %>
-                <% @top_posters_today.first(10).each_with_index do |user, index| %>
+                <% @top_posters_today.each_with_index do |user, index| %>
                   <% is_current = user.id == Current.user&.id %>
                   <tr class="<%= 'current-user' if is_current %>">
                     <td class="txt-right txt-small txt-faded" style="width: 20px;"><%= index + 1 %></td>
@@ -118,7 +118,7 @@
           <table class="table full-width">
             <tbody>
               <% if @top_posters_month.any? %>
-                <% @top_posters_month.first(10).each_with_index do |user, index| %>
+                <% @top_posters_month.each_with_index do |user, index| %>
                   <% is_current = user.id == Current.user&.id %>
                   <tr class="<%= 'current-user' if is_current %>">
                     <td class="txt-right txt-small txt-faded" style="width: 20px;"><%= index + 1 %></td>
@@ -200,7 +200,7 @@
           <table class="table full-width">
             <tbody>
               <% if @top_posters_year.any? %>
-                <% @top_posters_year.first(10).each_with_index do |user, index| %>
+                <% @top_posters_year.each_with_index do |user, index| %>
                   <% is_current = user.id == Current.user&.id %>
                   <tr class="<%= 'current-user' if is_current %>">
                     <td class="txt-right txt-small txt-faded" style="width: 20px;"><%= index + 1 %></td>
@@ -282,7 +282,7 @@
           <table class="table full-width">
             <tbody>
               <% if @top_posters_all_time.any? %>
-                <% @top_posters_all_time.first(10).each_with_index do |user, index| %>
+                <% @top_posters_all_time.each_with_index do |user, index| %>
                   <% is_current = user.id == Current.user&.id %>
                   <tr class="<%= 'current-user' if is_current %>">
                     <td class="txt-right txt-small txt-faded" style="width: 20px;"><%= index + 1 %></td>
@@ -436,7 +436,7 @@
         <div class="overflow-x-auto">
           <table class="table full-width">
             <tbody>
-              <% @newest_members.first(10).each_with_index do |user, index| %>
+              <% @newest_members.each_with_index do |user, index| %>
                 <% is_current = user.id == Current.user&.id %>
                 <tr class="<%= 'current-user' if is_current %>">
                   <td class="txt-right txt-small txt-faded" style="width: 20px;"><%= index + 1 %></td>
@@ -477,7 +477,7 @@
         <div class="overflow-x-auto">
           <table class="table full-width">
             <tbody>
-              <% @daily_stats.first(7).each do |stat| %>
+              <% @daily_stats.each do |stat| %>
                 <tr>
                   <td><%= stat.date %></td>
                   <td class="txt-right"><%= number_with_delimiter(stat.count) %></td>
