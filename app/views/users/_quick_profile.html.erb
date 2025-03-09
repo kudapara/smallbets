@@ -41,6 +41,21 @@
             </div>
           <% end %>
 
+          <div class="margin-block-start">
+            <% rank = user.message_rank %>
+            <div class="txt-small">
+              <% if rank == 1 %>
+                🥇 <%= pluralize(number_with_delimiter(user.total_message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
+              <% elsif rank == 2 %>
+                🥈 <%= pluralize(number_with_delimiter(user.total_message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
+              <% elsif rank == 3 %>
+                🥉 <%= pluralize(number_with_delimiter(user.total_message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
+              <% else %>
+                <%= pluralize(number_with_delimiter(user.total_message_count), 'message') %> posted (Rank #<%= number_with_delimiter(rank) %>)
+              <% end %>
+            </div>
+          </div>
+
           <%= button_to rooms_directs_path(user_ids: [ user.id ]), class: "btn btn--reversed full-width txt-medium", data: { turbo_frame: "_top" } do %>
             <%= image_tag "messages.svg", aria: { hidden: "true", label: "Ping #{user.name}" } %>
           <% end %>

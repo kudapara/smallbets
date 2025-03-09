@@ -1,4 +1,8 @@
 class StatsService
+  # Class variable to store the cached ranks
+  @@all_time_ranks = nil
+  @@last_cache_time = nil
+  
   # Get top posters for today
   def self.top_posters_today(limit = 10)
     today = Time.now.utc.strftime('%Y-%m-%d')
@@ -330,9 +334,15 @@ class StatsService
   
   # Precompute all user ranks for the all-time stats page
   # Returns a hash mapping user_id to rank
+  # Results are cached across requests and invalidated when messages or users change
   def self.precompute_all_time_ranks
+    # Return cached result if available and not too old (max 1 hour)
+    if @@all_time_ranks.present? && @@last_cache_time.present? && @@last_cache_time > 1.hour.ago
+      return @@all_time_ranks
+    end
+    
     # Use a query that includes all users, even those with no messages
-    sql = <<-SQL
+    sql = <<~SQL
       WITH user_stats AS (
         SELECT 
           users.id, 
@@ -356,6 +366,10 @@ class StatsService
       ranks[row['id'].to_i] = row['rank']
     end
     
+    # Cache the result
+    @@all_time_ranks = ranks
+    @@last_cache_time = Time.current
+    
     ranks
   end
   
@@ -368,4 +382,12 @@ class StatsService
     # Use the precomputed ranks for consistency across the application
     precompute_all_time_ranks[user_id]
   end
-end 
+  
+  # Clear the cached all-time ranks
+  # This should be called when a user creates or deletes a message,
+  # or when a user is created, deleted, or suspended
+  def self.clear_all_time_ranks_cache
+    @@all_time_ranks = nil
+    @@last_cache_time = nil
+  end
+end

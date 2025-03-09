@@ -34,6 +34,11 @@ class User < ApplicationRecord
   before_validation :normalize_social_urls
   before_save :transliterate_name, if: :name_changed?
   after_create_commit :grant_membership_to_open_rooms
+  
+  # Clear the all_time_ranks cache when users are created, deleted, or their status changes
+  after_create_commit -> { StatsService.clear_all_time_ranks_cache }
+  after_destroy_commit -> { StatsService.clear_all_time_ranks_cache }
+  after_update_commit -> { StatsService.clear_all_time_ranks_cache if saved_change_to_attribute?(:active) || saved_change_to_attribute?(:suspended_at) }
 
   scope :ordered, -> { order("LOWER(name)") }
   scope :recent_posters_first, ->(room_id = nil) do
