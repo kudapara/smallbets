@@ -396,8 +396,10 @@
                 <td class="txt-right">
                   <% deploy_time = Time.parse(ENV["LAST_DEPLOY"]) rescue nil %>
                   <% if deploy_time.present? %>
-                    <%= local_datetime_tag deploy_time, style: :relative %>
-                    <span class="txt-small txt-faded">(<%= local_datetime_tag deploy_time, style: :datetime %>)</span>
+                    <div data-controller="local-time">
+                      <%= local_datetime_tag deploy_time, style: :relative %>
+                      <span class="txt-small txt-faded">(<%= local_datetime_tag deploy_time, style: :datetime %>)</span>
+                    </div>
                   <% else %>
                     <span class="txt-faded">Unknown</span>
                   <% end %>
