@@ -82,7 +82,7 @@
               <% @recent_messages.each do |message| %>
                 <div class="txt-align-left" style="width: 100%; text-align: left !important; padding-top: 0.3rem; padding-bottom: 0.3rem;">
                   <div class="txt-small txt-subdued">
-                    <%= link_to message.room.name, message.room %>
+                    <%= link_to message.room.name, room_at_message_path(message.room, message) %>
                     · <%= time_ago_in_words(message.created_at) %> ago
                   </div>
                   <div class="break-word"><%= truncate(message.body.to_plain_text, length: 100) %></div>
@@ -93,7 +93,13 @@
         <% end %>
 
         <div class="pad-inline-double margin-inline margin-block-start" style="text-align: left !important;">
-          <%= link_to "All messages from #{@user.name}...", user_messages_path(@user), class: "txt-medium", style: "color: var(--lch-black)" %>
+          <div class="txt-align-left" style="width: 100%; text-align: left !important; padding-top: 0.3rem; padding-bottom: 0.3rem;">
+            <div class="txt-subdued">
+              <span style="font-size: var(--font-size-medium);">
+                <%= link_to "All messages from #{@user.name}...", user_messages_path(@user) %>
+              </span>
+            </div>
+          </div>
         </div>
 
         <% if Current.user.can_administer? %>

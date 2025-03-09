@@ -46,7 +46,11 @@
           <% end %>
           
           <div class="txt-align-center">
-            <%= link_to "All messages from #{user.name}...", user_messages_path(user), class: "txt-small", style: "color: var(--color-txt)", data: { turbo_frame: "_top" } %>
+            <div class="txt-subdued">
+              <span style="font-size: var(--font-size-small);">
+                <%= link_to "All messages from #{user.name}...", user_messages_path(user), data: { turbo_frame: "_top" } %>
+              </span>
+            </div>
           </div>
           
         </div>
