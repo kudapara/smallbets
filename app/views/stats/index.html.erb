@@ -396,52 +396,8 @@
                 <td class="txt-right">
                   <% deploy_time = Time.parse(ENV["LAST_DEPLOY"]) rescue nil %>
                   <% if deploy_time.present? %>
-                    <span id="last-deploy-time"><%= deploy_time.strftime("%Y-%m-%d %H:%M:%S UTC") %></span>
-                    <script>
-                      document.addEventListener('DOMContentLoaded', function() {
-                        const deployTimeEl = document.getElementById('last-deploy-time');
-                        const utcTimeStr = deployTimeEl.textContent;
-                        
-                        try {
-                          // Parse the UTC time string
-                          const deployDate = new Date(utcTimeStr);
-                          
-                          if (!isNaN(deployDate.getTime())) {
-                            // Calculate relative time
-                            const now = new Date();
-                            const diffSeconds = Math.floor((now - deployDate) / 1000);
-                            
-                            let relativeTime;
-                            if (diffSeconds < 60) {
-                              relativeTime = "just now";
-                            } else if (diffSeconds < 3600) {
-                              relativeTime = `${Math.floor(diffSeconds / 60)}m ago`;
-                            } else if (diffSeconds < 86400) {
-                              relativeTime = `${Math.floor(diffSeconds / 3600)}h ago`;
-                            } else {
-                              relativeTime = `${Math.floor(diffSeconds / 86400)}d ago`;
-                            }
-                            
-                            // Format local date and time
-                            const options = { 
-                              year: 'numeric', 
-                              month: 'numeric', 
-                              day: 'numeric',
-                              hour: 'numeric',
-                              minute: 'numeric'
-                            };
-                            const localDateTime = deployDate.toLocaleString(undefined, options);
-                            
-                            // Update the element
-                            deployTimeEl.textContent = relativeTime;
-                            deployTimeEl.insertAdjacentHTML('afterend', 
-                              `<span class="txt-small txt-faded"> (${localDateTime})</span>`);
-                          }
-                        } catch (e) {
-                          console.error('Error formatting date:', e);
-                        }
-                      });
-                    </script>
+                    <%= time_ago_in_words(deploy_time) %> ago
+                    <span class="txt-small txt-faded">(<%= deploy_time.strftime("%Y-%m-%d %I:%M %p") %> UTC)</span>
                   <% else %>
                     <span class="txt-faded">Unknown</span>
                   <% end %>
