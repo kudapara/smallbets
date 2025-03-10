@@ -2,7 +2,7 @@ module User::Role
   extend ActiveSupport::Concern
 
   included do
-    enum role: %i[ member expert administrator bot ]
+    enum role: %i[ member administrator bot expert ]
   end
 
   def can_administer?(record = nil)
