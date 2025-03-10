@@ -15,8 +15,10 @@
 
   <% unless hotwire_native_app? %>
     <div class="flex gap-half align-center">
-      <%= turbo_frame_tag dom_id(room, :involvement) do %>
-        <%= button_to_change_involvement(room, @membership.involvement) %>
+      <% unless room.direct? %>
+        <%= turbo_frame_tag dom_id(room, :involvement) do %>
+          <%= button_to_change_involvement(room, @membership.involvement) %>
+        <% end %>
       <% end %>
     </div>
   <% end %>
