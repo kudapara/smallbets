@@ -268,13 +268,32 @@
   margin: 0;
   padding-inline-end: calc(var(--btn-size) / 2);
 
-  .message__original-room, .message__room {
+  .message__meta-block {
     font-size: 0.8rem;
     font-weight: 400;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  
+  }
+
+  .message__answered {
+    font-size: 0.8rem;
+    font-weight: 400;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--color-border-darkest); 
+
+    &::before {
+      content: "✓";
+    }
+     
+    &.message__answered-by-me {
+      color: var(--color-positive);
+    } 
+  }
+
+  .message__original-room, .message__room {
     &::before {
       content: "→";
     }

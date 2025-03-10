@@ -9,7 +9,7 @@ class Accounts::UsersController < ApplicationController
 
   def update
     @user.update(role_params)
-    redirect_to edit_account_url
+    redirect_to request.referer || user_url(@user), notice: "✓"
   end
 
   def destroy
@@ -24,6 +24,6 @@ class Accounts::UsersController < ApplicationController
     end
 
     def role_params
-      { role: params.require(:user)[:role].presence_in(%w[ member administrator ]) || "member" }
+      { role: params.require(:user)[:role].presence_in(%w[ member expert administrator ]) || "member" }
     end
 end

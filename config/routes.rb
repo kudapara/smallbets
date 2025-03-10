@@ -125,6 +125,7 @@ Rails.application.routes.draw do
           delete '', to: 'bookmarks#destroy'
         end
       end
+      resource :answer, only: %i[ create destroy ]
     end
   end
   scope module: "messages" do
