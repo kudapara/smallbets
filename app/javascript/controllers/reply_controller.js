@@ -17,8 +17,9 @@ export default class extends Controller {
 
   #formatLinkTargets() {
     this.bodyTarget.querySelectorAll("a").forEach(link => {
+      const relative = link.href.startsWith("/")
       const sameDomain = link.href.startsWith(window.location.origin)
-      link.target = sameDomain ? "_top" : "_blank"
+      link.target = relative || sameDomain ? "_top" : "_blank"
     })
   }
 
@@ -46,6 +47,6 @@ export default class extends Controller {
   }
 
   get #linkToOriginal() {
-    return `<a href="${this.linkTarget.href}">#</a>`
+    return `<a href="${this.linkTarget.getAttribute('href')}">#</a>`
   }
 }
