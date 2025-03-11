@@ -192,18 +192,60 @@ class StatsController < ApplicationController
     @page_title = "Daily Stats"
     
     # Get all days with messages (no time limit), using simple strftime
-    @days = Message.select("strftime('%Y-%m-%d', created_at) as date")
+    all_days = Message.select("strftime('%Y-%m-%d', created_at) as date")
                   .group("date")
                   .order("date DESC")
                   .map(&:date)
     
-    # For each day, get the top 10 posters
-    @daily_stats = {}
-    @days.each do |day|
-      @daily_stats[day] = StatsService.top_posters_for_day(day)
+    # Group days by month
+    days_by_month = all_days.group_by do |day|
+      date = Date.parse(day)
+      "#{date.year}-#{date.month.to_s.rjust(2, '0')}"
     end
     
-    render 'stats/today'
+    # Sort months in descending order
+    @sorted_months = days_by_month.keys.sort.reverse
+    
+    # Check for month parameter in either the URL path or query params
+    month_param = params[:month]
+    
+    if month_param.present?
+      # If a specific month is requested, only load that month's data
+      @month = month_param
+      if days_by_month[@month].present?
+        @days = days_by_month[@month].sort.reverse
+        
+        # For each day, get the top 10 posters
+        @daily_stats = {}
+        @days.each do |day|
+          @daily_stats[day] = StatsService.top_posters_for_day(day)
+        end
+        
+        # Log for debugging
+        Rails.logger.debug "Rendering month data for #{@month} with #{@days.size} days"
+        
+        respond_to do |format|
+          format.html { render partial: 'stats/month_data', locals: { month: @month, days: @days, daily_stats: @daily_stats } }
+          format.turbo_stream { render partial: 'stats/month_data', locals: { month: @month, days: @days, daily_stats: @daily_stats } }
+        end
+        return
+      end
+    else
+      # For initial page load, only load the first month
+      @initial_month = @sorted_months.first
+      @days = days_by_month[@initial_month].sort.reverse
+      
+      # For each day, get the top 10 posters
+      @daily_stats = {}
+      @days.each do |day|
+        @daily_stats[day] = StatsService.top_posters_for_day(day)
+      end
+      
+      # Store all months for the view to use
+      @all_months = @sorted_months
+      
+      render 'stats/today'
+    end
   end
   
   def month
@@ -273,5 +315,43 @@ class StatsController < ApplicationController
     @total_active_users = User.where(active: true, suspended_at: nil).count
     
     render 'stats/all'
+  end
+
+  def month_data
+    # Get all days with messages for the specified month
+    month_param = params[:month]
+    
+    unless month_param.present?
+      render plain: "Month parameter is required", status: :bad_request
+      return
+    end
+    
+    # Get all days with messages
+    all_days = Message.select("strftime('%Y-%m-%d', created_at) as date")
+                .group("date")
+                .order("date DESC")
+                .map(&:date)
+    
+    # Filter days for the specified month
+    days_in_month = all_days.select do |day|
+      date = Date.parse(day)
+      "#{date.year}-#{date.month.to_s.rjust(2, '0')}" == month_param
+    end.sort.reverse
+    
+    if days_in_month.empty?
+      render plain: "No data for month #{month_param}", status: :not_found
+      return
+    end
+    
+    # For each day, get the top 10 posters
+    @daily_stats = {}
+    days_in_month.each do |day|
+      @daily_stats[day] = StatsService.top_posters_for_day(day)
+    end
+    
+    # Log for debugging
+    Rails.logger.debug "Rendering month data for #{month_param} with #{days_in_month.size} days"
+    
+    render partial: 'stats/month_data', locals: { month: month_param, days: days_in_month, daily_stats: @daily_stats }
   end
 end 

@@ -3,6 +3,42 @@
 
 <% content_for :head do %>
   <%= stylesheet_link_tag "application/stats" %>
+  <style>
+    #loading-indicator {
+      display: none;
+      text-align: center;
+      padding: 0.5rem;
+      margin: 1rem 0;
+      position: relative;
+      z-index: 10;
+      clear: both;
+    }
+    
+    .loading-spinner {
+      display: inline-block;
+      width: 2rem;
+      height: 2rem;
+      border: 0.25rem solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top-color: #3498db;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    #error-message {
+      display: none;
+      text-align: center;
+      padding: 1rem;
+      margin: 1rem 0;
+      background-color: #fff3f3;
+      border: 1px solid #ffcaca;
+      border-radius: 0.5rem;
+      color: #d63031;
+    }
+  </style>
 <% end %>
 
 <% content_for :nav do %>
@@ -18,74 +54,158 @@
   </div>
 <% end %>
 
-<section class="full-width" style="margin-top: 2rem;">
-  <% 
-    # Group days by month
-    days_by_month = @days.group_by do |day|
-      date = Date.parse(day)
-      "#{date.year}-#{date.month.to_s.rjust(2, '0')}"
-    end
-    
-    # Sort months in descending order
-    sorted_months = days_by_month.keys.sort.reverse
-  %>
-  
-  <% sorted_months.each do |month_key| %>
-    <% 
-      year, month = month_key.split('-')
-      month_name = Date.new(year.to_i, month.to_i, 1).strftime("%B %Y") 
-      
-      # Sort days within month in descending order (31st to 1st)
-      days_in_month = days_by_month[month_key].sort.reverse
-    %>
-    <h2 class="section-heading" style="margin-top: 2rem;"><%= month_name %></h2>
-    <div class="stats-grid margin-block">
-      <% days_in_month.each do |day| %>
-        <div class="card grid-card">
-          <div class="card-header">
-            <h2 class="txt-h3 margin-none"><%= day %></h2>
-          </div>
-          <div class="card-body compact">
-            <div class="overflow-x-auto">
-              <table class="table full-width">
-                <tbody>
-                  <% if @daily_stats[day].present? %>
-                    <% @daily_stats[day].each_with_index do |user, index| %>
-                      <% is_current = user.id == Current.user&.id %>
-                      <tr class="<%= 'current-user' if is_current %>">
-                        <td class="txt-right txt-small txt-faded" style="width: 20px;"><%= index + 1 %></td>
-                        <td>
-                          <div class="flex gap-inline align-center">
-                            <%= link_to user_path(user, from: "/stats/daily"), class: "flex align-center hover-target", style: "text-decoration: none; gap: 4px; min-width: 0;" do %>
-                              <% if user.avatar.attached? %>
-                                <div class="avatar avatar-xs">
-                                  <%= image_tag user.avatar, alt: user.name, loading: "lazy" %>
-                                </div>
-                              <% else %>
-                                <div class="avatar avatar-xs">
-                                  <%= user.name.first.upcase %>
-                                </div>
-                              <% end %>
-                              <span class="txt-truncate"><%= user.name %></span>
-                            <% end %>
-                          </div>
-                        </td>
-                        <td class="txt-right">
-                          <%= number_with_delimiter(user.message_count) %>
-                        </td>
-                      </tr>
-                    <% end %>
-                  <% else %>
-                    <tr>
-                      <td colspan="3" class="txt-center">No messages yet</td>
-                    </tr>
-                  <% end %>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      <% end %>
-    </div>
+<section class="full-width" style="margin-top: 2rem;" id="stats-container">
+  <% if @initial_month.present? %>
+    <%= render partial: 'stats/month_data', locals: { month: @initial_month, days: @days, daily_stats: @daily_stats } %>
   <% end %>
-</section> 
+  
+  <div id="loading-indicator">
+    <div class="loading-spinner"></div>
+  </div>
+  
+  <div id="error-message">
+    <p>Failed to load data. <a href="#" id="retry-button">Retry</a></p>
+  </div>
+</section>
+
+<% if @all_months.present? && @all_months.size > 1 %>
+  <script>
+    // Variables to track pagination state
+    let paginationInitialized = false;
+    let scrollCheckFunction = null;
+    let months = [];
+    let currentIndex = 1;
+    let isLoading = false;
+    
+    // Initialize the scroll pagination
+    function initScrollPagination() {
+      // Prevent multiple initializations
+      if (paginationInitialized) return;
+      
+      paginationInitialized = true;
+      
+      // Store the months we need to load
+      months = <%= raw @all_months.to_json %>;
+      currentIndex = 1; // Start from the second month (index 1) since the first one is already loaded
+      isLoading = false;
+      let scrollTimeout = null;
+      
+      // Function to check if we need to load more content
+      function checkScroll() {
+        if (isLoading) return;
+        
+        // If we've reached the end of the data, just stop checking
+        if (currentIndex >= months.length) return;
+        
+        // Clear any existing timeout to debounce the scroll event
+        if (scrollTimeout) {
+          clearTimeout(scrollTimeout);
+        }
+        
+        // Set a new timeout
+        scrollTimeout = setTimeout(() => {
+          const scrollPosition = window.scrollY + window.innerHeight;
+          const documentHeight = document.documentElement.scrollHeight;
+          
+          // Calculate how far we are from the bottom as a percentage
+          const scrollPercentage = (scrollPosition / documentHeight) * 100;
+          
+          // Load more content if we're near the bottom (within 150px or 90% scrolled)
+          if (scrollPosition >= documentHeight - 150 || scrollPercentage > 90) {
+            loadNextMonth();
+          }
+        }, 150);
+      }
+      
+      // Save reference to the checkScroll function for cleanup
+      scrollCheckFunction = checkScroll;
+      
+      // Function to load the next month
+      function loadNextMonth() {
+        if (isLoading || currentIndex >= months.length) return;
+        
+        isLoading = true;
+        const loadingIndicator = document.getElementById('loading-indicator');
+        loadingIndicator.style.display = 'block';
+        
+        const monthToLoad = months[currentIndex];
+        const container = document.getElementById('stats-container');
+        
+        // Create a placeholder for the month
+        const placeholder = document.createElement('div');
+        placeholder.id = `month-${monthToLoad}`;
+        container.insertBefore(placeholder, loadingIndicator);
+        
+        // Load the month data using fetch
+        fetch(`<%= stats_month_data_path %>?month=${monthToLoad}`)
+          .then(response => response.text())
+          .then(html => {
+            // Replace the placeholder with the loaded content
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            placeholder.outerHTML = tempDiv.innerHTML;
+            
+            // Update state and hide loading indicator
+            currentIndex++;
+            loadingIndicator.style.display = 'none';
+            isLoading = false;
+            
+            // Check if we need to load more (in case the content is too short)
+            setTimeout(() => {
+              const newScrollPosition = window.scrollY + window.innerHeight;
+              const newDocumentHeight = document.documentElement.scrollHeight;
+              const newScrollPercentage = (newScrollPosition / newDocumentHeight) * 100;
+              
+              if (newScrollPosition >= newDocumentHeight - 150 || newScrollPercentage > 90) {
+                checkScroll();
+              }
+            }, 300);
+          })
+          .catch(error => {
+            // Remove the placeholder on error
+            placeholder.remove();
+            loadingIndicator.style.display = 'none';
+            isLoading = false;
+            
+            // Show error message
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.style.display = 'block';
+            
+            // Set up retry button
+            const retryButton = document.getElementById('retry-button');
+            retryButton.onclick = function(e) {
+              e.preventDefault();
+              errorMessage.style.display = 'none';
+              checkScroll(); // Try loading again
+            };
+          });
+      }
+      
+      // Listen for scroll events
+      window.addEventListener('scroll', checkScroll);
+      
+      // Initial check - only if the page is very short
+      setTimeout(() => {
+        const documentHeight = document.documentElement.scrollHeight;
+        // Only do initial load if the document is shorter than the viewport plus some margin
+        if (documentHeight < window.innerHeight + 100) {
+          loadNextMonth();
+        }
+      }, 1000);
+    }
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', initScrollPagination);
+    
+    // Also initialize when Turbo navigates to this page
+    document.addEventListener('turbo:load', initScrollPagination);
+    
+    // Clean up when navigating away
+    document.addEventListener('turbo:before-visit', function() {
+      if (paginationInitialized && scrollCheckFunction) {
+        window.removeEventListener('scroll', scrollCheckFunction);
+        paginationInitialized = false;
+      }
+    });
+  </script>
+<% end %>
