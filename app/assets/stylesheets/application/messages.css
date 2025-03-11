@@ -277,11 +277,6 @@
   }
 
   .message__answered {
-    font-size: 0.8rem;
-    font-weight: 400;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     color: var(--color-border-darkest); 
 
     &::before {

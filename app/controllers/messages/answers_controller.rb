@@ -29,6 +29,6 @@ class Messages::AnswersController < ApplicationController
   end
 
   def ensure_can_answer
-    head :forbidden unless Current.user.expert?
+    head :forbidden unless Current.user.expert? || Current.user.administrator?
   end
 end

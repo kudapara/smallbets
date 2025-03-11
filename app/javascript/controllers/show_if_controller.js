@@ -1,22 +1,34 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-    static values = { role: String, id: Number }
+    static values = { role: String, roles: Array, id: Number }
 
     connect() {
-        this.#hideOnRoleMismatch()
-        this.#hideOnIdMismatch()
+        this.#showOnRoleMatch()
+        this.#showOnIdMatch()
     }
     
-    #hideOnRoleMismatch() {
-        if (this.hasRoleValue && this.roleValue.toLowerCase() !== Current.user?.role?.toLowerCase()) this.#hide();
+    #showOnRoleMatch() {
+        const userRole = Current.user?.role?.trim()?.toLowerCase() ?? ""
+        const allowedRoles = this.#allowedRoles()
+
+        if (allowedRoles.length && allowedRoles.includes(userRole)) this.#show();
     }
 
-    #hideOnIdMismatch() {
-        if (this.hasIdValue && this.idValue !== Current.user?.id) this.#hide();
+    #showOnIdMatch() {
+        if (this.hasIdValue && this.idValue === Current.user?.id) this.#show();
     }
     
-    #hide() {
-        this.element.style.display = 'none';
+    #show() {
+        this.element.removeAttribute("hidden");
+    }
+
+    #allowedRoles() {
+        if (this.hasRolesValue) {
+            return this.rolesValue.map((r) => r.trim().toLowerCase())
+        } else if (this.hasRoleValue) {
+            return [this.roleValue.toLowerCase()]
+        }
+        return []
     }
 }

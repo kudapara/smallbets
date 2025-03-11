@@ -191,6 +191,8 @@
 [hidden] { display: none; }
 [contents] { display: contents; }
 
+.no-select { user-select: none }
+
 /* PWA */
 .hide-in-pwa {
   @media (display-mode: standalone) {
