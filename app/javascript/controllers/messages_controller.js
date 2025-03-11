@@ -71,6 +71,7 @@ export default class extends Controller {
 
   async beforeStreamRender(event) {
     const target = event.detail.newStream.getAttribute("target")
+    const action = event.detail.newStream.getAttribute("action")
 
     if (target === this.messagesTarget.id) {
       const render = event.detail.render
@@ -91,6 +92,7 @@ export default class extends Controller {
           }
         }
       } else {
+        if (action === "append") event.preventDefault()
         this.#showReturnToLatestButton(true)
       }
     }
