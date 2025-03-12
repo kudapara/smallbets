@@ -330,6 +330,17 @@ class StatsService
     }
   end
   
+  # Get top rooms by message count
+  def self.top_rooms_by_message_count(limit = 10)
+    Room.select('rooms.*, COUNT(messages.id) AS message_count')
+        .joins(:messages)
+        .where('messages.active = true')
+        .where(type: 'Rooms::Open') # Only include open rooms
+        .group('rooms.id')
+        .order('message_count DESC, rooms.created_at ASC')
+        .limit(limit)
+  end
+  
   # Precompute all user ranks for the all-time stats page
   # Returns a hash mapping user_id to rank
   # Results are cached across requests and invalidated when messages or users change

@@ -184,4 +184,5 @@ Rails.application.routes.draw do
   get "stats/monthly", to: "stats#month"
   get "stats/yearly", to: "stats#year"
   get "stats/all", to: "stats#all"
+  get "stats/rooms", to: "stats#rooms"
 end

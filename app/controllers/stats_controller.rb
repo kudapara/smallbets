@@ -14,6 +14,9 @@ class StatsController < ApplicationController
     db_path = ActiveRecord::Base.connection_db_config.configuration_hash[:database]
     @database_size = File.size(db_path) rescue 0
     
+    # Get top rooms by message count
+    @top_rooms = StatsService.top_rooms_by_message_count(10)
+    
     # System metrics
     begin
       # CPU metrics
@@ -315,6 +318,35 @@ class StatsController < ApplicationController
     @total_active_users = User.where(active: true, suspended_at: nil).count
     
     render 'stats/all'
+  end
+
+  def rooms
+    @page_title = "Room Stats"
+    
+    # Get all open rooms ordered by message count
+    @rooms = Room.select('rooms.*, COUNT(messages.id) AS message_count')
+                .joins(:messages)
+                .where('messages.active = true')
+                .where(type: 'Rooms::Open')
+                .group('rooms.id')
+                .order('message_count DESC, rooms.created_at ASC')
+                .includes(:creator) # Include creator to avoid N+1 queries
+    
+    # For each room, find the top talker
+    @top_talkers = {}
+    @rooms.each do |room|
+      top_talker = User.select('users.id, users.name, COUNT(messages.id) AS message_count')
+                      .joins("INNER JOIN messages ON messages.creator_id = users.id AND messages.active = true")
+                      .where('messages.room_id = ?', room.id)
+                      .where('users.active = true AND users.suspended_at IS NULL')
+                      .group('users.id, users.name')
+                      .order('message_count DESC')
+                      .first
+      
+      @top_talkers[room.id] = top_talker if top_talker
+    end
+    
+    render 'stats/rooms'
   end
 
   def month_data
