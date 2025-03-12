@@ -9,10 +9,10 @@ module RoomsHelper
     member_count = room.memberships.visible.joins(:user).where(users: { suspended_at: nil, active: true }).count
 
     link_to \
-      [ :edit, @room ],
+      room_stats_path(room),
       class: "btn",
-      style: "view-transition-name: edit-room-#{@room.id}",
-      data: { room_id: @room.id } do
+      style: "view-transition-name: edit-room-#{room.id}",
+      data: { room_id: room.id } do
         image_tag("person.svg", aria: { hidden: "true" }) +
         tag.span(number_with_delimiter(member_count), class: "hide-on-mobile") +
         tag.span(round_for_mobile(member_count), class: "hide-on-desktop")

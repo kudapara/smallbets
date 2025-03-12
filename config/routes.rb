@@ -99,6 +99,7 @@ Rails.application.routes.draw do
     scope module: "rooms" do
       resource :refresh, only: :show
       resource :settings, only: :show
+      resource :stats, only: :show
       resource :involvement, only: %i[ show update ] do
         get :notifications_ready, on: :member
       end
