@@ -2,6 +2,7 @@ class User < ApplicationRecord
   DEFAULT_NAME = "Small Better"
   
   has_subscriptions
+  after_create_commit :subscribe_to_emails
 
   include Avatar, Bot, Mentionable, Role, Transferable, Deactivatable, Preferences
 
@@ -237,5 +238,9 @@ class User < ApplicationRecord
 
       handle = url.strip
       "https://www.linkedin.com/in/#{handle}"
+    end
+
+    def subscribe_to_emails
+      subscribe("notifications")
     end
 end
