@@ -65,3 +65,6 @@ gem "stringex"
 gem 'aws-sdk-rails', '~> 4'
 
 gem "heapy", group: :development
+
+gem "rufus-scheduler"
+gem "mailkick"

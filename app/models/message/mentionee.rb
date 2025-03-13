@@ -2,18 +2,16 @@ module Message::Mentionee
   extend ActiveSupport::Concern
 
   included do
-    has_and_belongs_to_many :mentionees, ->(message) { where(id: message.room.user_ids) }, 
-                            class_name: "User", join_table: "mentions"
+    has_many :mentions, dependent: :destroy
+    has_many :mentionees, ->(message) { where(id: message.room.user_ids) }, through: :mentions, source: :user
 
     after_save :create_mentionees
     
-    scope :with_mentions, ->{ joins("JOIN mentions ON mentions.message_id = messages.id") }
     scope :mentioning, ->(user_id) {
-      with_mentions.where(mentions: { user_id: user_id })
+      joins(:mentions).where(mentions: { user_id: user_id })
     }
     scope :without_user_mentions, ->(user) {
-      joins("LEFT JOIN mentions ON mentions.message_id = messages.id")
-        .where("mentions.user_id IS NULL OR mentions.user_id != ?", user.id)
+      left_outer_joins(:mentions).where.not(mentions: { user_id: user.id }).distinct
     }
   end
 

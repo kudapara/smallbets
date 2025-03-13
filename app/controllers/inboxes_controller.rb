@@ -46,7 +46,7 @@ class InboxesController < ApplicationController
 
   private
     def find_mentions
-      Bookmark.populate_for paginate(Current.user.mentions.without_created_by(Current.user).with_threads.with_creator)
+      Bookmark.populate_for paginate(Current.user.mentioning_messages.without_created_by(Current.user).with_threads.with_creator)
     end
 
     def find_notifications

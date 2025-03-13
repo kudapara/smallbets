@@ -1,0 +1,12 @@
+Hi <%= @user.name %>,
+
+You have <%= pluralize(@messages.size, "unread mention") %>:
+
+<% @messages.each do |message| %>
+<%= message.creator.name %> on <%= message.created_at.strftime("%b %-d, %-I:%M %p") %> in <%= message.room.name %> => <%= room_at_message_url(message.room, message) %> 
+<%= message.plain_text_body %>
+
+<% end %>
+--
+To opt out of these emails, click here:
+<%= mailkick_unsubscribe_url(@user, "notifications") %>

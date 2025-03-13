@@ -51,7 +51,7 @@ FOREIGN KEY ("parent_message_id")
   REFERENCES "messages" ("id")
 );
 CREATE INDEX "index_rooms_on_parent_message_id" ON "rooms" ("parent_message_id");
-CREATE TABLE IF NOT EXISTS "mentions" ("user_id" integer NOT NULL, "message_id" integer NOT NULL, CONSTRAINT "fk_rails_1b711e94aa"
+CREATE TABLE IF NOT EXISTS "mentions" ("user_id" integer NOT NULL, "message_id" integer NOT NULL, "notified_at" datetime(6), CONSTRAINT "fk_rails_1b711e94aa"
 FOREIGN KEY ("user_id")
   REFERENCES "users" ("id")
 , CONSTRAINT "fk_rails_df6f108928"
@@ -111,7 +111,13 @@ CREATE INDEX "index_messages_on_created_at" ON "messages" ("created_at");
 CREATE INDEX "index_messages_on_room_id_and_created_at" ON "messages" ("room_id", "created_at");
 CREATE INDEX "index_messages_on_answered_at" ON "messages" ("answered_at");
 CREATE INDEX "index_messages_on_answered_by_id" ON "messages" ("answered_by_id");
+CREATE INDEX "index_mentions_on_user_id_and_message_id" ON "mentions" ("user_id", "message_id");
+CREATE INDEX "index_mentions_on_user_id_and_not_notified" ON "mentions" ("user_id") WHERE notified_at IS NULL;
+CREATE TABLE IF NOT EXISTS "mailkick_subscriptions" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "subscriber_type" varchar, "subscriber_id" integer, "list" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL);
+CREATE UNIQUE INDEX "index_mailkick_subscriptions_on_subscriber_and_list" ON "mailkick_subscriptions" ("subscriber_type", "subscriber_id", "list");
 INSERT INTO "schema_migrations" (version) VALUES
+('20250313150105'),
+('20250313112520'),
 ('20250310112527'),
 ('20250303042704'),
 ('20241226114337'),
