@@ -17,10 +17,27 @@ export default class extends Controller {
 
   #formatLinkTargets() {
     this.bodyTarget.querySelectorAll("a").forEach(link => {
-      const relative = link.href.startsWith("/")
-      const sameDomain = link.href.startsWith(window.location.origin)
-      link.target = relative || sameDomain ? "_top" : "_blank"
+      if (this.#isInternalLink(link)) {
+        link.target = "_top"
+      } else {
+        link.target = "_blank"
+        link.rel = "noopener noreferrer"
+      }
     })
+  }
+  
+  #isInternalLink(link) {
+    const currentHostname = window.location.hostname
+    const linkHostname = new URL(link.href, window.location.href).hostname
+    
+    if (linkHostname === currentHostname) return true
+    if (this.#getRootDomain(linkHostname) === this.#getRootDomain(currentHostname)) return true
+
+    return false
+  }
+  
+  #getRootDomain(hostname) {
+    return hostname.includes('.') ? hostname.split('.').slice(-2).join('.') : hostname
   }
 
   get #bodyContent() {

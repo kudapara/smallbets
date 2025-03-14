@@ -86,7 +86,15 @@ module Authentication
     end
 
     def post_authenticating_url
-      session.delete(:return_to_after_authenticating) || root_url
+      return_url = session.delete(:return_to_after_authenticating)
+      safe_redirect_url?(return_url) ? return_url : root_url
+    end
+
+    def safe_redirect_url?(url)
+      uri = URI.parse(url)
+      uri.host.blank? || uri.host == URI.parse(root_url).hostname
+    rescue URI::InvalidURIError
+      false
     end
 
     def reset_authentication
