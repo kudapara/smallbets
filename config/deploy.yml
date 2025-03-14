@@ -38,6 +38,7 @@ env:
     - GUMROAD_ON
     - GUMROAD_PRODUCT_IDS
     - WEBHOOK_SECRET
+    - COOKIE_DOMAIN
 
 volumes:
   - "/disk/campfire/:/rails/storage/"
