@@ -32,8 +32,8 @@
          data-search-rooms-target="container"
          data-search-rooms-filter-class="display-none">
       <div>
-        <label class="for-screen-reader" for="room-search">Search rooms</label>
-        <input type="search" id="room-search" class="input input--search" placeholder="Search rooms..."
+        <label class="for-screen-reader" for="room-search">Find rooms</label>
+        <input type="search" id="room-search" class="input input--search" placeholder="Find Rooms..."
                data-search-rooms-target="input"
                data-action="input->search-rooms#filter keyup->search-rooms#filter"
                autocomplete="off">
@@ -71,34 +71,46 @@
     </button>
   </div>
 
-  <div class="flex align-end sidebar__tools gap-half justify-end d-hotwire-native-none">
-    <%= link_to user_profile_path, class: "btn avatar flex-item-no-shrink sidebar__tool" do %>
-      <%= avatar_image_tag(Current.user, size: 48, style: "view-transition-name: avatar-#{Current.user.id}") %>
-      <span class="for-screen-reader"><%= Current.user.name %></span>
-    <% end %>
-
-    <%= render "users/sidebars/bell" %>
-
-    <%= link_to inbox_path, class: "btn align-center gap txt-reversed sidebar__tool" do %>
-      <%= image_tag "inbox.svg", size: 20, aria: { hidden: "true" } %>
-      <span class="for-screen-reader">Inbox</span>
-    <% end %>
-
-    <%= link_to library_path, class: "btn align-center gap txt-reversed sidebar__tool" do %>
-      <%= image_tag "library.svg", size: 20, aria: { hidden: "true" } %>
-      <span class="for-screen-reader">Library</span>
-    <% end %>
-
-    <%= link_to stats_path, class: "btn align-center gap txt-reversed sidebar__tool" do %>
-      <%= image_tag "stats.svg", size: 20, aria: { hidden: "true" } %>
-      <span class="for-screen-reader">Stats</span>
-    <% end %>
-
-    <% if Current.user&.administrator? %>
-      <%= link_to edit_account_path, class: "btn align-center gap txt-reversed sidebar__tool" do %>
-        <%= image_tag "settings.svg", size: 20, aria: { hidden: "true" }, style: "view-transition-name: account-settings" %>
-        <span class="for-screen-reader">Account Settings</span>
+  <div class="sidebar__tools d-hotwire-native-none">
+    <div class="sidebar__tool-container">
+      <%= link_to inbox_path, class: "btn sidebar__tool" do %>
+        <%= image_tag "mentions.svg", size: 20, aria: { hidden: "true" } %>
+        <span class="for-screen-reader">Mentions</span>
+        <span class="sidebar__tool-label">Mentions</span>
       <% end %>
-    <% end %>
+
+      <%= link_to bookmarks_inbox_path, class: "btn sidebar__tool" do %>
+        <%= image_tag "bookmark.svg", size: 20, aria: { hidden: "true" } %>
+        <span class="for-screen-reader">Bookmarks</span>
+        <span class="sidebar__tool-label">Bookmarks</span>
+      <% end %>
+
+      <%= link_to library_path, class: "btn sidebar__tool" do %>
+        <%= image_tag "library.svg", size: 20, aria: { hidden: "true" } %>
+        <span class="for-screen-reader">Library</span>
+        <span class="sidebar__tool-label">Library</span>
+      <% end %>
+
+      <%= link_to stats_path, class: "btn sidebar__tool" do %>
+        <%= image_tag "stats.svg", size: 20, aria: { hidden: "true" } %>
+        <span class="for-screen-reader">Stats</span>
+        <span class="sidebar__tool-label">Stats</span>
+      <% end %>
+
+      <% if Current.user&.administrator? %>
+        <%= link_to edit_account_path, class: "btn sidebar__tool" do %>
+          <%= image_tag "settings.svg", size: 20, aria: { hidden: "true" }, style: "view-transition-name: account-settings" %>
+          <span class="for-screen-reader">Account Settings</span>
+          <span class="sidebar__tool-label">Settings</span>
+        <% end %>
+      <% end %>
+      
+      <%= render "users/sidebars/bell" %>
+      
+      <%= link_to user_profile_path, class: "btn avatar sidebar__tool" do %>
+        <%= avatar_image_tag(Current.user, size: 40, style: "view-transition-name: avatar-#{Current.user.id}") %>
+        <span class="for-screen-reader"><%= Current.user.name %></span>
+      <% end %>
+    </div>
   </div>
 <% end %>

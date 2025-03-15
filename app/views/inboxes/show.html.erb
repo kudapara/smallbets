@@ -1,30 +1,7 @@
-<% @page_title = "Inbox" %>
+<% @page_title ||= "Inbox" %>
 <% @body_class = "sidebar searches inbox" %>
 
-<% content_for :sidebar do %>
-  <div class="rooms position-relative flex flex-column gap overflow-y overflow-hide-scrollbar">
-    <%= link_to mentions_inbox_path, class: "align-center gap room btn txt-nowrap" do %>
-      <span class="overflow-ellipsis">Mentions</span>
-    <% end %>
-    <%= link_to notifications_inbox_path, class: "align-center gap room btn txt-nowrap" do %>
-      <span class="overflow-ellipsis">Notifications</span>
-    <% end %>
-    <%= link_to messages_inbox_path, class: "align-center gap room btn txt-nowrap" do %>
-      <span class="overflow-ellipsis">All Messages</span>
-    <% end %>
-    <%= link_to bookmarks_inbox_path, class: "align-center gap room btn txt-nowrap" do %>
-      <span class="overflow-ellipsis">Bookmarks</span>
-    <% end %>
-
-    <% if has_unreads? %>
-      <%= button_to clear_inbox_path, class: "btn searches__btn",
-                    data: { turbo_confirm: "Are you sure you want to mark everything as read?" } do %>
-        <%= image_tag "eye.svg", aria: { hidden: "true" }, title: "Mark everything as read" %>
-        <span class="for-screen-reader">Mark everything as read</span>
-      <% end %>
-    <% end %>
-  </div>
-<% end %>
+<% content_for :sidebar, sidebar_turbo_frame_tag(src: user_sidebar_path) %>
 
 <div id="message-area" class="message-area">
   <div class="message-area--empty min-width center">

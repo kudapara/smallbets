@@ -17,7 +17,7 @@ body {
 
   &.sidebar {
     @media (min-width: 120ch) {
-      --sidebar-width: 26vw;
+      --sidebar-width: calc(26vw + var(--sidebar-tools-width));
     }
   }
 }
