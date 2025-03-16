@@ -64,12 +64,12 @@
         <%= image_tag "add.svg", size: 20, aria: { hidden: "true" }, style: "view-transition-name: new-room" %>
       <% end %>
     </div>
-
-    <button class="btn sidebar__toggle" data-action="toggle-class#toggle">
-      <%= image_tag "menu.svg", size: 20, aria: { hidden: "true" } %>
-      <span class="for-screen-reader">Open menu</span>
-    </button>
   </div>
+
+  <button class="btn sidebar__toggle" data-action="click->toggle-class#toggle">
+    <%= image_tag "menu.svg", size: 20, aria: { hidden: "true" } %>
+    <span class="for-screen-reader">Open menu</span>
+  </button>
 
   <div class="sidebar__tools d-hotwire-native-none">
     <div class="sidebar__tool-container">
