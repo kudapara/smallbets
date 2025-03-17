@@ -1,7 +1,7 @@
 class UnreadMentionsNotifierJob < ApplicationJob
   def perform
     User.active.administrator.subscribed("notifications").find_each do |user|
-      puts "Processing user #{user.id}..."
+      log "Checking for unread mentions...", user
 
       begin
         unread_messages = user.memberships.visible.unread.includes(:room, unread_notifications: :creator)
@@ -13,17 +13,25 @@ class UnreadMentionsNotifierJob < ApplicationJob
         # Require at least one mention older than 12 hours to notify user
         next unless unread_messages.any? { |m| m.created_at <= 12.hours.ago }
 
+        log "Found #{unread_messages.count} mentions to notify about.", user
+
         unread_messages.sort_by!(&:created_at)
 
         NotifierMailer.unread_mentions(user, unread_messages).deliver_now
         user.mentions.where(message_id: unread_messages.map(&:id)).update_all(notified_at: Time.current)
 
-        puts "Notified user #{user.id} about #{unread_messages.count} unread mentions."
+        log "Notified about #{unread_messages.count} unread mentions.", user
       rescue => e
-        Rails.logger.error "Error notifying user #{user.id} about unread mentions: #{e.message}"
+        log "Failed to notify about unread mentions: #{e.message}", user
       end
     end
 
-    puts "Done."
+    log "Done notifying all users."
+  end
+
+  private
+
+  def log(message, user = nil)
+    "[UnreadMentionsNotifierJob]#{"[#{user.id}]" if user.present?} #{message}"
   end
 end
