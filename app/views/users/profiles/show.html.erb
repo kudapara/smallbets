@@ -60,7 +60,7 @@
         <%= translation_button(:user_name) %>
 
         <label class="flex align-center gap flex-item-grow input input--actor">
-          <%= form.text_field :name, value: @user.editable_name, class: "input txt-large ", autocomplete: "name", placeholder: "Enter your name",
+          <%= form.text_field :name, value: @user.editable_name, class: "input txt-medium ", autocomplete: "name", placeholder: "Enter your name",
                               autofocus: true, required: true,  data: { "1p-ignore": true } %>
           <%= image_tag "person.svg", role: "presentation", size: 24, class: "colorize--black" %>
         </label>
@@ -70,7 +70,7 @@
         <%= translation_button(:email_address) %>
 
         <label class="flex align-center gap flex-item-grow input input--actor">
-          <%= form.email_field :email_address, class: "input txt-large", value: @user.email_address, autocomplete: "username",
+          <%= form.email_field :email_address, class: "input txt-medium", value: @user.email_address, autocomplete: "username",
                                placeholder: "Enter your email address", required: true %>
           <%= image_tag "email.svg", role: "presentation", size: 24, class: "colorize--black" %>
         </label>
@@ -80,7 +80,7 @@
         <%= translation_button(:twitter) %>
 
         <label class="flex align-center gap flex-item-grow input input--actor">
-          <%= form.text_field :twitter_url, class: "input txt-large ", placeholder: "Your X profile", required: false %>
+          <%= form.text_field :twitter_url, class: "input txt-medium ", placeholder: "Your X profile", required: false %>
           <%= image_tag "social/twitter-outline.svg", role: "presentation", size: 24, class: "colorize--black" %>
         </label>
       </div>
@@ -89,7 +89,7 @@
         <%= translation_button(:linkedin) %>
 
         <label class="flex align-center gap flex-item-grow input input--actor">
-          <%= form.text_field :linkedin_url, class: "input txt-large ", placeholder: "Your LinkedIn profile", required: false %>
+          <%= form.text_field :linkedin_url, class: "input txt-medium ", placeholder: "Your LinkedIn profile", required: false %>
           <%= image_tag "social/linkedin-bw.svg", role: "presentation", size: 24, class: "colorize--black" %>
         </label>
       </div>
@@ -98,7 +98,7 @@
         <%= translation_button(:website) %>
 
         <label class="flex align-center gap flex-item-grow input input--actor">
-          <%= form.text_field :personal_url, class: "input txt-large ", placeholder: "Your website", required: false %>
+          <%= form.text_field :personal_url, class: "input txt-medium ", placeholder: "Your website", required: false %>
           <%= image_tag "web.svg", role: "presentation", size: 24, class: "colorize--black" %>
         </label>
       </div>
@@ -107,7 +107,7 @@
         <%= translation_button(:bio) %>
 
         <label class="flex align--center gap flex-item--grow input input--actor">
-          <%= form.text_area :bio, class: "input txt-large", placeholder: "A few words about yourself…", maxlength: 200,
+          <%= form.text_area :bio, class: "input txt-medium", placeholder: "A few words about yourself…", maxlength: 200,
                              rows: 3, required: false %>
           <%= image_tag "bio.svg", role: "presentation", size: 24, class: "colorize--black" %>
         </label>
@@ -117,8 +117,16 @@
     </div>
   <% end %>
 
-  <div class="margin-block pad-inline pad-block fill-shade border-radius">
-    <menu class="flex flex-column gap margin-none pad">
+  <hr class="margin-block-start borderless">
+
+  <fieldset style="padding-bottom: 0;">
+    <legend class="gap">
+      <%= image_tag "star.svg", aria: { hidden: "true" }, size: 36, class: "colorize--black" %>
+    </legend>
+  </fieldset>
+
+  <div class="margin-block pad-inline pad-block fill-shade border-radius" style="margin-top: 0;">
+    <menu class="flex flex-column gap-half margin-none pad">
       <%= render partial: "users/profiles/membership", collection: @shared_memberships %>
     </menu>
   </div>
