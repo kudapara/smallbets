@@ -28,7 +28,6 @@
   inline-size: var(--sidebar-tools-width);
   block-size: 100dvh;
   border-inline-start: 1px solid var(--color-border-darker);
-  z-index: 4;
   background-color: var(--color-bg-translucent);
   overflow-y: auto;
   scrollbar-width: none;
