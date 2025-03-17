@@ -5,7 +5,7 @@ Rails.application.config.after_initialize do
     Rails.logger.info "Starting Rufus scheduler."
     $rufus_scheduler = Rufus::Scheduler.new
 
-    $rufus_scheduler.cron "0 6 * * * America/Los_Angeles" do
+    $rufus_scheduler.cron "0 7 * * * America/Los_Angeles" do
       UnreadMentionsNotifierJob.new.perform
     end
   end

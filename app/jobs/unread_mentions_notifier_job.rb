@@ -32,6 +32,6 @@ class UnreadMentionsNotifierJob < ApplicationJob
   private
 
   def log(message, user = nil)
-    "[UnreadMentionsNotifierJob]#{"[#{user.id}]" if user.present?} #{message}"
+    Rails.logger.info "[UnreadMentionsNotifierJob]#{"[#{user.id}]" if user.present?} #{message}"
   end
 end
