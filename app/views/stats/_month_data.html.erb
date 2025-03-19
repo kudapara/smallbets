@@ -6,8 +6,8 @@
   days_in_month = days
 %>
 
-<div id="month-<%= month %>">
-  <h2 class="section-heading" style="margin-top: 2rem;"><%= month_name %></h2>
+<div id="month-<%= month %>" style="margin-bottom: 2rem;">
+  <h2 class="section-heading"><%= month_name %></h2>
   <div class="stats-grid margin-block">
     <% days_in_month.each do |day| %>
       <div class="card grid-card">

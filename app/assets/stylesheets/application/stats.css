@@ -2,8 +2,7 @@
 
 .stats-page .full-width {
   width: 100%;
-  padding: 1rem;
-  padding-top: 0.5rem; /* Minimal padding at the top */
+  padding: 5rem 1rem 1rem;
 }
 
 .stats-page .section-heading {
@@ -14,17 +13,14 @@
   clear: both; /* Ensures the heading doesn't get overlapped */
 }
 
-/* Fix for navigation overlap */
 .stats-page #nav {
-  position: relative;
-  z-index: 10;
+  border-inline: 1px solid var(--color-border-darker);
+  backdrop-filter: blur(12px);
 }
 
-/* Ensure main content doesn't overlap with navigation */
+/* Ensure content isn't scrolled down */
 .stats-page #main-content {
-  position: relative;
-  z-index: 1;
-  padding-top: 0; /* Removed padding */
+  justify-content: start;
 }
 
 .stats-page .stats-grid {
