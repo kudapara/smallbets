@@ -20,6 +20,11 @@
       </p>
     <% end %>
     <p>
+      <% if @more_mentions_count > 0 %>
+        <%= link_to "See all other #{@more_mentions_count} mentions here", inbox_url %>
+      <% end %>
+    </p>
+    <p>
       <br/>
       <small>
         --
