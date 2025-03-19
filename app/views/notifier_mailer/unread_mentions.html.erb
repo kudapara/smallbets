@@ -10,7 +10,7 @@
   </head>
   <body>
     <p>Hi <%= @user.name %>,</p>
-    <p>You have <%= pluralize(@messages.size, "unread mention") %>:</p>
+    <p>You have <%= pluralize(@total_messages_count, "unread mention") %>:</p>
     
     <% @messages.each do |message| %>
       <p>
