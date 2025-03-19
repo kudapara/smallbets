@@ -5,9 +5,7 @@ class ApplicationMailer < ActionMailer::Base
   helper_method :formatted_time
 
   def formatted_time(time)
-    return "" unless time
-
-    time.in_time_zone("Pacific Time (US & Canada)").strftime("%b %-d, %-I:%M %p")
+    time&.strftime("%b %-d, %-I:%M %p")
   end
 end
 
