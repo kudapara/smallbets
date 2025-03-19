@@ -3,7 +3,7 @@ Hi <%= @user.name %>,
 You have <%= pluralize(@messages.size, "unread mention") %>:
 
 <% @messages.each do |message| %>
-<%= message.creator.name %> on <%= message.created_at.strftime("%b %-d, %-I:%M %p") %> in <%= message.room.name %> => <%= room_at_message_url(message.room, message) %> 
+<%= message.creator.name %> on <%= formatted_time message.created_at %> in <%= room_display_name(message.room) %> => <%= room_at_message_url(message.room, message) %> 
 <%= message.plain_text_body %>
 
 <% end %>

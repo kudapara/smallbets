@@ -51,15 +51,6 @@ FOREIGN KEY ("parent_message_id")
   REFERENCES "messages" ("id")
 );
 CREATE INDEX "index_rooms_on_parent_message_id" ON "rooms" ("parent_message_id");
-CREATE TABLE IF NOT EXISTS "mentions" ("user_id" integer NOT NULL, "message_id" integer NOT NULL, "notified_at" datetime(6), CONSTRAINT "fk_rails_1b711e94aa"
-FOREIGN KEY ("user_id")
-  REFERENCES "users" ("id")
-, CONSTRAINT "fk_rails_df6f108928"
-FOREIGN KEY ("message_id")
-  REFERENCES "messages" ("id")
-);
-CREATE INDEX "index_mentions_on_user_id" ON "mentions" ("user_id");
-CREATE INDEX "index_mentions_on_message_id" ON "mentions" ("message_id");
 CREATE TABLE IF NOT EXISTS "bookmarks" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "user_id" integer NOT NULL, "message_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "active" boolean DEFAULT 1, CONSTRAINT "fk_rails_c1ff6fa4ac"
 FOREIGN KEY ("user_id")
   REFERENCES "users" ("id")
@@ -88,12 +79,11 @@ CREATE TABLE IF NOT EXISTS "users" ("id" integer PRIMARY KEY AUTOINCREMENT NOT N
 CREATE UNIQUE INDEX "index_users_on_bot_token" ON "users" ("bot_token");
 CREATE UNIQUE INDEX "index_users_on_email_address" ON "users" ("email_address");
 CREATE UNIQUE INDEX "index_users_on_order_id" ON "users" ("order_id") WHERE order_id IS NOT NULL;
-CREATE TABLE IF NOT EXISTS "memberships" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "room_id" integer NOT NULL, "user_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "unread_at" datetime(6) DEFAULT NULL, "involvement" varchar DEFAULT 'mentions', "connections" integer DEFAULT 0 NOT NULL, "connected_at" datetime(6) DEFAULT NULL, "active" boolean DEFAULT 1);
+CREATE TABLE IF NOT EXISTS "memberships" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "room_id" integer NOT NULL, "user_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "unread_at" datetime(6) DEFAULT NULL, "involvement" varchar DEFAULT 'mentions', "connections" integer DEFAULT 0 NOT NULL, "connected_at" datetime(6) DEFAULT NULL, "active" boolean DEFAULT 1, "notified_until" datetime(6));
 CREATE INDEX "index_memberships_on_room_id_and_created_at" ON "memberships" ("room_id", "created_at");
 CREATE UNIQUE INDEX "index_memberships_on_room_id_and_user_id" ON "memberships" ("room_id", "user_id");
 CREATE INDEX "index_memberships_on_room_id" ON "memberships" ("room_id");
 CREATE INDEX "index_memberships_on_user_id" ON "memberships" ("user_id");
-CREATE INDEX "index_mentions_on_message_id_and_user_id" ON "mentions" ("message_id", "user_id");
 CREATE INDEX "index_memberships_on_room_user_involvement" ON "memberships" ("room_id", "user_id", "involvement");
 CREATE TABLE IF NOT EXISTS "messages" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "room_id" integer NOT NULL, "creator_id" integer NOT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "client_message_id" varchar NOT NULL, "active" boolean DEFAULT 1, "answered_at" datetime(6) DEFAULT NULL, "answered_by_id" integer DEFAULT NULL, CONSTRAINT "fk_rails_761a2f12b3"
 FOREIGN KEY ("creator_id")
@@ -111,11 +101,21 @@ CREATE INDEX "index_messages_on_created_at" ON "messages" ("created_at");
 CREATE INDEX "index_messages_on_room_id_and_created_at" ON "messages" ("room_id", "created_at");
 CREATE INDEX "index_messages_on_answered_at" ON "messages" ("answered_at");
 CREATE INDEX "index_messages_on_answered_by_id" ON "messages" ("answered_by_id");
-CREATE INDEX "index_mentions_on_user_id_and_message_id" ON "mentions" ("user_id", "message_id");
-CREATE INDEX "index_mentions_on_user_id_and_not_notified" ON "mentions" ("user_id") WHERE notified_at IS NULL;
 CREATE TABLE IF NOT EXISTS "mailkick_subscriptions" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "subscriber_type" varchar, "subscriber_id" integer, "list" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL);
 CREATE UNIQUE INDEX "index_mailkick_subscriptions_on_subscriber_and_list" ON "mailkick_subscriptions" ("subscriber_type", "subscriber_id", "list");
+CREATE TABLE IF NOT EXISTS "mentions" ("user_id" integer NOT NULL, "message_id" integer NOT NULL, CONSTRAINT "fk_rails_df6f108928"
+FOREIGN KEY ("message_id")
+  REFERENCES "messages" ("id")
+, CONSTRAINT "fk_rails_1b711e94aa"
+FOREIGN KEY ("user_id")
+  REFERENCES "users" ("id")
+);
+CREATE INDEX "index_mentions_on_user_id" ON "mentions" ("user_id");
+CREATE INDEX "index_mentions_on_message_id" ON "mentions" ("message_id");
+CREATE INDEX "index_mentions_on_message_id_and_user_id" ON "mentions" ("message_id", "user_id");
+CREATE INDEX "index_mentions_on_user_id_and_message_id" ON "mentions" ("user_id", "message_id");
 INSERT INTO "schema_migrations" (version) VALUES
+('20250319101929'),
 ('20250313150105'),
 ('20250313112520'),
 ('20250310112527'),

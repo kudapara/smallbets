@@ -1,6 +1,9 @@
 class NotifierMailer < ApplicationMailer
   include ActionView::Helpers::TextHelper
-  
+  include RoomsHelper
+
+  helper_method :room_display_name
+
   def unread_mentions(user, messages)
     @user = user
     @messages = messages

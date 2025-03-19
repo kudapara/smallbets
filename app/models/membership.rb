@@ -5,29 +5,40 @@ class Membership < ApplicationRecord
   belongs_to :user
 
   has_many :unread_notifications, ->(membership) {
-    next none if membership.involved_in_invisible?
+    scope = since(membership.unread_at || Time.current)
 
-    since(membership.unread_at || Time.current).mentioning(membership.user_id)
+    membership.room.direct? ? scope : scope.mentioning(membership.user_id)
   }, through: :room, source: :messages
 
   scope :with_has_unread_notifications, -> {
     select(
       "memberships.*",
 
-      <<~SQL.squish + " AS preloaded_has_unread_notifications"
-        EXISTS (
-          SELECT 1
-          FROM messages
-          JOIN mentions ON mentions.message_id = messages.id
-          WHERE messages.room_id = memberships.room_id
-            AND memberships.involvement NOT IN ('invisible')
-            AND mentions.user_id = memberships.user_id
-            AND messages.created_at >= COALESCE(
-              memberships.unread_at,
-              '#{Time.current.utc.iso8601}'
+      <<~SQL.squish
+      EXISTS (
+        SELECT 1
+        FROM messages
+        WHERE messages.room_id = memberships.room_id
+          AND messages.created_at >= COALESCE(
+            memberships.unread_at,
+            '#{Time.current.utc.iso8601}'
+          )
+          AND (
+            EXISTS (
+              SELECT 1
+              FROM rooms
+              WHERE rooms.id = memberships.room_id
+                AND rooms.type = 'Rooms::Direct'
             )
-        )
-      SQL
+            OR EXISTS (
+              SELECT 1
+              FROM mentions
+              WHERE mentions.message_id = messages.id
+                AND mentions.user_id = memberships.user_id
+            )
+          )
+      ) AS preloaded_has_unread_notifications
+    SQL
     )
   }
 

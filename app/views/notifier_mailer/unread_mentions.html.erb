@@ -14,7 +14,7 @@
     
     <% @messages.each do |message| %>
       <p>
-        <%= message.creator.name %> on <%= message.created_at.strftime("%b %-d, %-I:%M %p") %> in <%= link_to message.room.name, room_at_message_url(message.room, message) %>:
+        <%= message.creator.name %> on <%= formatted_time message.created_at %> in <%= link_to room_display_name(message.room), room_at_message_url(message.room, message) %>:
         <br/>
         <i><%= message.plain_text_body %></i>
       </p>
