@@ -159,6 +159,22 @@ class User < ApplicationRecord
     StatsService.calculate_all_time_rank(id)
   end
 
+  def subscribed_to_emails?
+    subscribed?("notifications")
+  end
+
+  def subscribe_to_emails
+    subscribe("notifications")
+  end
+
+  def unsubscribe_from_emails
+    unsubscribe("notifications")
+  end
+
+  def toggle_email_subscription
+    subscribed_to_emails? ? unsubscribe_from_emails : subscribe_to_emails
+  end
+
   private
     def self.find_and_initialize_unclaimed_gumroad_import(attributes)
       unclaimed_gumroad_import = User.active.non_suspended.unclaimed_gumroad_imports.find_by(email_address: attributes[:email_address])
@@ -238,9 +254,5 @@ class User < ApplicationRecord
 
       handle = url.strip
       "https://www.linkedin.com/in/#{handle}"
-    end
-
-    def subscribe_to_emails
-      subscribe("notifications")
     end
 end

@@ -54,6 +54,7 @@ Rails.application.routes.draw do
 
   scope module: :users do
     resource :preference, only: [:update]
+    resource :email_subscription, only: %i[ show update ]
   end
 
   resources :users, only: :show do

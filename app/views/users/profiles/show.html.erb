@@ -121,6 +121,28 @@
 
   <fieldset style="padding-bottom: 0;">
     <legend class="gap">
+      <%= image_tag "notification-bell-everything-old.svg", aria: { hidden: "true" }, size: 36, class: "colorize--black" %>
+    </legend>
+  </fieldset>
+
+  <div class="margin-block pad-inline pad-block-half fill-shade border-radius" style="margin-top: 0;">
+    <menu class="flex flex-column gap-half margin-none pad">
+      <li class="flex align-center gap margin-none min-width membership-item">
+        Receive an email when mentioned
+
+        <hr class="separator" aria-hidden="true">
+
+        <span class="txt-small">
+          <%= render "users/email_subscriptions/email_subscription" %>
+        </span>
+      </li>
+    </menu>
+  </div>
+
+  <hr class="margin-block-start borderless">
+
+  <fieldset style="padding-bottom: 0;">
+    <legend class="gap">
       <%= image_tag "star.svg", aria: { hidden: "true" }, size: 36, class: "colorize--black" %>
     </legend>
   </fieldset>
