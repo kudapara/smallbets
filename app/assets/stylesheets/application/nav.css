@@ -10,13 +10,13 @@
   row-gap: var(--block-space);
   z-index: 2;
 
-  &:has(.room--current) {
+  &:has(.btn--faux) {
     padding-inline: var(--inline-space);
 
     @media (min-width: 120ch) {
       margin-inline-start: 5vw;
 
-      .room--current {
+      .btn--faux {
         margin-inline-start: -3vw;
 
         .account-logo + & {
