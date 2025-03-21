@@ -50,7 +50,7 @@ export default class extends Controller {
   }
 
   roomTargetConnected(target) {
-    if (!this.#keepCurrentRoomUnread && target.dataset.roomId == Current.room.id) {
+    if (!this.#keepCurrentRoomUnread && target.dataset.roomId == Current.room?.id) {
       this.#readCurrentRoom()
     }
   }
@@ -63,7 +63,7 @@ export default class extends Controller {
         room.dataset.sortedListPriority = "1"
       }
       room.classList.remove(this.unreadClass, this.badgeClass)
-      if (Current.room.id === roomId) {
+      if (Current.room?.id === roomId) {
         this.#keepCurrentRoomUnread = false
       }
       this.dispatch("read", { detail: { targetId: roomId } })
@@ -94,7 +94,7 @@ export default class extends Controller {
       sortedListTarget.dataset.updatedAt = roomUpdatedAt
       sortedListTarget.dataset.size = roomSize
       
-      if (forceUnread || Current.room.id != roomId) {
+      if (forceUnread || Current.room?.id != roomId) {
         unreadRoom.classList.add(this.unreadClass)
       }
       
@@ -110,7 +110,7 @@ export default class extends Controller {
     const unreadRooms = this.#findRoomTargets(roomId)
 
     unreadRooms.forEach(unreadRoom => {
-      if (Current.room.id != roomId) {
+      if (Current.room?.id != roomId) {
         unreadRoom.classList.add(this.badgeClass)
       }
     })
@@ -147,6 +147,6 @@ export default class extends Controller {
   }
   
   #readCurrentRoom() {
-    this.read({ detail: { roomId: Current.room.id } })
+    this.read({ detail: { roomId: Current.room?.id } })
   }
 }
