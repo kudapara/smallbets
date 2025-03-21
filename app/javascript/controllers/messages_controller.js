@@ -60,7 +60,7 @@ export default class extends Controller {
   }
 
   messageTargetConnected(target) {
-    this.#formatter.format(target, ThreadStyle.thread)
+    this.#formatMessage(target)
   }
 
   bodyTargetConnected(target) {
@@ -73,8 +73,24 @@ export default class extends Controller {
     const target = event.detail.newStream.getAttribute("target")
     const action = event.detail.newStream.getAttribute("action")
 
+    const render = event.detail.render
+
+    if (action === "remove") {
+      const removedMessage = this.messageTargets.find(el => el.id === target)
+      if (removedMessage) {
+        const followingMessage = removedMessage.nextElementSibling
+        if (followingMessage) {
+          event.detail.render = async (streamElement) => {
+            await render(streamElement)
+            await nextEventLoopTick()
+            // Re-format the message following the deleted one, in case we need to re-draw message separators or re-thread messages
+            this.#formatMessage(followingMessage)
+          }
+        }
+      }
+    }
+    
     if (target === this.messagesTarget.id) {
-      const render = event.detail.render
       const upToDate = this.#paginator.upToDate
 
       if (upToDate) {
@@ -221,6 +237,7 @@ export default class extends Controller {
 
     if (followingMessage) {
       followingMessage.before(this.#lastMessage)
+      this.#formatMessage(followingMessage)
     }
   }
 
@@ -247,5 +264,17 @@ export default class extends Controller {
 
   #sortValue(node) {
     return (node && parseInt(node.dataset.sortValue)) || 0
+  }
+
+  #formatMessage(message) {
+    this.#formatter.format(message, ThreadStyle.thread);
+
+    // Also re-format all threaded messages above, to make sure they still need to be threaded
+    // (appending current message might have removed the pending message above it and cause inconsistencies in message threads)
+    let current = message.previousElementSibling
+    while (current && current.classList.contains(this.formattedClass) && current.classList.contains(this.threadedClass)) {
+      this.#formatter.format(current, ThreadStyle.thread);
+      current = current.previousElementSibling;
+    }
   }
 }
