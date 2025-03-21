@@ -80,6 +80,7 @@
     let months = [];
     let currentIndex = 1;
     let isLoading = false;
+    const viewport = document.getElementById('main-content');
     
     // Initialize the scroll pagination
     function initScrollPagination() {
@@ -108,14 +109,14 @@
         
         // Set a new timeout
         scrollTimeout = setTimeout(() => {
-          const scrollPosition = window.scrollY + window.innerHeight;
-          const documentHeight = document.documentElement.scrollHeight;
+          const scrollPosition = viewport.scrollTop + viewport.clientHeight;
+          const containerHeight = viewport.scrollHeight;
           
           // Calculate how far we are from the bottom as a percentage
-          const scrollPercentage = (scrollPosition / documentHeight) * 100;
+          const scrollPercentage = (scrollPosition / containerHeight) * 100;
           
           // Load more content if we're near the bottom (within 150px or 90% scrolled)
-          if (scrollPosition >= documentHeight - 150 || scrollPercentage > 90) {
+          if (scrollPosition >= containerHeight - 150 || scrollPercentage > 90) {
             loadNextMonth();
           }
         }, 150);
@@ -133,12 +134,11 @@
         loadingIndicator.style.display = 'block';
         
         const monthToLoad = months[currentIndex];
-        const container = document.getElementById('stats-container');
         
         // Create a placeholder for the month
         const placeholder = document.createElement('div');
         placeholder.id = `month-${monthToLoad}`;
-        container.insertBefore(placeholder, loadingIndicator);
+        document.getElementById('stats-container').insertBefore(placeholder, loadingIndicator);
         
         // Load the month data using fetch
         fetch(`<%= stats_month_data_path %>?month=${monthToLoad}`)
@@ -156,11 +156,11 @@
             
             // Check if we need to load more (in case the content is too short)
             setTimeout(() => {
-              const newScrollPosition = window.scrollY + window.innerHeight;
-              const newDocumentHeight = document.documentElement.scrollHeight;
-              const newScrollPercentage = (newScrollPosition / newDocumentHeight) * 100;
+              const newScrollPosition = viewport.scrollTop + viewport.clientHeight;
+              const newContainerHeight = viewport.scrollHeight;
+              const newScrollPercentage = (newScrollPosition / newContainerHeight) * 100;
               
-              if (newScrollPosition >= newDocumentHeight - 150 || newScrollPercentage > 90) {
+              if (newScrollPosition >= newContainerHeight - 150 || newScrollPercentage > 90) {
                 checkScroll();
               }
             }, 300);
@@ -186,13 +186,13 @@
       }
       
       // Listen for scroll events
-      window.addEventListener('scroll', checkScroll);
+      viewport.addEventListener('scroll', checkScroll);
       
       // Initial check - only if the page is very short
       setTimeout(() => {
-        const documentHeight = document.documentElement.scrollHeight;
+        const containerHeight = viewport.scrollHeight;
         // Only do initial load if the document is shorter than the viewport plus some margin
-        if (documentHeight < window.innerHeight + 100) {
+        if (containerHeight < viewport.clientHeight + 100) {
           loadNextMonth();
         }
       }, 1000);
