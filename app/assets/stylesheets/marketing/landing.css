@@ -582,6 +582,7 @@ header {
     var(--color-fall-50) 50%
   );
   border: none;
+  box-shadow: none;
   transform: translateX(-50%) rotate(-3deg);
   transform-origin: center;
   z-index: -1;
@@ -622,6 +623,7 @@ header {
     var(--color-cod-50) 50%
   );
   border: none;
+  box-shadow: none;
   transform: translateX(-50%) rotate(-3deg);
   transform-origin: center;
   z-index: -1;
