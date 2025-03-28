@@ -10,15 +10,21 @@ export default class extends Controller {
 
   async #unsubscribeFromWebPush() {
     if ("serviceWorker" in navigator) {
-      const registration = await navigator.serviceWorker.getRegistration(window.location.host)
+      try {
+        // Get registration without specifying a scope
+        const registration = await navigator.serviceWorker.getRegistration()
 
-      if (registration) {
-        const subscription = await registration.pushManager.getSubscription()
+        if (registration) {
+          const subscription = await registration.pushManager.getSubscription()
 
-        if (subscription) {
-          this.pushSubscriptionEndpointTarget.value = subscription.endpoint
-          await subscription.unsubscribe()
+          if (subscription) {
+            this.pushSubscriptionEndpointTarget.value = subscription.endpoint
+            await subscription.unsubscribe()
+          }
         }
+      } catch (error) {
+        console.error("Error unsubscribing from push notifications:", error)
+        // Continue with form submission even if unsubscription fails
       }
     }
   }

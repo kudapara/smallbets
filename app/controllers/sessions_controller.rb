@@ -10,7 +10,7 @@ class SessionsController < ApplicationController
   def destroy
     remove_push_subscription
     reset_authentication
-    redirect_to root_url
+    redirect_to unauthenticated_root_url
   end
 
   private
