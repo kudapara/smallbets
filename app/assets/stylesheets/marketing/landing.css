@@ -753,7 +753,7 @@ header {
   height: 100px;
   left: -25%;
   top: calc(50% - 50px);
-  background: linear-gradient(to bottom, #fff 49.5%, var(--color-fall-50) 50.5%);
+  background: linear-gradient(to bottom, var(--color-cod-50) 49.5%, var(--color-fall-50) 50.5%);
   transform: rotate(-3deg);
   transform-origin: center;
   z-index: -1;
@@ -789,7 +789,7 @@ header {
   height: 100px;
   left: -25%;
   top: calc(50% - 50px);
-  background: linear-gradient(to bottom, var(--color-fall-50) 49.5%, #fff 50.5%);
+  background: linear-gradient(to bottom, var(--color-fall-50) 49.5%, var(--color-cod-50) 50.5%);
   transform: rotate(-3deg);
   transform-origin: center;
   z-index: -1;
