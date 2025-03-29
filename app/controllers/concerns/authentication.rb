@@ -99,7 +99,7 @@ module Authentication
 
     def reset_authentication
       request.session.delete(:user_id)
-      cookies.delete(:session_token)
+      cookies.delete(:session_token, domain: ENV["COOKIE_DOMAIN"])
     end
 
     def deny_bots
