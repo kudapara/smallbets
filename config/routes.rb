@@ -175,6 +175,8 @@ Rails.application.routes.draw do
 
   get 'library' => 'library#show'
 
+  get 'experts' => 'experts#show'
+
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Stats routes

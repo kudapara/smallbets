@@ -1,0 +1,204 @@
+<% @page_title = "Resident Experts" %>
+<% @body_class = "sidebar stats-page" %>
+
+<% content_for :head do %>
+  <%= stylesheet_link_tag "application/stats" %>
+<% end %>
+
+<% content_for :nav do %>
+  <%= account_logo_tag if Current.account.logo.attached? %>
+  <%= tag.span class: "btn btn--reversed btn--faux room--current" do %>
+    <h1 class="room__contents txt-medium overflow-ellipsis">Resident Experts</h1>
+  <% end %>
+  <%= link_home %>
+<% end %>
+
+<% content_for :sidebar, sidebar_turbo_frame_tag(src: user_sidebar_path) %>
+
+<section class="full-width">
+  <div class="stats-grid margin-block">
+    <!-- Expert: Kilian -->
+    <div class="card grid-card">
+      <div class="card-header">
+        <%= link_to user_path(228, from: "/experts"), class: "card-header-link align-center", style: "display: flex; gap: 0.5rem;" do %>
+          <%= avatar_tag @expert_users[228] %>
+          <h3 class="txt-h3">Kilian Ekamp</h3>
+        <% end %>
+      </div>
+      <div class="card-body compact">
+        <div class="txt-small txt-faded">
+          <span class="txt-nowrap">Coding for Non-Coders</span>&nbsp;• <span class="txt-nowrap">YouTube</span>&nbsp;• <span class="txt-nowrap">Education</span>&nbsp;• <span class="txt-nowrap">ChatGPT</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expert: Daniel -->
+    <div class="card grid-card">
+      <div class="card-header">
+        <%= link_to user_path(1, from: "/experts"), class: "card-header-link align-center", style: "display: flex; gap: 0.5rem;" do %>
+          <%= avatar_tag @expert_users[1] %>
+          <h3 class="txt-h3">Daniel Vassallo</h3>
+        <% end %>
+      </div>
+      <div class="card-body compact">
+        <div class="txt-small txt-faded">
+          <span class="txt-nowrap">Audience Building</span>&nbsp;• <span class="txt-nowrap">Communities</span>&nbsp;• <span class="txt-nowrap">Digital Products</span>&nbsp;• <span class="txt-nowrap">Marketing</span>&nbsp;• <span class="txt-nowrap">Gumroad</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expert: Krystian -->
+    <div class="card grid-card">
+      <div class="card-header">
+        <%= link_to user_path(2844, from: "/experts"), class: "card-header-link align-center", style: "display: flex; gap: 0.5rem;" do %>
+          <%= avatar_tag @expert_users[2844] %>
+          <h3 class="txt-h3">Krystian Zun</h3>
+        <% end %>
+      </div>
+      <div class="card-body compact">
+        <div class="txt-small txt-faded">
+          <span class="txt-nowrap">Design</span>&nbsp;• <span class="txt-nowrap">UI</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expert: Nesters -->
+    <div class="card grid-card">
+      <div class="card-header">
+        <%= link_to user_path(211, from: "/experts"), class: "card-header-link align-center", style: "display: flex; gap: 0.5rem;" do %>
+          <%= avatar_tag @expert_users[211] %>
+          <h3 class="txt-h3">Nesters Kovalkovs</h3>
+        <% end %>
+      </div>
+      <div class="card-body compact">
+        <div class="txt-small txt-faded">
+          <span class="txt-nowrap">SEO</span>&nbsp;• <span class="txt-nowrap">E-commerce</span>&nbsp;• <span class="txt-nowrap">Shopify</span>&nbsp;• <span class="txt-nowrap">Conversion Rate Optimization</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expert: Ira -->
+    <div class="card grid-card">
+      <div class="card-header">
+        <%= link_to user_path(70, from: "/experts"), class: "card-header-link align-center", style: "display: flex; gap: 0.5rem;" do %>
+          <%= avatar_tag @expert_users[70] %>
+          <h3 class="txt-h3">Ira Zayats</h3>
+        <% end %>
+      </div>
+      <div class="card-body compact">
+        <div class="txt-small txt-faded">
+          <span class="txt-nowrap">Campfire Mods</span>&nbsp;• <span class="txt-nowrap">Ruby</span>&nbsp;• <span class="txt-nowrap">Rails</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expert: Peter -->
+    <div class="card grid-card">
+      <div class="card-header">
+        <%= link_to user_path(187, from: "/experts"), class: "card-header-link align-center", style: "display: flex; gap: 0.5rem;" do %>
+          <%= avatar_tag @expert_users[187] %>
+          <h3 class="txt-h3">Peter Askew</h3>
+        <% end %>
+      </div>
+      <div class="card-body compact">
+        <div class="txt-small txt-faded">
+          <span class="txt-nowrap">Premium Domains</span>&nbsp;• <span class="txt-nowrap">WordPress</span>&nbsp;• <span class="txt-nowrap">Job Boards</span>&nbsp;• <span class="txt-nowrap">Directories</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expert: Fernando -->
+    <div class="card grid-card">
+      <div class="card-header">
+        <%= link_to user_path(1196, from: "/experts"), class: "card-header-link align-center", style: "display: flex; gap: 0.5rem;" do %>
+          <%= avatar_tag @expert_users[1196] %>
+          <h3 class="txt-h3">Fernando Torres</h3>
+        <% end %>
+      </div>
+      <div class="card-body compact">
+        <div class="txt-small txt-faded">
+          <span class="txt-nowrap">Amazon FBA</span>&nbsp;• <span class="txt-nowrap">Physical Products</span>&nbsp;• <span class="txt-nowrap">Manufacturing</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expert: Hassan -->
+    <div class="card grid-card">
+      <div class="card-header">
+        <%= link_to user_path(333, from: "/experts"), class: "card-header-link align-center", style: "display: flex; gap: 0.5rem;" do %>
+          <%= avatar_tag @expert_users[333] %>
+          <h3 class="txt-h3">Hassan Osman</h3>
+        <% end %>
+      </div>
+      <div class="card-body compact">
+        <div class="txt-small txt-faded">
+          <span class="txt-nowrap">Amazon KDP</span>&nbsp;• <span class="txt-nowrap">Udemy</span>&nbsp;• <span class="txt-nowrap">Writing</span>&nbsp;• <span class="txt-nowrap">Podcasting</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expert: Katt -->
+    <div class="card grid-card">
+      <div class="card-header">
+        <%= link_to user_path(391, from: "/experts"), class: "card-header-link align-center", style: "display: flex; gap: 0.5rem;" do %>
+          <%= avatar_tag @expert_users[391] %>
+          <h3 class="txt-h3">Katt Risen</h3>
+        <% end %>
+      </div>
+      <div class="card-body compact">
+        <div class="txt-small txt-faded">
+          <span class="txt-nowrap">No-Code</span>&nbsp;• <span class="txt-nowrap">Newsletters</span>&nbsp;• <span class="txt-nowrap">Tools</span>&nbsp;• <span class="txt-nowrap">Job Boards</span>&nbsp;• <span class="txt-nowrap">Directories</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expert: Sairam -->
+    <div class="card grid-card">
+      <div class="card-header">
+        <%= link_to user_path(39, from: "/experts"), class: "card-header-link align-center", style: "display: flex; gap: 0.5rem;" do %>
+          <%= avatar_tag @expert_users[39] %>
+          <h3 class="txt-h3">Sairam Sundaresan</h3>
+        <% end %>
+      </div>
+      <div class="card-body compact">
+        <div class="txt-small txt-faded">
+          <span class="txt-nowrap">AI Apps</span>&nbsp;• <span class="txt-nowrap">AI Research</span>&nbsp;• <span class="txt-nowrap">AI Coding</span>&nbsp;• <span class="txt-nowrap">Writing with AI</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expert: Greg -->
+    <div class="card grid-card">
+      <div class="card-header">
+        <%= link_to user_path(343, from: "/experts"), class: "card-header-link align-center", style: "display: flex; gap: 0.5rem;" do %>
+          <%= avatar_tag @expert_users[343] %>
+          <h3 class="txt-h3">Greg Lim</h3>
+        <% end %>
+      </div>
+      <div class="card-body compact">
+        <div class="txt-small txt-faded">
+          <span class="txt-nowrap">Amazon KDP</span>&nbsp;• <span class="txt-nowrap">Udemy</span>&nbsp;• <span class="txt-nowrap">Amazon Ads</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expert: Francesco -->
+    <div class="card grid-card">
+      <div class="card-header">
+        <%= link_to user_path(697, from: "/experts"), class: "card-header-link align-center", style: "display: flex; gap: 0.5rem;" do %>
+          <%= avatar_tag @expert_users[697] %>
+          <h3 class="txt-h3">Francesco Ambrosiano</h3>
+        <% end %>
+      </div>
+      <div class="card-body compact">
+        <div class="txt-small txt-faded">
+          <span class="txt-nowrap">Google Ads</span>&nbsp;• <span class="txt-nowrap">Facebook Ads</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<% content_for :footer do %>
+  <div class="margin-block-start">&nbsp;</div>
+<% end %>

@@ -85,6 +85,14 @@
         <span class="sidebar__tool-label">Bookmarks</span>
       <% end %>
 
+      <% if Current.user&.administrator? %>
+        <%= link_to experts_path, class: "btn sidebar__tool" do %>
+          <%= image_tag "bulb.svg", size: 20, aria: { hidden: "true" } %>
+          <span class="for-screen-reader">Experts</span>
+          <span class="sidebar__tool-label">Experts</span>
+        <% end %>
+      <% end %>
+
       <%= link_to library_path, class: "btn sidebar__tool" do %>
         <%= image_tag "library.svg", size: 20, aria: { hidden: "true" } %>
         <span class="for-screen-reader">Library</span>
@@ -99,9 +107,9 @@
 
       <% if Current.user&.administrator? %>
         <%= link_to edit_account_path, class: "btn sidebar__tool" do %>
-          <%= image_tag "settings.svg", size: 20, aria: { hidden: "true" }, style: "view-transition-name: account-settings" %>
-          <span class="for-screen-reader">Account Settings</span>
-          <span class="sidebar__tool-label">Settings</span>
+          <%= image_tag "crown.svg", size: 20, aria: { hidden: "true" }, style: "view-transition-name: account-settings" %>
+          <span class="for-screen-reader">Admin</span>
+          <span class="sidebar__tool-label">Admin</span>
         <% end %>
       <% end %>
       
