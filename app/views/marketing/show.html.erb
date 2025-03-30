@@ -102,282 +102,37 @@
     <div class="container">
       <h2 class="section-title">Resident Experts</h2>
       <p class="text-xl mb-12">
-        Get direct help from these experienced creators in our community.
+        These are our resident experts. Just @mention any of these amazing practitioners in our Campfire chat and they'll help you out.
       </p>
 
       <div class="experts-container">
-        <!-- Expert: Kilian -->
-        <div class="p-4 md:p-6 flex expert-card">
-          <div class="flex-shrink-0 expert-avatar">
-            <%= image_tag "experts/kilian.jpg", class: "size-20 md:size-24 rounded-xl object-cover", alt: "Kilian Ekamp" %>
-          </div>
-          <div class="flex-grow">
-            <div class="flex items-center gap-2 mb-2">
-              <h3 class="font-bold text-xl text-secondary-950">
-                Kilian Ekamp
-              </h3>
-              <a href="https://x.com/KilianEkamp" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/twitter.svg", class: "w-5 h-5", alt: "Twitter" %>
-              </a>
-              <a href="https://www.linkedin.com/in/kilianekamp" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/linkedin.svg", class: "w-5 h-5", alt: "LinkedIn" %>
-              </a>
+        <% Expert.all.each do |expert| %>
+          <div class="p-4 md:p-6 flex expert-card">
+            <div class="flex-shrink-0 expert-avatar">
+              <%= image_tag "experts/#{expert[:name].split.first.downcase}.jpg", class: "size-20 md:size-24 rounded-xl object-cover", alt: expert[:name] %>
             </div>
-            <p class="text-md text-secondary-700 mb-3">
-            <span class="txt-nowrap">Coding for Non-Coders</span>&nbsp;• <span class="txt-nowrap">YouTube</span>&nbsp;• <span class="txt-nowrap">Education</span>&nbsp;• <span class="txt-nowrap">ChatGPT</span>
-            </p>
-          </div>
-        </div>
-
-        <!-- Expert: Daniel -->
-        <div class="p-4 md:p-6 flex expert-card">
-          <div class="flex-shrink-0 expert-avatar">
-            <%= image_tag "experts/daniel.jpg", class: "size-20 md:size-24 rounded-xl object-cover", alt: "Daniel Vassallo" %>
-          </div>
-          <div class="flex-grow">
-            <div class="flex items-center gap-2 mb-2">
-              <h3 class="font-bold text-xl text-secondary-950">
-                Daniel Vassallo
-              </h3>
-              <a href="https://x.com/dvassallo" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/twitter.svg", class: "w-5 h-5", alt: "Twitter" %>
-              </a>
-              <a href="https://www.linkedin.com/in/danielvassallo" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/linkedin.svg", class: "w-5 h-5", alt: "LinkedIn" %>
-              </a>
+            <div class="flex-grow">
+              <div class="flex items-center gap-2 mb-2">
+                <h3 class="font-bold text-xl text-secondary-950">
+                  <%= expert[:name] %>
+                </h3>
+                <% if expert[:twitter].present? %>
+                  <a href="https://x.com/<%= expert[:twitter] %>" style="margin-top: 10px" target="_blank">
+                    <%= image_tag "social/twitter.svg", class: "w-5 h-5", alt: "Twitter" %>
+                  </a>
+                <% end %>
+                <% if expert[:linkedin].present? %>
+                  <a href="https://www.linkedin.com/in/<%= expert[:linkedin] %>" style="margin-top: 10px" target="_blank">
+                    <%= image_tag "social/linkedin.svg", class: "w-5 h-5", alt: "LinkedIn" %>
+                  </a>
+                <% end %>
+              </div>
+              <p class="text-md text-secondary-700 mb-3">
+                <%= expert[:expertise].map { |e| content_tag(:span, e, class: "txt-nowrap") }.join("&nbsp;• ").html_safe %>
+              </p>
             </div>
-            <p class="text-md text-secondary-700 mb-3">
-            <span class="txt-nowrap">Audience Building</span>&nbsp;• <span class="txt-nowrap">Communities</span>&nbsp;• <span class="txt-nowrap">Digital Products</span>&nbsp;• <span class="txt-nowrap">Marketing</span>&nbsp;• <span class="txt-nowrap">Gumroad</span>
-            </p>
           </div>
-        </div>
-
-        <!-- Expert: Krystian -->
-        <div class="p-4 md:p-6 flex expert-card">
-          <div class="flex-shrink-0 expert-avatar">
-            <%= image_tag "experts/krystian.jpg", class: "size-20 md:size-24 rounded-xl object-cover", alt: "Krystian Zun" %>
-          </div>
-          <div class="flex-grow">
-            <div class="flex items-center gap-2 mb-2">
-              <h3 class="font-bold text-xl text-secondary-950">
-                Krystian Zun
-              </h3>
-              <a href="https://x.com/krystianzun" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/twitter.svg", class: "w-5 h-5", alt: "Twitter" %>
-              </a>
-              <a href="https://www.linkedin.com/in/krystianzun" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/linkedin.svg", class: "w-5 h-5", alt: "LinkedIn" %>
-              </a>
-            </div>
-            <p class="text-md text-secondary-700 mb-3">
-            <span class="txt-nowrap">Design</span>&nbsp;• <span class="txt-nowrap">UI</span>
-            </p>
-          </div>
-        </div>
-
-        <!-- Expert: Nesters -->
-        <div class="p-4 md:p-6 flex expert-card">
-          <div class="flex-shrink-0 expert-avatar">
-            <%= image_tag "experts/nesters.jpg", class: "size-20 md:size-24 rounded-xl object-cover", alt: "Nesters Kovalkovs" %>
-          </div>
-          <div class="flex-grow">
-            <div class="flex items-center gap-2 mb-2">
-              <h3 class="font-bold text-xl text-secondary-950">
-                Nesters Kovalkovs
-              </h3>
-              <a href="https://x.com/nestersk" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/twitter.svg", class: "w-5 h-5", alt: "Twitter" %>
-              </a>
-              <a href="https://www.linkedin.com/in/nestersk/" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/linkedin.svg", class: "w-5 h-5", alt: "LinkedIn" %>
-              </a>
-            </div>
-            <p class="text-md text-secondary-700 mb-3">
-            <span class="txt-nowrap">SEO</span>&nbsp;• <span class="txt-nowrap">E-commerce</span>&nbsp;• <span class="txt-nowrap">Shopify</span>&nbsp;• <span class="txt-nowrap">Conversion Rate Optimization</span>
-            </p>
-          </div>
-        </div>
-
-        <!-- Expert: Ira -->
-        <div class="p-4 md:p-6 flex expert-card">
-          <div class="flex-shrink-0 expert-avatar">
-            <%= image_tag "experts/ira.jpg", class: "size-20 md:size-24 rounded-xl object-cover", alt: "Ira Zayats" %>
-          </div>
-          <div class="flex-grow">
-            <div class="flex items-center gap-2 mb-2">
-              <h3 class="font-bold text-xl text-secondary-950">
-                Ira Zayats
-              </h3>
-              <a href="https://x.com/izayats" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/twitter.svg", class: "w-5 h-5", alt: "Twitter" %>
-              </a>
-              <a href="https://linkedin.com/in/izayats" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/linkedin.svg", class: "w-5 h-5", alt: "LinkedIn" %>
-              </a>
-            </div>
-            <p class="text-md text-secondary-700 mb-3">
-            <span class="txt-nowrap">Campfire Mods</span>&nbsp;• <span class="txt-nowrap">Ruby</span>&nbsp;• <span class="txt-nowrap">Rails</span>
-            </p>
-          </div>
-        </div>
-
-        <!-- Expert: Peter -->
-        <div class="p-4 md:p-6 flex expert-card">
-          <div class="flex-shrink-0 expert-avatar">
-            <%= image_tag "experts/peter.jpg", class: "size-20 md:size-24 rounded-xl object-cover", alt: "Peter Askew" %>
-          </div>
-          <div class="flex-grow">
-            <div class="flex items-center gap-2 mb-2">
-              <h3 class="font-bold text-xl text-secondary-950">
-                Peter Askew
-              </h3>
-              <a href="https://x.com/searchbound" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/twitter.svg", class: "w-5 h-5", alt: "Twitter" %>
-              </a>
-              <a href="https://www.linkedin.com/in/peteraskew/" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/linkedin.svg", class: "w-5 h-5", alt: "LinkedIn" %>
-              </a>
-            </div>
-            <p class="text-md text-secondary-700 mb-3">
-            <span class="txt-nowrap">Premium Domains</span>&nbsp;• <span class="txt-nowrap">WordPress</span>&nbsp;• <span class="txt-nowrap">Job Boards</span>&nbsp;• <span class="txt-nowrap">Directories</span>
-            </p>
-          </div>
-        </div>
-
-        <!-- Expert: Fernando -->
-        <div class="p-4 md:p-6 flex expert-card">
-          <div class="flex-shrink-0 expert-avatar">
-            <%= image_tag "experts/fernando.jpg", class: "size-20 md:size-24 rounded-xl object-cover", alt: "Fernando Torres" %>
-          </div>
-          <div class="flex-grow">
-            <div class="flex items-center gap-2 mb-2">
-              <h3 class="font-bold text-xl text-secondary-950">
-                Fernando Torres
-              </h3>
-              <a href="https://x.com/YvrFernando" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/twitter.svg", class: "w-5 h-5", alt: "Twitter" %>
-              </a>
-              <a href="https://www.linkedin.com/in/fernandotorres91" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/linkedin.svg", class: "w-5 h-5", alt: "LinkedIn" %>
-              </a>
-            </div>
-            <p class="text-md text-secondary-700 mb-3">
-            <span class="txt-nowrap">Amazon FBA</span>&nbsp;• <span class="txt-nowrap">Physical Products</span>&nbsp;• <span class="txt-nowrap">Manufacturing</span>
-            </p>
-          </div>
-        </div>
-
-        <!-- Expert: Hassan -->
-        <div class="p-4 md:p-6 flex expert-card">
-          <div class="flex-shrink-0 expert-avatar">
-            <%= image_tag "experts/hassan.jpg", class: "size-20 md:size-24 rounded-xl object-cover", alt: "Hassan Osman" %>
-          </div>
-          <div class="flex-grow">
-            <div class="flex items-center gap-2 mb-2">
-              <h3 class="font-bold text-xl text-secondary-950">
-                Hassan Osman
-              </h3>
-              <a href="https://x.com/AuthorOnTheSide" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/twitter.svg", class: "w-5 h-5", alt: "Twitter" %>
-              </a>
-              <a href="https://www.linkedin.com/in/hassano/" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/linkedin.svg", class: "w-5 h-5", alt: "LinkedIn" %>
-              </a>
-            </div>
-            <p class="text-md text-secondary-700 mb-3">
-            <span class="txt-nowrap">Amazon KDP</span>&nbsp;• <span class="txt-nowrap">Udemy</span>&nbsp;• <span class="txt-nowrap">Writing</span>&nbsp;• <span class="txt-nowrap">Podcasting</span>
-            </p>
-          </div>
-        </div>
-
-        <!-- Expert: Katt -->
-        <div class="p-4 md:p-6 flex expert-card">
-          <div class="flex-shrink-0 expert-avatar">
-            <%= image_tag "experts/katt.jpg", class: "size-20 md:size-24 rounded-xl object-cover", alt: "Katt Risen" %>
-          </div>
-          <div class="flex-grow">
-            <div class="flex items-center gap-2 mb-2">
-              <h3 class="font-bold text-xl text-secondary-950">
-                Katt Risen
-              </h3>
-              <a href="https://x.com/kattrisen" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/twitter.svg", class: "w-5 h-5", alt: "Twitter" %>
-              </a>
-              <a href="https://www.linkedin.com/in/katt-risen" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/linkedin.svg", class: "w-5 h-5", alt: "LinkedIn" %>
-              </a>
-            </div>
-            <p class="text-md text-secondary-700 mb-3">
-            <span class="txt-nowrap">No-Code</span>&nbsp;• <span class="txt-nowrap">Newsletters</span>&nbsp;• <span class="txt-nowrap">Tools</span>&nbsp;• <span class="txt-nowrap">Job Boards</span>&nbsp;• <span class="txt-nowrap">Directories</span>
-            </p>
-          </div>
-        </div>
-
-        <!-- Expert: Sairam -->
-        <div class="p-4 md:p-6 flex expert-card">
-          <div class="flex-shrink-0 expert-avatar">
-            <%= image_tag "experts/sairam.jpg", class: "size-20 md:size-24 rounded-xl object-cover", alt: "Sairam Sundaresan" %>
-          </div>
-          <div class="flex-grow">
-            <div class="flex items-center gap-2 mb-2">
-              <h3 class="font-bold text-xl text-secondary-950">
-                Sairam Sundaresan
-              </h3>
-              <a href="https://x.com/DSaience" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/twitter.svg", class: "w-5 h-5", alt: "Twitter" %>
-              </a>
-              <a href="https://www.linkedin.com/in/sairam-sundaresan/" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/linkedin.svg", class: "w-5 h-5", alt: "LinkedIn" %>
-              </a>
-            </div>
-            <p class="text-md text-secondary-700 mb-3">
-            <span class="txt-nowrap">AI Apps</span>&nbsp;• <span class="txt-nowrap">AI Research</span>&nbsp;• <span class="txt-nowrap">AI Coding</span>&nbsp;• <span class="txt-nowrap">Writing with AI</span>
-            </p>
-          </div>
-        </div>
-
-        <!-- Expert: Greg -->
-        <div class="p-4 md:p-6 flex expert-card">
-          <div class="flex-shrink-0 expert-avatar">
-            <%= image_tag "experts/greg.jpg", class: "size-20 md:size-24 rounded-xl object-cover", alt: "Greg Lim" %>
-          </div>
-          <div class="flex-grow">
-            <div class="flex items-center gap-2 mb-2">
-              <h3 class="font-bold text-xl text-secondary-950">
-                Greg Lim
-              </h3>
-              <a href="https://x.com/greglim81" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/twitter.svg", class: "w-5 h-5", alt: "Twitter" %>
-              </a>
-            </div>
-            <p class="text-md text-secondary-700 mb-3">
-            <span class="txt-nowrap">Amazon KDP</span>&nbsp;• <span class="txt-nowrap">Udemy</span>&nbsp;• <span class="txt-nowrap">Amazon Ads</span>
-            </p>
-          </div>
-        </div>
-
-        <!-- Expert: Francesco -->
-        <div class="p-4 md:p-6 flex expert-card">
-          <div class="flex-shrink-0 expert-avatar">
-            <%= image_tag "experts/francesco.jpg", class: "size-20 md:size-24 rounded-xl object-cover", alt: "Francesco Ambrosiano" %>
-          </div>
-          <div class="flex-grow">
-            <div class="flex items-center gap-2 mb-2">
-              <h3 class="font-bold text-xl text-secondary-950">
-                Francesco Ambrosiano
-              </h3>
-              <a href="https://x.com/giftedio" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/twitter.svg", class: "w-5 h-5", alt: "Twitter" %>
-              </a>
-              <a href="https://www.linkedin.com/in/francescoambrosiano" style="margin-top: 10px" target="_blank">
-                <%= image_tag "social/linkedin.svg", class: "w-5 h-5", alt: "LinkedIn" %>
-              </a>
-            </div>
-            <p class="text-md text-secondary-700 mb-3">
-            <span class="txt-nowrap">Google Ads</span>&nbsp;• <span class="txt-nowrap">Facebook Ads</span>
-            </p>
-          </div>
-        </div>
+        <% end %>
       </div>
     </div>
   </section>
