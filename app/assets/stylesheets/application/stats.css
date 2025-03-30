@@ -47,6 +47,10 @@
       background-color: rgba(0, 0, 0, 0.02);
     }
     
+    .card-header.hover-darker:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    
     .card-header-link {
       display: block;
       color: inherit;

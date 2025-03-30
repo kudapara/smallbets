@@ -19,10 +19,12 @@
   <div class="stats-grid margin-block">
     <% Expert.all.each do |expert| %>
       <div class="card grid-card">
-        <div class="card-header">
-          <%= link_to user_path(@expert_users[expert[:id]], from: "/experts"), class: "card-header-link align-center", style: "display: flex; gap: 0.5rem;" do %>
-            <%= avatar_tag @expert_users[expert[:id]] %>
-            <h3 class="txt-h3"><%= expert[:name] %></h3>
+        <div class="card-header hover-darker">
+          <%= link_to user_path(@expert_users[expert[:id]], from: "/experts"), class: "card-header-link", style: "display: block; margin: -0.75rem;" do %>
+            <div class="align-center" style="display: flex; gap: 0.5rem; padding: 0.75rem;">
+              <%= avatar_tag @expert_users[expert[:id]] %>
+              <h3 class="txt-h3"><%= expert[:name] %></h3>
+            </div>
           <% end %>
         </div>
         <div class="card-body compact">
@@ -33,8 +35,9 @@
       </div>
     <% end %>
   </div>
+  <div style="margin-top: 2rem;">
+    <p>We're the resident experts of the Small Bets community, ready to share our first-hand experience and help you succeed.
+    Just @mention any of us in the chat or send a direct message, and we'll help you with everything we know.</p>
+    <p>And if you'd like to join this group of fine people, <%= link_to "Daniel", user_path(1, from: "/experts"), style: "text-decoration: underline;" %> is the one to talk to.</p>
+  </div>
 </section>
-
-<% content_for :footer do %>
-  <div class="margin-block-start">&nbsp;</div>
-<% end %>

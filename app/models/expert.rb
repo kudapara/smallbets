@@ -40,7 +40,7 @@ class Expert
         {
           id: 187,
           name: "Peter Askew",
-          expertise: ["Premium Domains", "WordPress", "Job Boards", "Directories", "E-commerce", "Shopify"],
+          expertise: ["Domains", "WordPress", "Job Boards", "Directories", "E-commerce", "Shopify"],
           twitter: "searchbound",
           linkedin: "peteraskew"
         },
