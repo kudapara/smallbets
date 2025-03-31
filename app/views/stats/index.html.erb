@@ -494,9 +494,9 @@
                 <% is_current = user.id == Current.user&.id %>
                 <tr class="<%= 'current-user' if is_current %>">
                   <td class="txt-right txt-small txt-faded" style="width: 20px;"><%= index + 1 %></td>
-                  <td>
+                  <td style="max-width: 0; width: 100%;">
                     <div class="flex gap-inline align-center">
-                      <%= link_to user_path(user, from: "/stats"), class: "flex align-center hover-target", style: "text-decoration: none; gap: 4px; min-width: 0;" do %>
+                      <%= link_to user_path(user, from: "/stats"), class: "flex align-center hover-target", style: "text-decoration: none; gap: 4px; min-width: 0; width: 100%;" do %>
                         <% if user.avatar.attached? %>
                           <div class="avatar avatar-xs">
                             <%= image_tag user.avatar, alt: user.name, loading: "lazy" %>
@@ -506,11 +506,11 @@
                             <%= user.name.first.upcase %>
                           </div>
                         <% end %>
-                        <span class="txt-truncate"><%= user.name %></span>
+                        <span class="txt-truncate" style="width: 100%;"><%= user.name %></span>
                       <% end %>
                     </div>
                   </td>
-                  <td class="txt-right">
+                  <td class="txt-right" style="width: 90px; white-space: nowrap;">
                     <%= user.joined_at.strftime("%Y-%m-%d") %>
                   </td>
                 </tr>
