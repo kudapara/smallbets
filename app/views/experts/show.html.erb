@@ -16,6 +16,9 @@
 <% content_for :sidebar, sidebar_turbo_frame_tag(src: user_sidebar_path) %>
 
 <section class="full-width">
+  <div style="margin-bottom: 2rem;">
+    <p>These are our resident experts. Just @mention any of these amazing practitioners in the chat or in a direct message and they'll help you out.</p>
+  </div>
   <div class="stats-grid margin-block">
     <% Expert.all.each do |expert| %>
       <div class="card grid-card">
@@ -34,10 +37,5 @@
         </div>
       </div>
     <% end %>
-  </div>
-  <div style="margin-top: 2rem;">
-    <p>We're the resident experts of the Small Bets community, ready to share our first-hand experience and help you succeed.
-    Just @mention any of us in the chat or send a direct message, and we'll help you with everything we know.</p>
-    <p>And if you'd like to join this group of fine people, <%= link_to "Daniel", user_path(1, from: "/experts"), style: "text-decoration: underline;" %> is the one to talk to.</p>
   </div>
 </section>
