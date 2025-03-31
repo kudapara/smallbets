@@ -75,7 +75,7 @@ class Expert
         {
           id: 343,
           name: "Greg Lim",
-          expertise: ["Amazon KDP", "Udemy", "Amazon Ads"],
+          expertise: ["Amazon KDP", "Udemy", "Tech Writing"],
           twitter: "greglim81",
           linkedin: nil
         },

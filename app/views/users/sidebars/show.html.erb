@@ -85,12 +85,10 @@
         <span class="sidebar__tool-label">Bookmarks</span>
       <% end %>
 
-      <% if Current.user&.administrator? %>
-        <%= link_to experts_path, class: "btn sidebar__tool" do %>
-          <%= image_tag "bulb.svg", size: 20, aria: { hidden: "true" } %>
-          <span class="for-screen-reader">Experts</span>
-          <span class="sidebar__tool-label">Experts</span>
-        <% end %>
+      <%= link_to experts_path, class: "btn sidebar__tool" do %>
+        <%= image_tag "bulb.svg", size: 20, aria: { hidden: "true" } %>
+        <span class="for-screen-reader">Experts</span>
+        <span class="sidebar__tool-label">Experts</span>
       <% end %>
 
       <%= link_to library_path, class: "btn sidebar__tool" do %>
