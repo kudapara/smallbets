@@ -140,6 +140,7 @@ Rails.application.routes.draw do
       get :notifications
       get :messages
       get :bookmarks
+      get :answers
       post :clear
     end
     scope path: "/paged", as: :paged do
@@ -147,6 +148,7 @@ Rails.application.routes.draw do
       resources :notifications, only: %i[ index ], controller: 'inboxes/notifications'
       resources :messages, only: %i[ index ], controller: 'inboxes/messages'
       resources :bookmarks, only: %i[ index ], controller: 'inboxes/bookmarks'
+      resources :answers, only: %i[ index ], controller: 'inboxes/answers'
     end
   end
 

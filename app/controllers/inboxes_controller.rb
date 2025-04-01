@@ -2,6 +2,7 @@ class InboxesController < ApplicationController
   before_action :set_message_pagination_anchors, only: %i[ mentions notifications messages ]
   before_action :set_bookmark_pagination_anchors, only: %i[ bookmarks ]
   before_action :set_sidebar_variables
+  before_action :ensure_is_expert, only: %i[ answers ]
 
   def show
     clear_last_loaded_message_timestamps
@@ -13,6 +14,11 @@ class InboxesController < ApplicationController
     @messages = find_mentions
 
     track_last_loaded_message :inbox_last_loaded_mention_created_at
+  end
+
+  def answers
+    @messages = find_answers
+    @answer_count = Current.user.reachable_messages.where(answered_by: Current.user).count
   end
 
   def notifications
@@ -95,6 +101,10 @@ class InboxesController < ApplicationController
       Bookmark.populate_for(bookmarks.map(&:message))
     end
 
+    def find_answers
+      Bookmark.populate_for paginate(Current.user.reachable_messages.where(answered_by: Current.user).with_threads.with_creator)
+    end
+
     def paginate(records)
       case
       when params[:before].present?
@@ -131,5 +141,9 @@ class InboxesController < ApplicationController
 
       time = Time.iso8601(time)
       time > 1.hour.ago ? time : Time.current
+    end
+
+    def ensure_is_expert
+      head :forbidden unless Current.user.expert? || Current.user.administrator?
     end
 end
