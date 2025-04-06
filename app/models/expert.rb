@@ -85,7 +85,14 @@ class Expert
           expertise: ["Google Ads", "Facebook Ads"],
           twitter: "giftedio",
           linkedin: "francescoambrosiano"
-        }
+        },
+        {
+          id: 1102,
+          name: "Espree Devora",
+          expertise: ["Podcasting"],
+          twitter: "espreedevora",
+          linkedin: "espree"
+        },
       ]
     end
 
