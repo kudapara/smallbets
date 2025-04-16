@@ -1,9 +1,11 @@
+<% join_url = "http://dvassallo.gumroad.com/l/small-bets?wanted=true" %>
 <div class="min-h-screen bg-cod-50 overflow-x-hidden">
 
   <!-- Header Section -->
   <header class="py-4">
-    <div class="container" style="display: flex; justify-content: flex-end;">
+    <div class="container" style="display: flex; justify-content: flex-end; gap: 1rem;">
       <a href="/chat" class="btn btn-outline uppercase font-bold text-lg">Sign In</a>
+      <a href="<%= join_url %>" class="btn btn-primary uppercase font-bold text-lg">Join Now</a>
     </div>
   </header>
 
@@ -85,7 +87,7 @@
         </ul>
 
         <div class="mt-8">
-        <a href="http://dvassallo.gumroad.com/l/small-bets?wanted=true" class="btn btn-primary uppercase font-bold text-lg">I want to join!</a>
+        <a href="<%= join_url %>" class="btn btn-primary uppercase font-bold text-lg">I want to join!</a>
           <p class="mt-2 text-sm">
             Join <%= number_with_delimiter(@user_count) %> amazing people and get access to our support network.
           </p>
@@ -1011,7 +1013,7 @@
 
   <section style="padding-top: 0px; padding-bottom: 120px;">
     <div class="container relative mt-8 text-center">
-      <a href="http://dvassallo.gumroad.com/l/small-bets?wanted=true" class="btn btn-primary uppercase font-bold text-lg">I want to join!</a>
+      <a href="<%= join_url %>" class="btn btn-primary uppercase font-bold text-lg">I want to join!</a>
       <p class="mt-2 text-sm">
         Join <%= number_with_delimiter(@user_count) %> amazing people and get access to our support network.
       </p>

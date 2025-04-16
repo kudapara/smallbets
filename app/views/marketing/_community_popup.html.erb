@@ -7,7 +7,7 @@
     <%= avatar_tag user, loading: :lazy %>
   </summary>
 
-  <div class="community-popup-menu border shadow" data-popup-target="menu" data-popup-menu="true">
+  <div class="community-popup-menu border shadow" data-popup-target="menu" data-popup-menu="true" style="opacity: 0; visibility: hidden; transition: opacity 0.1s ease;">
     <div class="community-popup-profile">
       <div class="avatar" style="--avatar-size: 96px; margin: 0 auto 0.1rem auto; cursor: default; pointer-events: none;">
         <%= avatar_tag user, loading: :lazy, size: 96 %>
@@ -58,14 +58,23 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.community-popup').forEach(function(details) {
     details.addEventListener('toggle', function(e) {
       if (!details.open) return;
+      
+      var menu = details.querySelector('[data-popup-menu="true"]');
+      if (!menu) return;
+      
+      // Hide initially
+      menu.style.opacity = '0';
+      menu.style.visibility = 'hidden';
+      
+      // Reset to default position
+      menu.style.transform = 'translateX(-50%)';
+      
+      // Position correctly before showing
       setTimeout(function() {
-        var menu = details.querySelector('[data-popup-menu="true"]');
-        if (!menu) return;
-        // Reset to default
-        menu.style.transform = 'translateX(-50%)';
         // Get bounding rect
         var rect = menu.getBoundingClientRect();
         var vw = window.innerWidth;
+        
         // If overflow left
         if (rect.left < 8) {
           menu.style.transform = 'translateX(0)';
@@ -74,7 +83,11 @@ document.addEventListener('DOMContentLoaded', function() {
         else if (rect.right > vw - 8) {
           menu.style.transform = 'translateX(-100%)';
         }
-      }, 10);
+        
+        // Show the menu after positioning
+        menu.style.opacity = '1';
+        menu.style.visibility = 'visible';
+      }, 0);
     });
   });
 });
