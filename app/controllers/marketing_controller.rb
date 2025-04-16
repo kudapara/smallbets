@@ -29,11 +29,11 @@ class MarketingController < ApplicationController
       .order('message_count DESC, joined_at ASC, users.id ASC')
 
     user_ids = users_with_counts.map(&:id)
-    users_by_id = User.where(id: user_ids).includes(avatar_attachment: :blob).index_by(&:id)
+    users = User.active.without_bots.where(id: user_ids).includes(avatar_attachment: :blob).index_by(&:id)
 
     top_members_with_avatars = []
     users_with_counts.each do |user|
-      real_user = users_by_id[user.id]
+      real_user = users[user.id]
       if real_user && real_user.avatar.attached?
         top_members_with_avatars << real_user
         break if top_members_with_avatars.size >= 102

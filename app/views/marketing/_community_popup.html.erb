@@ -7,15 +7,15 @@
     <%= avatar_tag user, loading: :lazy %>
   </summary>
 
-  <div class="community-popup-menu border shadow" data-popup-target="menu">
+  <div class="community-popup-menu border shadow" data-popup-target="menu" data-popup-menu="true">
     <div class="community-popup-profile">
       <div class="avatar" style="--avatar-size: 96px; margin: 0 auto 0.1rem auto; cursor: default; pointer-events: none;">
         <%= avatar_tag user, loading: :lazy, size: 96 %>
       </div>
-      <div class="community-popup-name" style="font-weight: bold; font-size: 1.2rem; text-align: center; margin-bottom: 0.5rem;">
+      <div class="community-popup-name" style="font-weight: bold; text-align: center; margin-bottom: 0.5rem;">
         <%= user.name %>
       </div>
-      <div class="community-popup-joined" style="font-size: 0.95rem; color: #888; margin-bottom: 0.5rem;">
+      <div class="community-popup-joined" style="color: #888; margin-bottom: 0.5rem;">
         Joined <%= user.joined_at.strftime("%b %d, %Y") %>
       </div>
       <div class="community-popup-socials" style="display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 0.5rem;">
@@ -32,10 +32,10 @@
       </div>
       <% if user.personal_url.present? %>
         <div class="community-popup-site" style="margin-bottom: 0.5rem;">
-          <%= link_to friendly_domain(user.personal_url), with_protocol(user.personal_url), target: "_blank", style: "font-size: 0.95rem; color: #0077cc; word-break: break-all;" %>
+          <%= link_to friendly_domain(user.personal_url), with_protocol(user.personal_url), target: "_blank", style: "color: #0077cc; word-break: break-all;" %>
         </div>
       <% end %>
-      <div class="community-popup-messages" style="font-size: 0.95rem; color: #222; margin-bottom: 0.5rem;">
+      <div class="community-popup-messages" style="color: #222; margin-bottom: 0.5rem;">
         <% rank = user.message_rank %>
         <% if rank == 1 %>
           🥇 <%= pluralize(number_with_delimiter(user.total_message_count), 'message') %> (Rank #<%= number_with_delimiter(rank) %>)
@@ -51,4 +51,31 @@
       </div>
     </div>
   </div>
-<% end %> 
+<% end %>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.community-popup').forEach(function(details) {
+    details.addEventListener('toggle', function(e) {
+      if (!details.open) return;
+      setTimeout(function() {
+        var menu = details.querySelector('[data-popup-menu="true"]');
+        if (!menu) return;
+        // Reset to default
+        menu.style.transform = 'translateX(-50%)';
+        // Get bounding rect
+        var rect = menu.getBoundingClientRect();
+        var vw = window.innerWidth;
+        // If overflow left
+        if (rect.left < 8) {
+          menu.style.transform = 'translateX(0)';
+        }
+        // If overflow right
+        else if (rect.right > vw - 8) {
+          menu.style.transform = 'translateX(-100%)';
+        }
+      }, 10);
+    });
+  });
+});
+</script> 

@@ -945,10 +945,33 @@ header {
   margin-bottom: 0.5rem;
 }
 
+.community-popup-profile {
+  font-size: 0.9rem;
+}
+.community-popup-menu .community-popup-joined,
+.community-popup-menu .community-popup-socials,
+.community-popup-menu .community-popup-site,
+.community-popup-menu .community-popup-messages {
+  font-size: 0.9rem;
+}
+
 @media (max-width: 600px) {
   .community-popup-menu {
-    min-width: 140px;
+    min-width: 280px;
+    max-width: 320px;
     padding: 1rem 0.5rem 0.5rem 0.5rem;
+  }
+  .community-popup-profile {
+    font-size: 0.8rem;
+  }
+  .community-popup-menu .community-popup-joined,
+  .community-popup-menu .community-popup-socials,
+  .community-popup-menu .community-popup-site,
+  .community-popup-menu .community-popup-messages {
+    font-size: 0.8rem;
+  }
+  .community-popup-name {
+    font-size: 1.2rem;
   }
 }
 
