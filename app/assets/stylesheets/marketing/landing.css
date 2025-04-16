@@ -838,3 +838,134 @@ header {
     top: calc(50% - 90px);
   }
 }
+
+/* Avatar styles copied from application/avatars.css */
+.avatar {
+  --avatar-border-radius: 50%;
+
+  aspect-ratio: 1;
+  border-radius: var(--avatar-border-radius);
+  display: grid;
+  /* Size is controlled by --avatar-size variable, set inline in the HTML */
+  inline-size: var(--avatar-size, 5ch);
+  margin: 0;
+  place-items: center;
+
+  /* Override default button styles if .avatar is also a .btn */
+  &.btn {
+    padding: 0; /* Remove button padding */
+    border: none; /* Remove button border */
+    background: none; /* Remove button background */
+    box-shadow: none; /* Remove button shadow */
+  }
+}
+
+/* Removed the solid black border from #community .avatar to avoid double/offset borders */
+/* #community .avatar {
+  border: 2px solid black;
+} */
+
+.avatar > img {
+  aspect-ratio: 1;
+  block-size: auto;
+  border-radius: var(--avatar-border-radius);
+  grid-area: 1/1;
+  inline-size: var(--avatar-size, 5ch);
+  max-inline-size: 100%;
+  object-fit: cover;
+  border: 2px solid black;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+/* Flexbox layout for the community avatar section */
+#community .grid { /* Keep class name for simplicity, but use flex */
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#community .gap-4 {
+  gap: 1rem;
+}
+
+#community .justify-center {
+  justify-content: center; /* Center the flex items (avatars) horizontally */
+}
+
+/* Community popup styles for marketing page */
+.community-popup {
+  position: relative;
+  display: inline-block;
+}
+
+.community-popup[open] .community-popup-menu {
+  display: block;
+}
+
+.community-popup-menu {
+  display: none;
+  position: absolute;
+  z-index: 100;
+  top: 110%;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 300px;
+  max-width: 320px;
+  background: #fff;
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  padding: 1rem;
+  border: 1px solid #eee;
+}
+
+.community-popup-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.community-popup-profile .avatar {
+  width: var(--avatar-size, 48px) !important;
+  height: var(--avatar-size, 48px) !important;
+  margin: 0 auto 0.45rem auto !important;
+  display: block;
+}
+
+.community-popup-profile .avatar > img {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  margin: 0 auto;
+}
+
+.community-popup-name {
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 600px) {
+  .community-popup-menu {
+    min-width: 140px;
+    padding: 1rem 0.5rem 0.5rem 0.5rem;
+  }
+}
+
+/* Fix avatar shape in marketing popup and remove disclosure arrow */
+.community-popup .avatar,
+.community-popup .avatar > img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  aspect-ratio: 1/1;
+  display: block;
+}
+
+.community-popup summary {
+  list-style: none;
+}
+.community-popup summary::-webkit-details-marker {
+  display: none;
+}

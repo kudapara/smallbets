@@ -1,0 +1,54 @@
+<% stats = @community_stats_by_user_id[user.id] || {} %>
+<%= tag.details class: "community-popup position-relative avatar",
+                data: { controller: "popup", 
+                        action: "keydown.esc->popup#close toggle->popup#toggle click@document->popup#closeOnClickOutside", 
+                        popup_orientation_top_class: "popup-orientation-top" } do %>
+  <summary class="btn avatar">
+    <%= avatar_tag user, loading: :lazy %>
+  </summary>
+
+  <div class="community-popup-menu border shadow" data-popup-target="menu">
+    <div class="community-popup-profile">
+      <div class="avatar" style="--avatar-size: 96px; margin: 0 auto 0.1rem auto; cursor: default; pointer-events: none;">
+        <%= avatar_tag user, loading: :lazy, size: 96 %>
+      </div>
+      <div class="community-popup-name" style="font-weight: bold; font-size: 1.2rem; text-align: center; margin-bottom: 0.5rem;">
+        <%= user.name %>
+      </div>
+      <div class="community-popup-joined" style="font-size: 0.95rem; color: #888; margin-bottom: 0.5rem;">
+        Joined <%= user.joined_at.strftime("%b %d, %Y") %>
+      </div>
+      <div class="community-popup-socials" style="display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 0.5rem;">
+        <% if user.twitter_url.present? %>
+          <%= link_to with_protocol(user.twitter_url), target: "_blank" do %>
+            <%= image_tag "social/twitter.svg", size: 20, alt: "Twitter" %>
+          <% end %>
+        <% end %>
+        <% if user.linkedin_url.present? %>
+          <%= link_to with_protocol(user.linkedin_url), target: "_blank" do %>
+            <%= image_tag "social/linkedin.svg", size: 20, alt: "LinkedIn" %>
+          <% end %>
+        <% end %>
+      </div>
+      <% if user.personal_url.present? %>
+        <div class="community-popup-site" style="margin-bottom: 0.5rem;">
+          <%= link_to friendly_domain(user.personal_url), with_protocol(user.personal_url), target: "_blank", style: "font-size: 0.95rem; color: #0077cc; word-break: break-all;" %>
+        </div>
+      <% end %>
+      <div class="community-popup-messages" style="font-size: 0.95rem; color: #222; margin-bottom: 0.5rem;">
+        <% rank = user.message_rank %>
+        <% if rank == 1 %>
+          🥇 <%= pluralize(number_with_delimiter(user.total_message_count), 'message') %> (Rank #<%= number_with_delimiter(rank) %>)
+        <% elsif rank == 2 %>
+          🥈 <%= pluralize(number_with_delimiter(user.total_message_count), 'message') %> (Rank #<%= number_with_delimiter(rank) %>)
+        <% elsif rank == 3 %>
+          🥉 <%= pluralize(number_with_delimiter(user.total_message_count), 'message') %> (Rank #<%= number_with_delimiter(rank) %>)
+        <% elsif rank %>
+          <%= pluralize(number_with_delimiter(user.total_message_count), 'message') %> (Rank #<%= number_with_delimiter(rank) %>)
+        <% else %>
+          No messages
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %> 

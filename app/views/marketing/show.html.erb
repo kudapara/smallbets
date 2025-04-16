@@ -97,10 +97,36 @@
   <!-- Divider: Fall to White (Bottom of pricing section) -->
   <div class="divider divider-fall-to-white"></div>
 
-  <!-- Resident Experts Section -->
-  <section id="experts" style="padding-top: 120px; padding-bottom: 60px;">
+  <!-- Community Section -->
+  <section id="community" style="padding-top: 120px; padding-bottom: 60px;">
     <div class="container">
-      <h2 class="section-title">Resident Experts</h2>
+      <h2 class="section-title">
+        <span>A Vibrant Community of </span>
+        <span class="inline-block -rotate-1 bg-primary-200 font-bold px-2 py-1">
+          <span class="inline-block rotate-1"><%= number_with_delimiter(@user_count) %> Members</span>
+        </span>
+      </h2>
+      <p class="text-xl mb-12">
+        The Small Bets community is nothing without its people.
+      </p>
+
+      <div class="grid grid-cols-10 gap-4 justify-center community-grid">
+        <% @top_community_members.each do |user| %>
+          <%= render "marketing/community_popup", user: user %>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <!-- Resident Experts Section -->
+  <section id="experts" style="padding-top: 60px; padding-bottom: 60px;">
+    <div class="container">
+      <h2 class="section-title">
+      <span>Always present</span>
+      <span class="inline-block -rotate-1 bg-primary-200 font-bold px-2 py-1">
+        <span class="inline-block rotate-1">Resident Experts</span>
+      </span>
+      </h2>
       <p class="text-xl mb-12">
         These are our resident experts. Just @mention any of these amazing practitioners in our Campfire chat and they'll help you out.
       </p>
@@ -608,10 +634,10 @@
   <section style="padding-top: 60px; padding-bottom: 60px;">
     <div class="container relative">
       <h2 class="section-title">
-        <span>Praise from our</span>
         <span class="inline-block -rotate-1 bg-primary-200 font-bold px-2 py-1">
-          <span class="inline-block rotate-1"><%= number_with_delimiter(@user_count) %> Members</span>
+          <span class="inline-block rotate-1">Praise</span>
         </span>
+        <span> from our members</span>
       </h2>
       <div >
         <div class="md:columns-2 lg:columns-3 gap-14 space-y-8">
@@ -993,3 +1019,44 @@
   </section>
 
 </div>
+
+<script>
+document.addEventListener('click', function(event) {
+  document.querySelectorAll('.community-popup[open]').forEach(function(details) {
+    if (!details.contains(event.target)) {
+      details.removeAttribute('open');
+    }
+  });
+});
+
+function hideIncompleteRow(gridSelector) {
+  const grid = document.querySelector(gridSelector);
+  if (!grid) return;
+  const children = Array.from(grid.children);
+  if (children.length === 0) return;
+
+  // Get computed style for gap and item width
+  const item = children[0];
+  const itemStyle = window.getComputedStyle(item);
+  const itemWidth = item.offsetWidth + parseFloat(itemStyle.marginLeft) + parseFloat(itemStyle.marginRight);
+
+  const gridStyle = window.getComputedStyle(grid);
+  const gridWidth = grid.clientWidth - parseFloat(gridStyle.paddingLeft) - parseFloat(gridStyle.paddingRight);
+  const gap = parseFloat(gridStyle.gap) || 0;
+
+  // Calculate columns
+  const columns = Math.floor((gridWidth + gap) / (itemWidth + gap));
+  if (columns < 1) return;
+
+  // Calculate how many items to show
+  const fullRows = Math.floor(children.length / columns);
+  const showCount = fullRows * columns;
+
+  children.forEach((child, idx) => {
+    child.style.display = idx < showCount ? '' : 'none';
+  });
+}
+
+window.addEventListener('DOMContentLoaded', () => hideIncompleteRow('.community-grid'));
+window.addEventListener('resize', () => hideIncompleteRow('.community-grid'));
+</script>

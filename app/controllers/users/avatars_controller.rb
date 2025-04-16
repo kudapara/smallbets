@@ -1,5 +1,6 @@
 class Users::AvatarsController < ApplicationController
   include ActiveStorage::Streaming
+  allow_unauthenticated_access # Allow access without login for avatars
 
   rescue_from(ActiveSupport::MessageVerifier::InvalidSignature) { head :not_found }
 
