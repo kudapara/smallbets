@@ -59,35 +59,54 @@ document.addEventListener('DOMContentLoaded', function() {
     details.addEventListener('toggle', function(e) {
       if (!details.open) return;
       
-      var menu = details.querySelector('[data-popup-menu="true"]');
+      const menu = details.querySelector('[data-popup-menu="true"]');
       if (!menu) return;
       
       // Hide initially
       menu.style.opacity = '0';
       menu.style.visibility = 'hidden';
       
-      // Reset to default position
-      menu.style.transform = 'translateX(-50%)';
-      
-      // Position correctly before showing
+      // Ensure popup is positioned absolutely relative to its parent
+      menu.style.position = 'absolute';
+
+      // Give the browser time to calculate positions
       setTimeout(function() {
-        // Get bounding rect
-        var rect = menu.getBoundingClientRect();
-        var vw = window.innerWidth;
+        // Reset any previous positioning
+        menu.style.left = '';
+        menu.style.right = '';
+        menu.style.transform = '';
+        menu.style.top = ''; // Also reset top
         
-        // If overflow left
-        if (rect.left < 8) {
-          menu.style.transform = 'translateX(0)';
+        const avatarRect = details.getBoundingClientRect();
+        const menuWidth = menu.offsetWidth;
+        const windowWidth = window.innerWidth;
+        const margin = 8; // Margin from edge of screen
+        
+        // Calculate horizontal position (relative to avatar center)
+        let leftPos = (avatarRect.width / 2) - (menuWidth / 2);
+        
+        // Calculate the absolute left position relative to the viewport first
+        let absoluteLeft = avatarRect.left + leftPos;
+        
+        // Ensure menu stays within viewport boundaries with margin
+        if (absoluteLeft < margin) {
+          // Adjust leftPos to align with the left margin
+          leftPos = margin - avatarRect.left;
+        } else if (absoluteLeft + menuWidth > windowWidth - margin) {
+          // Adjust leftPos to align with the right margin
+          leftPos = (windowWidth - margin - menuWidth) - avatarRect.left;
         }
-        // If overflow right
-        else if (rect.right > vw - 8) {
-          menu.style.transform = 'translateX(-100%)';
-        }
+        
+        // Apply absolute positioning relative to the parent <details> element
+        menu.style.left = leftPos + 'px';
+        // Position below the avatar
+        menu.style.top = (avatarRect.height + 8) + 'px'; 
+        menu.style.transform = 'none';
         
         // Show the menu after positioning
         menu.style.opacity = '1';
         menu.style.visibility = 'visible';
-      }, 0);
+      }, 20); // Slightly longer delay to ensure DOM updates
     });
   });
 });
