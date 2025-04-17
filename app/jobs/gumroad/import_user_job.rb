@@ -2,6 +2,8 @@ class Gumroad::ImportUserJob < ApplicationJob
   def perform(event)
     payload = event.payload || {}
 
+    return if payload["test"] == "true"
+
     # This will be either:
     # - the buyer's email in case of a normal purchase
     # - the gift receiver email in case of a gift purchase
