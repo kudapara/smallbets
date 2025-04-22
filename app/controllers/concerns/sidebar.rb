@@ -6,14 +6,14 @@ module Sidebar
   end
 
   def set_sidebar_memberships
-    memberships           = Current.user.memberships.visible.without_thread_rooms.with_has_unread_notifications.includes(:room).with_room_by_last_active_newest_first
+    memberships           = Current.user.memberships.visible.without_thread_rooms.joins(:room).where(rooms: { active: true }).with_has_unread_notifications.includes(:room).with_room_by_last_active_newest_first
 
     # Get all direct memberships and filter them
     all_direct_memberships = memberships.select { |m| m.room.direct? }
     @direct_memberships   = filter_direct_memberships(all_direct_memberships)
 
     # Get other memberships using the without_direct_rooms scope
-    other_memberships     = Current.user.memberships.visible.without_thread_rooms.without_direct_rooms.with_has_unread_notifications.includes(:room)
+    other_memberships     = Current.user.memberships.visible.without_thread_rooms.without_direct_rooms.joins(:room).where(rooms: { active: true }).with_has_unread_notifications.includes(:room)
     @all_memberships      = other_memberships
     @starred_memberships  = other_memberships
 
