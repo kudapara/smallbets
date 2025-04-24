@@ -103,7 +103,7 @@ a#special-event-banner.banner-urgent:hover span {
 /* Adjust font size for smaller screens */
 @media (max-width: 120ch) {
   #special-event-banner {
-    font-size: 70%;
+    font-size: 80%;
   }
 }
 

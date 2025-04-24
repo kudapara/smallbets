@@ -88,11 +88,7 @@ export default class extends Controller {
           dayPrefix = "Live on X tomorrow";
         } // Future dates > tomorrow are handled by the 24h check above
         
-        const formattedTime = targetLocalDate.toLocaleString(undefined, {
-          hour: 'numeric',
-          minute: '2-digit',
-          timeZoneName: 'short'
-        });
+        const formattedTime = targetLocalDate.toLocaleString(undefined, { hour: 'numeric', minute: '2-digit' });
         this.statusTarget.textContent = `${dayPrefix} at ${formattedTime}`;
         this.element.classList.remove(this.urgentClass);
       }
