@@ -86,7 +86,7 @@
     }
     
     .current-user {
-      background-color: rgba(0, 100, 255, 0.1);
+      background-color: rgb(255 200 0 / 15%);
     }
     
     .d-flex {
