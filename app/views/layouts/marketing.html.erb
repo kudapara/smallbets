@@ -22,25 +22,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&family=Caveat:wght@400;500;600&family=Parkinsans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <%= stylesheet_link_tag *Stylesheets.from("marketing"), "data-turbo-track": "reload" %>
-    
-    <%= javascript_importmap_tags %>
-    
+
     <%= yield :head %>
 </head>
 
 <body>
-    <a 
-      id="special-event-banner"
-      href="https://x.com/nestersk/status/1917662519247700425"
-      target="_blank"
-      style="font-weight: 600; letter-spacing: -0.02em; text-align: center; padding: 0.5rem; display: none; width: 100%; cursor: pointer; text-decoration: none; box-sizing: border-box;"
-      data-controller="countdown-banner"
-      data-countdown-banner-urgent-class="banner-urgent"
-      data-countdown-banner-target-time-value="2025-05-01T17:00:00Z"
-      data-countdown-banner-duration-hours-value="2"
-    >
-      The Weekly Yap — <span data-countdown-banner-target="status"></span>
-    </a>
     <main id="main-content">
         <%= yield %>
     </main>
