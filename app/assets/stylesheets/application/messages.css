@@ -228,6 +228,12 @@
   }
 }
 
+.message__new-separator + .message__day-separator {
+  display: grid !important;
+  visibility: visible !important;
+  margin-top: 0; /* Reduce top margin since it's right after the NEW separator */
+}
+
 .message__new-separator {
   grid-area: new;
   margin-block: calc(var(--message-space) / 2);
