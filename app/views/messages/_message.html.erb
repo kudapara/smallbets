@@ -10,7 +10,7 @@
     
     <% if is_first_unread_message %>
       <h2 id="unread_separator" class="message-separator message__new-separator"><span>New since last visit</span></h2>
-      <h2 class="message-separator message__day-separator message__unread-date-separator"><%= local_datetime_tag message.created_at, style: :date %></h2>
+      <h2 class="message-separator message__day-separator"><%= local_datetime_tag message.created_at, style: :date %></h2>
     <% end %>
     
     <h2 class="message-separator message__day-separator"><%= local_datetime_tag message.created_at, style: :date %></h2>
