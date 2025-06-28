@@ -2,7 +2,7 @@ class MarketingController < ApplicationController
   allow_unauthenticated_access
   layout "marketing"
 
-  before_action :restore_authentication, :redirect_signed_in_user_to_chat
+  before_action :restore_authentication, :redirect_signed_in_user_to_chat, except: [:join]
 
   def show
     @user_count = User.active.non_suspended.count
@@ -50,5 +50,9 @@ class MarketingController < ApplicationController
         rank: idx + 1
       }
     end
+  end
+
+  def join
+    redirect_to "https://dvassallo.gumroad.com/l/small-bets/100_OFF?wanted=true", status: :found, allow_other_host: true
   end
 end

@@ -14,6 +14,7 @@ Rails.application.routes.draw do
     root to: "marketing#show", as: :unauthenticated_root
   end
 
+  get "/join", to: "marketing#join", as: :join_now
   get "/chat", to: "welcome#show"
 
   resource :first_run
