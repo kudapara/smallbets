@@ -1,4 +1,6 @@
 class MarketingController < ApplicationController
+  include AccountsHelper
+  
   allow_unauthenticated_access
   layout "marketing"
 
@@ -57,7 +59,11 @@ class MarketingController < ApplicationController
   end
 
   def stats
-    user_count = User.active.non_suspended.count
-    render json: { user_count: user_count }
+    member_count = User.active.non_suspended.count
+    online_count = online_users_count
+    render json: { 
+      member_count: member_count,
+      online_count: online_count
+    }
   end
 end
