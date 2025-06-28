@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   end
 
   get "/join", to: "marketing#join", as: :join_now
+  get "/api/stats", to: "marketing#stats", defaults: { format: :json }
   get "/chat", to: "welcome#show"
 
   resource :first_run
