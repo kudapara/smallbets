@@ -58,13 +58,16 @@ group :test do
   gem "webmock", require: false
 end
 
-gem "dotenv", groups: [:development, :test]
+gem "dotenv", groups: [ :development, :test ]
 gem "letter_opener", group: :development
 gem "stringex"
 
-gem 'aws-sdk-rails', '~> 4'
+gem "aws-sdk-rails", "~> 4"
 
 gem "heapy", group: :development
 
 gem "rufus-scheduler"
 gem "mailkick"
+
+gem "rack-mini-profiler", "~> 4.0", require: false
+gem "stackprof", "~> 0.2"
