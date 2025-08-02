@@ -68,3 +68,6 @@ gem "heapy", group: :development
 
 gem "rufus-scheduler"
 gem "mailkick"
+
+gem "rack-mini-profiler", "~> 4.0", require: false
+gem "stackprof", "~> 0.2"

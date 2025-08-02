@@ -7,6 +7,11 @@
   </summary>
 
   <div class="popup-menu message__avatar-menu border shadow" data-popup-target="menu">
-    <%= render 'users/quick_profile', user: user %>
+    <%= turbo_frame_tag dom_id(user, :message_profile), 
+                        data: { turbo_frame_src: mention_profile_path(user) } do %>
+      <div class="txt-align-center pad">
+        <div class="spinner"></div>
+      </div>
+    <% end %>
   </div>
 <% end %>

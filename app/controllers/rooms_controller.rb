@@ -46,7 +46,7 @@ class RoomsController < ApplicationController
     end
 
     def find_messages
-      messages = @room.messages.with_threads.with_creator.includes(:mentionees)
+      messages = @room.messages.with_creator.includes(:mentionees, :boosts)
       @first_unread_message = messages.ordered.since(@membership.unread_at).first if @membership.unread?
 
       if show_first_message = messages.find_by(id: params[:message_id]) || @first_unread_message 

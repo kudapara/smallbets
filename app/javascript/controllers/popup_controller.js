@@ -12,6 +12,17 @@ export default class extends Controller {
 
   toggle() {
     this.#orient()
+    
+    // Load turbo frame only when popup opens
+    if (this.element.open) {
+      const frame = this.menuTarget.querySelector('turbo-frame[data-turbo-frame-src]')
+      if (frame && !frame.hasAttribute('src')) {
+        // Set src from data attribute to trigger loading
+        frame.src = frame.dataset.turboFrameSrc
+        // Remove the data attribute to prevent re-loading
+        delete frame.dataset.turboFrameSrc
+      }
+    }
   }
 
   closeOnClickOutside({ target }) {
