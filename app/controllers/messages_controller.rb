@@ -16,11 +16,15 @@ class MessagesController < ApplicationController
 
   def create
     set_room
-    @message = @room.messages.create_with_attachment!(message_params)
+    @message = @room.messages.create_with_attachment(message_params)
 
-    @message.broadcast_create
-    broadcast_update_message_involvements
-    deliver_webhooks_to_bots(@message, :created)
+    if @message.persisted?
+      @message.broadcast_create
+      broadcast_update_message_involvements
+      deliver_webhooks_to_bots(@message, :created)
+    else
+      render action: :not_allowed
+    end
   rescue ActiveRecord::RecordNotFound
     render action: :room_not_found
   end

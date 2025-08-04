@@ -32,6 +32,7 @@
 .txt-medium { font-weight: 500; }
 .txt-nowrap { white-space: nowrap; }
 
+.inline { display: inline }
 .block { display: block }
 
 /* Flexbox and Grid */

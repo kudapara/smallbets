@@ -189,6 +189,7 @@ class StatsController < ApplicationController
 
     # Get newest members
     @newest_members = StatsService.newest_members
+    @blocked_members = StatsService.blocked_members
   end
 
   def today

@@ -25,6 +25,12 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_many :auth_tokens, dependent: :destroy
 
+  has_many :blocks_given, class_name: "Block", foreign_key: :blocker_id, dependent: :destroy
+  has_many :blocked_users, through: :blocks_given, source: :blocked
+
+  has_many :blocks_received, class_name: "Block", foreign_key: :blocked_id, dependent: :destroy
+  has_many :blocked_by_users, through: :blocks_received, source: :blocker
+
   validates_presence_of :email_address, if: :person?
   normalizes :email_address, with: -> email_address { email_address.downcase }
 
@@ -173,6 +179,32 @@ class User < ApplicationRecord
 
   def toggle_email_subscription
     subscribed_to_emails? ? unsubscribe_from_emails : subscribe_to_emails
+  end
+
+  def blocked_in?(room)
+    return false unless room.one_on_one?
+
+    !can_ping?(room.roommate_to(self))
+  end
+
+  def can_ping?(other_user)
+    !blocked?(other_user) && !blocked_by?(other_user)
+  end
+
+  def blocked?(other_user)
+    blocked_users.exists?(other_user&.id)
+  end
+
+  def blocked_by?(other_user)
+    blocked_by_users.exists?(other_user&.id)
+  end
+
+  def block!(other_user)
+    blocks_given.find_or_create_by!(blocked: other_user)
+  end
+
+  def unblock!(other_user)
+    blocks_given.where(blocked: other_user).destroy_all
   end
 
   private

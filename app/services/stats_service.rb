@@ -316,6 +316,16 @@ class StatsService
         .order("joined_at DESC")
         .limit(limit)
   end
+
+  def self.blocked_members(limit = 10)
+    User.active
+        .non_suspended
+        .joins(:blocks_received)
+        .group("users.id")
+        .select("users.*, COUNT(blocks.id) AS blocks_count")
+        .order("blocks_count DESC")
+        .limit(limit)
+  end
   
   # Get total counts for the stats page
   def self.total_counts

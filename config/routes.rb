@@ -79,6 +79,11 @@ Rails.application.routes.draw do
         end
       end
     end
+    resources :blocks, only: [:create] do
+      collection do
+        delete "", to: "blocks#destroy"
+      end
+    end
   end
 
   namespace :autocompletable do

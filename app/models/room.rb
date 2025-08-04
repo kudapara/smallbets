@@ -93,6 +93,16 @@ class Room < ApplicationRecord
     is_a?(Rooms::Direct)
   end
 
+  def one_on_one?
+    direct? && memberships.count == 2
+  end
+
+  def roommate_to(user)
+    return nil unless one_on_one?
+
+    users.without(user).first
+  end
+
   def thread?
     is_a?(Rooms::Thread)
   end

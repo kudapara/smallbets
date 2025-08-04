@@ -14,6 +14,10 @@ module Message::Attachment
     def create_with_attachment!(attributes)
       create!(attributes).tap(&:process_attachment)
     end
+
+    def create_with_attachment(attributes)
+      create(attributes).tap(&:process_attachment)
+    end
   end
 
   def attachment?

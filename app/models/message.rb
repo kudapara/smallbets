@@ -38,6 +38,8 @@ class Message < ApplicationRecord
 
   attr_accessor :bookmarked
   alias_method :bookmarked?, :bookmarked
+
+  validate :ensure_can_message_recipient, on: :create
   
   def bookmarked_by_current_user?
     return bookmarked? unless bookmarked.nil?
@@ -75,5 +77,11 @@ class Message < ApplicationRecord
 
   def touch_room_activity
     room.touch(:last_active_at)
+  end
+
+  private
+
+  def ensure_can_message_recipient
+    errors.add(:base, "Messaging this user isn't allowed") if creator.blocked_in?(room)
   end
 end

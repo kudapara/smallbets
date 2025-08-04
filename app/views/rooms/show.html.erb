@@ -14,6 +14,7 @@
 
   <%= messages_tag(@room) do %>
     <%= render "rooms/show/invitation", room: @room %>
+    <%= render "rooms/show/block_notice", room: @room %>
     <%= render partial: "messages/message", collection: @messages, 
                cached: -> message { message_cache_key(message, room_id: @room.id, is_first_unread_message: message == @first_unread_message) }, 
                locals: { current_room: @room, first_unread_message: @first_unread_message } %>
@@ -25,4 +26,8 @@
   <%= button_to_jump_to_newest_message %>
 <% end %>
 
-<%= render "rooms/show/composer", room: @room %>
+<% if Current.user.blocked_in?(@room) %>
+  <%= render "rooms/show/composer_not_allowed", room: @room %>
+<% else %>
+  <%= render "rooms/show/composer", room: @room %>
+<% end %>
