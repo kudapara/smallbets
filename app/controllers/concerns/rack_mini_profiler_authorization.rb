@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module RackMiniProfilerAuthorization
   extend ActiveSupport::Concern
 
@@ -14,7 +12,7 @@ module RackMiniProfilerAuthorization
 
     def authorize_rack_mini_profiler?
       return true if Rails.env.development?
-      return true if Rails.env.production? && Current.user&.can_administer?
+      return true if Rails.env.production? && signed_in? && Current.user.can_administer?
       false
     end
 end
