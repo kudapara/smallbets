@@ -1,7 +1,7 @@
 module Pagination
   extend ActiveSupport::Concern
 
-  PAGE_SIZE = 40
+  PAGE_SIZE = 25
 
   included do
     scope :last_page, ->(page_size = PAGE_SIZE) { ordered.last(page_size) }
@@ -10,8 +10,8 @@ module Pagination
     scope :before, ->(record) { where("#{arel_table.name}.created_at < ?", record.created_at) }
     scope :after, ->(record) { where("#{arel_table.name}.created_at > ?", record.created_at) }
 
-    scope :page_before, ->(record, page_size=PAGE_SIZE) { before(record).last_page(page_size) }
-    scope :page_after, ->(record, page_size=PAGE_SIZE) { after(record).first_page(page_size) }
+    scope :page_before, ->(record, page_size = PAGE_SIZE) { before(record).last_page(page_size) }
+    scope :page_after, ->(record, page_size = PAGE_SIZE) { after(record).first_page(page_size) }
 
     scope :page_created_since, ->(time) { where("#{arel_table.name}.created_at > ?", time).first_page }
     scope :page_updated_since, ->(time) { where("#{arel_table.name}.updated_at > ?", time).last_page }
