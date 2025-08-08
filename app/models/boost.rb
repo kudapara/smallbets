@@ -14,7 +14,7 @@ class Boost < ApplicationRecord
 
   private
     def broadcast_reactivation
-      previous_boost = message.boosts.active.order(:created_at).where("created_at < ?", created_at).last
+      previous_boost = message.boosts.where("created_at < ?", created_at).last
       if previous_boost.present?
         target = previous_boost
         action = "after"

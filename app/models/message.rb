@@ -4,7 +4,7 @@ class Message < ApplicationRecord
   belongs_to :room, counter_cache: true
   belongs_to :creator, class_name: "User", default: -> { Current.user }
 
-  has_many :boosts, -> { active }, class_name: "Boost"
+  has_many :boosts, -> { active.order(:created_at) }, class_name: "Boost"
   has_many :bookmarks, -> { active }, class_name: "Bookmark"
 
   has_many :threads, -> { active }, class_name: "Rooms::Thread", foreign_key: :parent_message_id
