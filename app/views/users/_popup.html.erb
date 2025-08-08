@@ -1,3 +1,4 @@
+<%# locals: (user:) -%>
 <% cache [user, "popup", user.updated_at] do %>
   <%= tag.details class: "position-relative avatar",
                   data: { controller: "popup", 
