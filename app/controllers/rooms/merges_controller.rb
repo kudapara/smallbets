@@ -6,7 +6,7 @@ class Rooms::MergesController < ApplicationController
   def create
     @source_room.merge_into!(@target_room)
     for_each_sidebar_section do |list_name|
-      broadcast_remove_to :rooms, target: [@source_room, helpers.dom_prefix(list_name, :list_node)]
+      broadcast_remove_to :rooms, target: [ @source_room, helpers.dom_prefix(list_name, :list_node) ]
     end
 
     redirect_to room_url(@target_room), notice: "✓"

@@ -6,7 +6,7 @@ module Message::Mentionee
     has_many :mentionees, ->(message) { where(id: message.room.user_ids) }, through: :mentions, source: :user
 
     after_save :create_mentionees
-    
+
     scope :mentioning, ->(user_id) {
       joins(:mentions).where(mentions: { user_id: user_id })
     }

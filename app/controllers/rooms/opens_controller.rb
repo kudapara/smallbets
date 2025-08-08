@@ -42,7 +42,7 @@ class Rooms::OpensController < RoomsController
     def broadcast_update_room
       for_each_sidebar_section do |list_name|
         each_user_and_html_for(@room, list_name:) do | user, html |
-          broadcast_replace_to user, :rooms, target: [@room, helpers.dom_prefix(list_name, :list_node)], html: html 
+          broadcast_replace_to user, :rooms, target: [ @room, helpers.dom_prefix(list_name, :list_node) ], html: html
         end
       end
     end

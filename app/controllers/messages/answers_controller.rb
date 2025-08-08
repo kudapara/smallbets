@@ -20,12 +20,12 @@ class Messages::AnswersController < ApplicationController
 
   def broadcast_message_update
     action_html = render_to_string(partial: "messages/actions/answer", locals: { message: @message })
-    @message.broadcast_replace_to @message.room, :messages, target: [@message, :answering], html: action_html
-    @message.broadcast_replace_to :inbox, target: [@message, :answering], html: action_html
+    @message.broadcast_replace_to @message.room, :messages, target: [ @message, :answering ], html: action_html
+    @message.broadcast_replace_to :inbox, target: [ @message, :answering ], html: action_html
 
     meta_html = render_to_string(partial: "messages/answered_by", locals: { message: @message })
-    @message.broadcast_replace_to @message.room, :messages, target: [@message, :answered_by], html: meta_html
-    @message.broadcast_replace_to :inbox, target: [@message, :answered_by], html: meta_html
+    @message.broadcast_replace_to @message.room, :messages, target: [ @message, :answered_by ], html: meta_html
+    @message.broadcast_replace_to :inbox, target: [ @message, :answered_by ], html: meta_html
   end
 
   def ensure_can_answer

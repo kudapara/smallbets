@@ -2,11 +2,11 @@ module MessagesHelper
   def edit_message_in_room_path(room, message)
     room ? edit_room_message_path(room, message) : edit_message_path(message)
   end
-  
+
   def message_in_room_path(room, message)
     room ? room_message_path(room, message) : message_path(message)
   end
-  
+
   def message_area_tag(room, &)
     tag.div id: "message-area", class: "message-area", contents: true, data: {
       controller: "messages presence drop-target",
@@ -78,7 +78,7 @@ module MessagesHelper
 
     ""
   end
-  
+
   def message_cache_key(message, room_id: nil, is_first_unread_message: false)
     [
       message,

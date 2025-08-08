@@ -1,6 +1,6 @@
 class User < ApplicationRecord
   DEFAULT_NAME = "Small Better"
-  
+
   has_subscriptions
   after_create_commit :subscribe_to_emails
 
@@ -32,7 +32,7 @@ class User < ApplicationRecord
   has_many :blocked_by_users, through: :blocks_received, source: :blocker
 
   validates_presence_of :email_address, if: :person?
-  normalizes :email_address, with: -> email_address { email_address.downcase }
+  normalizes :email_address, with: ->(email_address) { email_address.downcase }
 
   scope :without_default_names, -> { where.not(name: DEFAULT_NAME) }
   scope :non_suspended, -> { where(suspended_at: nil) }
@@ -44,7 +44,7 @@ class User < ApplicationRecord
   before_validation :normalize_social_urls
   before_save :transliterate_name, if: :name_changed?
   after_create_commit :grant_membership_to_open_rooms
-  
+
   # Clear the all_time_ranks cache when users are created, deleted, or their status changes
   after_create_commit -> { StatsService.clear_all_time_ranks_cache }
   after_destroy_commit -> { StatsService.clear_all_time_ranks_cache }
@@ -84,7 +84,7 @@ class User < ApplicationRecord
   def imported_from_gumroad_and_unclaimed?
     order_id.present? && last_authenticated_at.nil?
   end
-  
+
   def ever_authenticated?
     last_authenticated_at.present?
   end
@@ -135,19 +135,19 @@ class User < ApplicationRecord
   def editable_name
     default_name? ? "" : name
   end
-  
+
   def joined_at
     membership_started_at || created_at
   end
-  
+
   def suspended?
     suspended_at.present?
   end
-  
+
   def suspend!
     update!(suspended_at: Time.current) unless suspended?
   end
-  
+
   def ensure_can_sign_in!
     update!(suspended_at: nil)
   end
@@ -156,7 +156,7 @@ class User < ApplicationRecord
     Message.active
            .joins(:room)
            .where(creator_id: id)
-           .where('rooms.type != ?', 'Rooms::Direct')
+           .where("rooms.type != ?", "Rooms::Direct")
            .count
   end
 
@@ -214,7 +214,7 @@ class User < ApplicationRecord
       unclaimed_gumroad_import&.update!(attributes)
       unclaimed_gumroad_import
     end
-  
+
     def self.find_or_create_user_from_gumroad(attributes)
       sale = GumroadAPI.successful_membership_sale(email: attributes[:email_address])
       User.create!(attributes.merge(membership_started_at: sale["created_at"], order_id: sale["order_id"])) if sale
@@ -233,13 +233,13 @@ class User < ApplicationRecord
 
       user
     end
-  
+
     def self.find_or_create_user_locally(attributes)
       User.create!(attributes)
     rescue ActiveRecord::RecordNotUnique
       User.active.find_by(email_address: attributes[:email_address])
     end
-  
+
     def grant_membership_to_open_rooms
       Membership.insert_all(Rooms::Open.active.pluck(:id).collect { |room_id| { room_id: room_id, user_id: id } })
       Rooms::Thread.joins(:parent_room).where(parent_room: { type: "Rooms::Open" }).find_each do |thread|

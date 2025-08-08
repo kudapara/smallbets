@@ -21,30 +21,30 @@ module Users::AvatarsHelper
       avatar_image_tag(user, size: 48, **options)
     end
   end
-  
+
   def avatar_image_tag(user, **options)
     options[:loading] ||= :lazy
     image_tag user_image_path(user), aria: { hidden: "true" }, **options
   end
-  
+
   def user_image_path(user)
     if user.avatar.attached?
       fresh_user_avatar_path(user)
-    elsif user.avatar_url.present? 
+    elsif user.avatar_url.present?
       user.avatar_url
     elsif user.bot?
       asset_path("default-bot-avatar.svg")
     else
-      initials = render template: "users/avatars/show", formats: [:svg], locals: { user: user }
+      initials = render template: "users/avatars/show", formats: [ :svg ], locals: { user: user }
       "data:image/svg+xml,#{svg_to_uri(initials)}"
     end
   end
-  
+
   def svg_to_uri(svg)
     # Remove comments, xml meta, and doctype
-    svg = svg.gsub(/<!--.*?-->|<\?.*?\?>|<!.*?>/m, '').gsub(/\s+/, ' ').gsub('> <', '><').gsub(/([\w:])="(.*?)"/, "\\1='\\2'").strip
+    svg = svg.gsub(/<!--.*?-->|<\?.*?\?>|<!.*?>/m, "").gsub(/\s+/, " ").gsub("> <", "><").gsub(/([\w:])="(.*?)"/, "\\1='\\2'").strip
     svg = Rack::Utils.escape(svg)
     # Un-escape characters in the given URI-escaped string that do not need escaping in "-quoted data URIs
-    svg = svg.gsub('%3D', '=').gsub('%3A', ':').gsub('%2F', '/').gsub('%27', "'").tr('+', ' ')
+    svg = svg.gsub("%3D", "=").gsub("%3A", ":").gsub("%2F", "/").gsub("%27", "'").tr("+", " ")
   end
 end

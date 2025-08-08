@@ -8,7 +8,7 @@ module User::Role
   def can_administer?(record = nil)
     administrator? || self == record&.creator || record&.new_record?
   end
-  
+
   def person?
     !bot?
   end

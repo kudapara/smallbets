@@ -1,6 +1,6 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: 'Small Bets <support@smallbets.com>'
-  layout 'mailer'
+  default from: "Small Bets <support@smallbets.com>"
+  layout "mailer"
 
   helper_method :formatted_time
 
@@ -8,4 +8,3 @@ class ApplicationMailer < ActionMailer::Base
     time&.strftime("%b %-d, %-I:%M %p")
   end
 end
-

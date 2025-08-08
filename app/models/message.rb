@@ -22,7 +22,7 @@ class Message < ApplicationRecord
 
   after_create_commit -> { involve_mentionees_in_room(unread: true) }
   after_update_commit -> { involve_mentionees_in_room(unread: false) }
-  
+
   # Clear the all_time_ranks cache when messages are created or deleted
   after_create_commit -> { StatsService.clear_all_time_ranks_cache }
   after_destroy_commit -> { StatsService.clear_all_time_ranks_cache }
@@ -40,13 +40,13 @@ class Message < ApplicationRecord
   alias_method :bookmarked?, :bookmarked
 
   validate :ensure_can_message_recipient, on: :create
-  
+
   def bookmarked_by_current_user?
     return bookmarked? unless bookmarked.nil?
-    
+
     bookmarks.find_by(user_id: Current.user&.id).present?
   end
-  
+
   def plain_text_body
     body.to_plain_text.presence || attachment&.filename&.to_s || ""
   end
@@ -68,7 +68,7 @@ class Message < ApplicationRecord
       Sound.find_by_name match[:name]
     end
   end
-  
+
   private
 
   def involve_mentionees_in_room(unread:)

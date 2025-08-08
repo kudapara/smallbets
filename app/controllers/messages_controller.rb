@@ -88,7 +88,7 @@ class MessagesController < ApplicationController
         refresh_shared_rooms(user)
       end
     end
-  
+
     def refresh_shared_rooms(user)
       memberships = user.memberships.shared.visible
       {

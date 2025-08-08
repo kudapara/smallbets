@@ -20,7 +20,7 @@ class Messages::BookmarksController < ApplicationController
 
     def broadcast_message_update
       html = render_to_string(partial: "messages/actions/bookmark", locals: { message: @message })
-      @message.broadcast_replace_to Current.user, @message.room, :messages, target: [@message, :bookmarking], html: html
-      @message.broadcast_replace_to Current.user, :inbox, target: [@message, :bookmarking], html: html
+      @message.broadcast_replace_to Current.user, @message.room, :messages, target: [ @message, :bookmarking ], html: html
+      @message.broadcast_replace_to Current.user, :inbox, target: [ @message, :bookmarking ], html: html
     end
 end

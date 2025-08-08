@@ -11,7 +11,7 @@ module User::Preferences
     self.preferences[key] = value
     save!
   end
-  
+
   def preference(key)
     preferences&.[](key)
   end

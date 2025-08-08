@@ -42,7 +42,7 @@ class UsersController < ApplicationController
     def verify_join_code
       head :not_found if Current.account.join_code != params[:join_code]
     end
-  
+
     def start_otp_if_user_exists
       user = User.active.non_suspended.find_by(email_address: user_params[:email_address])
 

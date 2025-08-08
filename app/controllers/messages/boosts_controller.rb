@@ -1,6 +1,6 @@
 class Messages::BoostsController < ApplicationController
   include NotifyBots
-  
+
   before_action :set_message
 
   def index

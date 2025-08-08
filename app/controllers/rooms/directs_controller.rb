@@ -14,10 +14,10 @@ class Rooms::DirectsController < RoomsController
   private
     def create_room
       @room = Rooms::Direct.find_or_create_for(selected_users)
-  
+
       broadcast_create_room(@room)
     end
-  
+
     def selected_users
       User.where(id: selected_users_ids.including(Current.user.id))
     end

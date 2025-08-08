@@ -1,4 +1,4 @@
-class LibraryController < ApplicationController  
+class LibraryController < ApplicationController
   def index
   end
 end

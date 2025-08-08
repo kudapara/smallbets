@@ -23,6 +23,6 @@ class BlocksController < ApplicationController
   end
 
   def set_room
-    @room = Rooms::Direct.find_or_create_for(User.where(id: [@user.id, Current.user.id]))
+    @room = Rooms::Direct.find_or_create_for(User.where(id: [ @user.id, Current.user.id ]))
   end
 end

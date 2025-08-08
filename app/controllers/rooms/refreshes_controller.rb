@@ -16,7 +16,7 @@ class Rooms::RefreshesController < ApplicationController
 
     def set_unread_at_message
       return if params[:unread_at_message_id].blank?
-      
+
       @unread_at_message = Message.find_by(id: params[:unread_at_message_id])
     end
 end

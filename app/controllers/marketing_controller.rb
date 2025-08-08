@@ -1,10 +1,10 @@
 class MarketingController < ApplicationController
   include AccountsHelper
-  
+
   allow_unauthenticated_access
   layout "marketing"
 
-  before_action :restore_authentication, :redirect_signed_in_user_to_chat, except: [:join, :stats]
+  before_action :restore_authentication, :redirect_signed_in_user_to_chat, except: [ :join, :stats ]
 
   def show
     @user_count = User.active.non_suspended.count
@@ -15,20 +15,20 @@ class MarketingController < ApplicationController
 
     recent_user_ids = Message
       .joins(:room)
-      .where('messages.active = true')
-      .where('rooms.type != ?', 'Rooms::Direct')
-      .where('messages.created_at >= ? AND messages.created_at <= ?', range_start, range_end)
+      .where("messages.active = true")
+      .where("rooms.type != ?", "Rooms::Direct")
+      .where("messages.created_at >= ? AND messages.created_at <= ?", range_start, range_end)
       .distinct
       .pluck(:creator_id)
 
     users_with_counts = User
-      .select('users.id, users.name, COUNT(messages.id) AS message_count, COALESCE(users.membership_started_at, users.created_at) as joined_at')
+      .select("users.id, users.name, COUNT(messages.id) AS message_count, COALESCE(users.membership_started_at, users.created_at) as joined_at")
       .joins(messages: :room)
-      .where('rooms.type != ? AND messages.active = true', 'Rooms::Direct')
-      .where('users.active = true AND users.suspended_at IS NULL')
+      .where("rooms.type != ? AND messages.active = true", "Rooms::Direct")
+      .where("users.active = true AND users.suspended_at IS NULL")
       .where(id: recent_user_ids)
-      .group('users.id, users.name, users.membership_started_at, users.created_at')
-      .order('message_count DESC, joined_at ASC, users.id ASC')
+      .group("users.id, users.name, users.membership_started_at, users.created_at")
+      .order("message_count DESC, joined_at ASC, users.id ASC")
 
     user_ids = users_with_counts.map(&:id)
     users = User.active.without_bots.where(id: user_ids).includes(avatar_attachment: :blob).index_by(&:id)
@@ -61,7 +61,7 @@ class MarketingController < ApplicationController
   def stats
     member_count = User.active.non_suspended.count
     online_count = online_users_count
-    render json: { 
+    render json: {
       member_count: member_count,
       online_count: online_count
     }

@@ -14,7 +14,7 @@ class Messages::ByBotsController < MessagesController
         reading(request.body) { |body| { body: format_mentions(body) } }
       end
     end
-  
+
     def format_mentions(body)
       body.to_s.gsub(/@\{(.+?)\}/) do |mention_sig|
         user_id = $1
@@ -27,7 +27,7 @@ class Messages::ByBotsController < MessagesController
       attachment_body = render_to_string partial: "users/mention", locals: { user: user }
       "<action-text-attachment sgid=\"#{user.attachable_sgid}\" content-type=\"application/vnd.campfire.mention\" content=\"#{attachment_body.gsub('"', '&quot;')}\"></action-text-attachment>"
     end
-  
+
     def reading(io)
       io.rewind
       yield io.read.force_encoding("UTF-8")

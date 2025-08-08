@@ -4,7 +4,7 @@ module Users::SidebarHelper
 
     Current.user.memberships.unread.any?
   end
-  
+
   def sidebar_turbo_frame_tag(src: nil, &)
     turbo_frame_tag :user_sidebar, src: src, target: "_top", data: {
       turbo_permanent: true,

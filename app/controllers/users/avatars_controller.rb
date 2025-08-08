@@ -7,7 +7,7 @@ class Users::AvatarsController < ApplicationController
   def show
     # Skip session cookies for avatar requests
     request.session_options[:skip] = true
-    
+
     @user = User.from_avatar_token(params[:user_id])
 
     if stale?(etag: @user)
@@ -35,7 +35,7 @@ class Users::AvatarsController < ApplicationController
     def send_webp_blob_file(key)
       send_file ActiveStorage::Blob.service.path_for(key), content_type: "image/webp", disposition: :inline
     end
-  
+
     def render_bot
       if @user.avatar.attached?
         avatar_variant = @user.avatar.variant(SQUARE_WEBP_VARIANT).processed

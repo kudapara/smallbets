@@ -1,7 +1,7 @@
 class Users::MessagesController < ApplicationController
   before_action :set_user
   before_action :set_messages
-  
+
   layout false, only: %i[ page ]
 
   def index
@@ -10,7 +10,7 @@ class Users::MessagesController < ApplicationController
     @return_to_room = last_room_visited
     @message_count = messages.count
   end
-  
+
   def page
     head :no_content if @messages.blank?
   end
@@ -19,7 +19,7 @@ class Users::MessagesController < ApplicationController
     def set_user
       @user = User.find(params[:user_id])
     end
-  
+
     def set_messages
       @messages = Bookmark.populate_for(find_paged_messages)
     end

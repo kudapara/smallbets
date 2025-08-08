@@ -109,6 +109,6 @@ module RoomsHelper
                       precision: number < 10_000 ? 1 : 0,
                       significant: false,
                       format: "%n%u",
-                      units: {thousand: "k", million: "M", billion: "B"})
+                      units: { thousand: "k", million: "M", billion: "B" })
     end
 end

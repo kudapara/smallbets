@@ -55,7 +55,7 @@ class WebhookTest < ActiveSupport::TestCase
     reply_message = Message.last
     assert_equal "Failed to respond within 300 seconds", reply_message.body.to_plain_text
   end
-  
+
   test "delivery of non-mention" do
     assert_difference -> { Message.count }, 0 do
       WebMock.stub_request(:post, webhooks(:everything).url).to_return(status: 200, body: "Accidental text in response", headers: { "Content-Type" => "text/plain" })

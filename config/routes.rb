@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   # Redirect www.smallbets.com to smallbets.com
   constraints(host: /^www\.smallbets\.com/) do
-    match '(*any)', to: redirect { |params, request|
+    match "(*any)", to: redirect { |params, request|
       "https://smallbets.com/#{params[:any]}#{request.query_string.present? ? '?' + request.query_string : ''}"
     }, via: :all
   end
@@ -55,7 +55,7 @@ Rails.application.routes.draw do
   resources :qr_code, only: :show
 
   scope module: :users do
-    resource :preference, only: [:update]
+    resource :preference, only: [ :update ]
     resource :email_subscription, only: %i[ show update ]
   end
 
@@ -79,7 +79,7 @@ Rails.application.routes.draw do
         end
       end
     end
-    resources :blocks, only: [:create] do
+    resources :blocks, only: [ :create ] do
       collection do
         delete "", to: "blocks#destroy"
       end
@@ -131,7 +131,7 @@ Rails.application.routes.draw do
       resources :boosts
       resources :bookmarks, only: %i[ create ] do
         collection do
-          delete '', to: 'bookmarks#destroy'
+          delete "", to: "bookmarks#destroy"
         end
       end
       resource :answer, only: %i[ create destroy ]
@@ -151,11 +151,11 @@ Rails.application.routes.draw do
       post :clear
     end
     scope path: "/paged", as: :paged do
-      resources :mentions, only: %i[ index ], controller: 'inboxes/mentions'
-      resources :notifications, only: %i[ index ], controller: 'inboxes/notifications'
-      resources :messages, only: %i[ index ], controller: 'inboxes/messages'
-      resources :bookmarks, only: %i[ index ], controller: 'inboxes/bookmarks'
-      resources :answers, only: %i[ index ], controller: 'inboxes/answers'
+      resources :mentions, only: %i[ index ], controller: "inboxes/mentions"
+      resources :notifications, only: %i[ index ], controller: "inboxes/notifications"
+      resources :messages, only: %i[ index ], controller: "inboxes/messages"
+      resources :bookmarks, only: %i[ index ], controller: "inboxes/bookmarks"
+      resources :answers, only: %i[ index ], controller: "inboxes/answers"
     end
   end
 
@@ -182,14 +182,14 @@ Rails.application.routes.draw do
   get "webmanifest"    => "pwa#manifest"
   get "service-worker" => "pwa#service_worker"
 
-  get 'library' => 'library#show'
+  get "library" => "library#show"
 
-  get 'experts' => 'experts#show'
+  get "experts" => "experts#show"
 
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Stats routes
-  get '/stats', to: 'stats#index'
+  get "/stats", to: "stats#index"
   get "stats/daily/month_data", to: "stats#month_data", as: "stats_month_data"
   get "stats/daily/:month", to: "stats#today", as: "stats_daily_month"
   get "stats/daily", to: "stats#today"

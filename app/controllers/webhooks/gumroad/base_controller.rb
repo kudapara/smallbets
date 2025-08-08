@@ -8,7 +8,7 @@ class Webhooks::Gumroad::BaseController < ApplicationController
   protected
 
   def verify_webhook_secret
-    unless params[:webhook_secret] == ENV['WEBHOOK_SECRET']
+    unless params[:webhook_secret] == ENV["WEBHOOK_SECRET"]
       Rails.logger.warn("ERROR: Unauthorized webhook attempt #{params.inspect}")
       render json: { status: "error", message: "Unauthorized" }, status: :unauthorized
     end

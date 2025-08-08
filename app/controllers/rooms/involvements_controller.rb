@@ -51,7 +51,7 @@ class Rooms::InvolvementsController < ApplicationController
       case
       when @membership.involved_in_invisible?
         for_each_sidebar_section do |list_name|
-          broadcast_remove_to @membership.user, :rooms, target: [@room, helpers.dom_prefix(list_name, :list_node)]
+          broadcast_remove_to @membership.user, :rooms, target: [ @room, helpers.dom_prefix(list_name, :list_node) ]
         end
       when @membership.involvement_previously_was.inquiry.invisible?
         for_each_sidebar_section do |list_name|

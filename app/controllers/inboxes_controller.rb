@@ -48,7 +48,7 @@ class InboxesController < ApplicationController
       m.read_until(mentions_loaded_until) if non_mentions.none?
     end
 
-    redirect_back(fallback_location: mentions_inbox_path) unless params[:stay] 
+    redirect_back(fallback_location: mentions_inbox_path) unless params[:stay]
   end
 
   private

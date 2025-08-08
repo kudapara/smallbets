@@ -46,7 +46,7 @@ module User::Bot
   def reset_bot_key
     update! bot_token: self.class.generate_bot_token
   end
-  
+
   def mentions_url
     mentions_webhook&.url
   end
@@ -65,11 +65,11 @@ module User::Bot
     def mentions_webhook
       webhooks.receiving_mentions.first
     end
-  
+
     def everything_webhook
       webhooks.receiving_everything.first
     end
-  
+
     def update_webhook_url!(url, receives)
       if url.present?
         webhooks.where(receives: receives).first&.update!(url: url) || webhooks.create!(url: url, receives: receives)

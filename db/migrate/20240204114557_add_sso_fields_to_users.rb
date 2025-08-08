@@ -8,7 +8,7 @@ class AddSsoFieldsToUsers < ActiveRecord::Migration[7.2]
     add_column :users, :linkedin_username, :string
     add_column :users, :personal_url, :string
     add_column :users, :membership_started_at, :datetime
-    
-    add_index :users, [:active, :sso_user_id], unique: true
+
+    add_index :users, [ :active, :sso_user_id ], unique: true
   end
 end

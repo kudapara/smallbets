@@ -76,9 +76,9 @@ module Authentication
 
       Current.user = session.user
       set_authenticated_by(:session)
-      cookies.signed.permanent[:session_token] = { value: session.token, 
-                                                   httponly: true, 
-                                                   same_site: :lax, 
+      cookies.signed.permanent[:session_token] = { value: session.token,
+                                                   httponly: true,
+                                                   same_site: :lax,
                                                    secure: Rails.env.production?,
                                                    domain: ENV["COOKIE_DOMAIN"]
       }

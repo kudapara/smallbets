@@ -8,8 +8,8 @@ module LinksHelper
     hostname = (URI.parse(url).hostname rescue url) || url
     hostname.sub(/^www\./, "")
   end
-  
+
   def with_protocol(url)
-    url.match(/\Ahttp(s)?:\/\//) ? url : "http://#{url}" 
+    url.match(/\Ahttp(s)?:\/\//) ? url : "http://#{url}"
   end
 end

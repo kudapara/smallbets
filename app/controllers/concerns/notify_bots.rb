@@ -1,6 +1,6 @@
 module NotifyBots
   extend ActiveSupport::Concern
-  
+
   def deliver_webhooks_to_bots(item, event)
     bots_eligible_for_webhook(item, event).each { |bot| bot.deliver_webhooks_later(item, event) }
   end

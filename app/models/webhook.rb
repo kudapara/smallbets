@@ -10,27 +10,27 @@ class Webhook < ApplicationRecord
 
   scope :receiving_mentions, -> { where(receives: :mentions) }
   scope :receiving_everything, -> { where(receives: :everything) }
-  
+
   def cares_about?(item, event)
     if receives_mentions?
-       event == :created && item.is_a?(Message) && item.mentionees.include?(user)  
+       event == :created && item.is_a?(Message) && item.mentionees.include?(user)
     else
       true
     end
   end
-  
+
   def deliver_later(item, event)
     payload = create_payload(item, event)
-    
+
     Bot::WebhookJob.perform_later(self, payload, item.try(:room))
   end
-  
+
   def deliver_now(item, event)
     payload = create_payload(item, event)
-    
+
     deliver(payload, item.try(:room))
   end
-  
+
   def deliver(payload, room)
     if receives_mentions?
       deliver_with_reply(payload, room)
@@ -57,7 +57,7 @@ class Webhook < ApplicationRecord
         raise "Failed to deliver webhook to #{url}, response: #{response.code} #{response.message}" unless response.is_a?(Net::HTTPSuccess)
       end
     end
-  
+
     def post(payload)
       http.request \
         Net::HTTP::Post.new(uri, "Content-Type" => "application/json").tap { |request| request.body = payload }
@@ -89,7 +89,7 @@ class Webhook < ApplicationRecord
 
     def message_payload(message, event)
       {
-        event:   "message_#{event}", 
+        event:   "message_#{event}",
         user:    user_to_api(message.creator),
         room:    room_to_api(message.room),
         message: message_to_api(message)
@@ -105,19 +105,19 @@ class Webhook < ApplicationRecord
         boost:   { id: boost.id, body: boost.content }
       }.to_json
     end
-  
+
     def user_payload(user, event)
       {
         event:   "user_#{event}",
         user:    user_to_api(user)
       }.to_json
     end
-  
+
     def room_to_api(room)
-      { 
-        id: room.id, 
-        name: room.name, 
-        type: room.class.name.demodulize ,
+      {
+        id: room.id,
+        name: room.name,
+        type: room.class.name.demodulize,
         members: room.memberships.visible.count,
         has_bot: user.member_of?(room),
         path: room_bot_messages_path(room)
@@ -132,9 +132,9 @@ class Webhook < ApplicationRecord
         path: message_path(message)
       }
     end
-  
+
     def user_to_api(user)
-      { 
+      {
         id: user.id,
         name: user.name,
         path: user_path(user)
@@ -144,7 +144,7 @@ class Webhook < ApplicationRecord
     def message_path(message)
       Rails.application.routes.url_helpers.room_at_message_path(message.room, message)
     end
-  
+
     def room_bot_messages_path(room)
       Rails.application.routes.url_helpers.room_bot_messages_path(room, user.bot_key)
     end
@@ -152,7 +152,7 @@ class Webhook < ApplicationRecord
     def user_path(user)
       Rails.application.routes.url_helpers.user_path(user)
     end
-  
+
     def extract_text_from(response)
       response.body.force_encoding("UTF-8") if response.code == "200" && response.content_type.in?(%w[ text/html text/plain ])
     end

@@ -1,6 +1,6 @@
 class Accounts::UsersController < ApplicationController
   include NotifyBots
-  
+
   before_action :ensure_can_administer, :set_user, only: %i[ update destroy ]
 
   def index

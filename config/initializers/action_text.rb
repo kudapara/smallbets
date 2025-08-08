@@ -5,5 +5,5 @@ Rails.application.config.after_initialize do
 
   # Support inline user popups for mentions inside ActionText
   Rails::HTML4::SafeListSanitizer.allowed_tags += %w[details summary section turbo-frame]
-  Rails::HTML4::SafeListSanitizer.allowed_attributes += %w(id data-controller data-action data-popup-orientation-top-class data-popup-target style)
+  Rails::HTML4::SafeListSanitizer.allowed_attributes += %w[id data-controller data-action data-popup-orientation-top-class data-popup-target style]
 end

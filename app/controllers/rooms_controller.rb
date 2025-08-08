@@ -24,7 +24,7 @@ class RoomsController < ApplicationController
 
       broadcast_remove_room
     end
-  
+
     def set_room
       if room = Current.user.rooms.find_by(id: params[:room_id] || params[:id])
         @room = room
@@ -32,7 +32,7 @@ class RoomsController < ApplicationController
         redirect_to root_url, alert: "Room not found or inaccessible"
       end
     end
-  
+
     def set_membership
       @membership = Membership.find_by(room_id: @room.id, user_id: Current.user.id)
     end
@@ -49,7 +49,7 @@ class RoomsController < ApplicationController
       messages = @room.messages.with_creator.includes(:mentionees, :boosts)
       @first_unread_message = messages.ordered.since(@membership.unread_at).first if @membership.unread?
 
-      if show_first_message = messages.find_by(id: params[:message_id]) || @first_unread_message 
+      if show_first_message = messages.find_by(id: params[:message_id]) || @first_unread_message
         @messages = messages.page_around(show_first_message)
       else
         @messages = messages.last_page
@@ -62,7 +62,7 @@ class RoomsController < ApplicationController
 
     def broadcast_remove_room
       for_each_sidebar_section do |list_name|
-        broadcast_remove_to :rooms, target: [@room, helpers.dom_prefix(list_name, :list_node)]
+        broadcast_remove_to :rooms, target: [ @room, helpers.dom_prefix(list_name, :list_node) ]
       end
     end
 end

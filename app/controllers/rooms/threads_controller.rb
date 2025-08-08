@@ -13,7 +13,7 @@ class Rooms::ThreadsController < RoomsController
     deactivate_room
     redirect_to room_at_message_path(@room.parent_message.room, @room.parent_message)
   end
-  
+
   private
   def room_params
     params.require(:room).permit(:name)

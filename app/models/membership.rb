@@ -48,13 +48,13 @@ class Membership < ApplicationRecord
   enum involvement: %w[ invisible nothing mentions everything ].index_by(&:itself), _prefix: :involved_in
 
   after_update :broadcast_involvement, if: :saved_change_to_involvement?
-  
+
 
   scope :with_ordered_room, -> { includes(:room).joins(:room).order("rooms.sortable_name") }
   scope :with_room_by_activity, -> { includes(:room).joins(:room).order("rooms.messages_count DESC") }
   scope :with_room_by_last_active_newest_first, -> { includes(:room).joins(:room).order("rooms.last_active_at DESC") }
   scope :with_room_chronologically, -> { includes(:room).joins(:room).order("rooms.created_at") }
-  scope :with_room_by_sort_preference, -> (preference) {
+  scope :with_room_by_sort_preference, ->(preference) {
     case preference
     when "alphabetical"
       with_ordered_room
@@ -75,7 +75,7 @@ class Membership < ApplicationRecord
 
   def read_until(time)
     return if read? || time < unread_at
-    
+
     update!(unread_at: room.messages.ordered.where("created_at > ?", time).first&.created_at)
     broadcast_read if read?
   end
@@ -89,15 +89,15 @@ class Membership < ApplicationRecord
     update!(unread_at: nil)
     broadcast_read
   end
-  
+
   def read?
     unread_at.blank?
   end
-  
+
   def unread?
     unread_at.present?
   end
-  
+
   def has_unread_notifications?
     if attributes.has_key?("preloaded_has_unread_notifications")
       ActiveRecord::Type::Boolean.new.cast(self[:preloaded_has_unread_notifications])
@@ -105,17 +105,17 @@ class Membership < ApplicationRecord
       unread? && unread_notifications.any?
     end
   end
-  
+
   def receives_mentions?
     involved_in_mentions? || involved_in_everything?
   end
-  
+
   def ensure_receives_mentions!
     update(involvement: :mentions) unless receives_mentions?
   end
-  
+
   private
-  
+
   def broadcast_read
     ActionCable.server.broadcast "user_#{user_id}_reads", { room_id: room_id }
   end
