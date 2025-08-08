@@ -1,7 +1,7 @@
 <%# Be sure to check/update messages/_template.html.erb when changing this file %>
+<%# locals: (message:, current_room: nil, first_unread_message: nil) -%>
 
-<% current_room ||= nil %>
-<% is_first_unread_message = (message == local_assigns[:first_unread_message]) %>
+<% is_first_unread_message = (message == first_unread_message) %>
 <% cache message_cache_key(message, room_id: current_room&.id, is_first_unread_message:) do %>
   <%= message_tag message do %>
     <div class="message-separator message__loading-indicator">
