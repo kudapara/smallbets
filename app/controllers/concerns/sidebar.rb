@@ -6,18 +6,35 @@ module Sidebar
   end
 
   def set_sidebar_memberships
-    memberships           = Current.user.memberships.visible.without_thread_rooms.joins(:room).where(rooms: { active: true }).with_has_unread_notifications.includes(:room).with_room_by_last_active_newest_first
+    memberships = Current.user.memberships.visible.without_thread_rooms
+                          .joins(:room).where(rooms: { active: true })
+                          .with_has_unread_notifications
+                          .includes(:room)
+                          .with_room_by_last_active_newest_first
 
     # Get all direct memberships and filter them
     all_direct_memberships = memberships.select { |m| m.room.direct? }
-    @direct_memberships   = filter_direct_memberships(all_direct_memberships)
-
+    filtered_direct = filter_direct_memberships(all_direct_memberships)
+    
+    # Only keep direct rooms with messages, but preserve all for virtual scrolling
+    @direct_memberships = filtered_direct.select { |m| m.room.messages_count > 0 }
+    
     # Get other memberships using the without_direct_rooms scope
-    other_memberships     = Current.user.memberships.visible.without_thread_rooms.without_direct_rooms.joins(:room).where(rooms: { active: true }).with_has_unread_notifications.includes(:room)
-    @all_memberships      = other_memberships
-    @starred_memberships  = other_memberships
-
-    @direct_memberships.select! { |m| m.room.messages_count > 0 }
+    other_memberships = Current.user.memberships.visible.without_thread_rooms
+                                   .without_direct_rooms.joins(:room)
+                                   .where(rooms: { active: true })
+                                   .with_has_unread_notifications
+                                   .includes(:room)
+    
+    # For virtual scrolling, we keep all memberships but may render only first 30
+    # The view will handle the actual limiting and virtual scrolling
+    @all_memberships = other_memberships
+    @starred_memberships = other_memberships
+    
+    # Store total counts for UI feedback (optional, for progress indicators)
+    @total_direct_count = @direct_memberships.count
+    @total_all_count = other_memberships.count
+    @total_starred_count = other_memberships.count
   end
 
   def for_each_sidebar_section
