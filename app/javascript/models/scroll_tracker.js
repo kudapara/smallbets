@@ -7,6 +7,9 @@ export default class ScrollTracker {
     #intersectionObserver
     #mutationObserver
     #firstChildWasHidden
+    #cachedScrollHeight = 0
+    #cachedClientHeight = 0
+    #rafId = null
 
     constructor(container, { lastChildRevealed, lastChildHidden }) {
         this.#container = container
@@ -17,6 +20,9 @@ export default class ScrollTracker {
         this.#mutationObserver.observe(container, {childList: true})
 
         this.#intersectionObserver = new IntersectionObserver(this.#handleIntersection.bind(this), {root: container})
+        
+        // Initialize cached values
+        this.#updateCachedValues()
     }
 
     connect() {
@@ -25,6 +31,10 @@ export default class ScrollTracker {
 
     disconnect() {
         this.#intersectionObserver?.disconnect()
+        if (this.#rafId) {
+            cancelAnimationFrame(this.#rafId)
+            this.#rafId = null
+        }
     }
 
     #childrenChanged() {
@@ -36,6 +46,23 @@ export default class ScrollTracker {
             this.#intersectionObserver?.observe(this.#container.firstElementChild)
             this.#intersectionObserver?.observe(this.#container.lastElementChild)
         }
+        
+        // Update cached values when DOM changes
+        this.#updateCachedValues()
+    }
+    
+    #updateCachedValues() {
+        // Cancel any pending RAF to avoid duplicates
+        if (this.#rafId) {
+            cancelAnimationFrame(this.#rafId)
+        }
+        
+        // Use requestAnimationFrame to batch layout reads
+        this.#rafId = requestAnimationFrame(() => {
+            this.#cachedScrollHeight = this.#container.scrollHeight
+            this.#cachedClientHeight = this.#container.clientHeight
+            this.#rafId = null
+        })
     }
 
     #handleIntersection(entries) {
@@ -69,6 +96,8 @@ export default class ScrollTracker {
     }
 
     get #distanceScrolledFromEnd() {
-        return this.#container.scrollHeight - this.#container.scrollTop - this.#container.clientHeight
+        // Use cached values to avoid forced reflow
+        // scrollTop is cheap to read and changes frequently, so we don't cache it
+        return this.#cachedScrollHeight - this.#container.scrollTop - this.#cachedClientHeight
     }
 }
