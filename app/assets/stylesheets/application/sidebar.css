@@ -5,14 +5,6 @@
   --sidebar-tools-width: 70px;
 }
 
-/* Virtual List Sentinel - invisible element for intersection observer */
-.virtual-list-sentinel {
-  height: 1px;
-  width: 100%;
-  opacity: 0;
-  pointer-events: none;
-}
-
 .sidebar__container {
   block-size: 100dvh;
   max-block-size: 100dvh;

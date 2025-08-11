@@ -1,40 +1,7 @@
-<div id="<%= list_name %>" 
-     contents 
-     data-sorted-list-target="container" 
-     data-controller="virtual-list"
-     data-virtual-list-item-height-value="32"
-     data-virtual-list-batch-size-value="20"
-     class="sidebar__list">
-  <!-- Only render first 30 rooms initially -->
-  <% memberships.first(30).each do |membership| %>
+<div id="<%= list_name %>" contents data-sorted-list-target="container" class="sidebar__list">
+  <% memberships.each do |membership| %>
     <% cache(sidebar_membership_cache_key(list_name, membership)) do %>
       <%= render "users/sidebars/rooms/shared", list_name:, membership: %>
     <% end %>
-  <% end %>
-  
-  <!-- Store remaining rooms as data for virtual scrolling -->
-  <% if memberships.size > 30 %>
-    <template data-virtual-list-target="template">
-      <% memberships.drop(30).each do |membership| %>
-        <% room = membership.room %>
-        <div data-membership-id="<%= membership.id %>" 
-             data-membership-room-id="<%= room.id %>"
-             data-room-id="<%= dom_id(room) %>"
-             data-dom-id="<%= dom_id(room, dom_prefix(list_name, :list_node)) %>"
-             data-room-name="<%= room_display_name(room) %>"
-             data-sortable-name="<%= room.sortable_name %>"
-             data-room-path="<%= room_path(room) %>"
-             data-unread="<%= membership.unread? %>"
-             data-has-notifications="<%= membership.has_unread_notifications? %>"
-             data-direct="<%= room.direct? %>"
-             data-involvement="<%= membership.involvement %>"
-             data-involvement-image-path="<%= image_path("notification-bell-#{membership.involvement}.svg") %>"
-             data-messages-count="<%= room.messages_count %>"
-             data-last-active-at="<%= room.last_active_at&.iso8601 %>"
-             data-last-active-relative="<%= local_datetime_tag(room.last_active_at, style: :relative, class: "txt-x-small txt-primary txt-nowrap position-relative").to_s.gsub('"', '&quot;') if room.last_active_at %>"
-             data-list-name="<%= list_name %>">
-        </div>
-      <% end %>
-    </template>
   <% end %>
 </div>
