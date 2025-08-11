@@ -4,7 +4,7 @@
           data: { controller: "form scroll-into-view", turbo_frame: dom_id(@message, :boosting), action: "keydown.esc->form#cancel" } do |form| %>
       <label class="boost__form-label flex gap" style="--column-gap: 0.7ch;" role="button" tabindex="0" aria-label="Add a boost">
         <figure class="avatar boost__avatar flex-item-no-shrink">
-          <%= avatar_tag Current.user %>
+          <%= avatar_tag Current.user, loading: :lazy %>
           <span class="for-screen-reader"><%= Current.user.name %></span>
         </figure>
 

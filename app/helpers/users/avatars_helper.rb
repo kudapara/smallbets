@@ -23,8 +23,24 @@ module Users::AvatarsHelper
   end
 
   def avatar_image_tag(user, **options)
-    options[:loading] ||= :lazy
-    image_tag user_image_path(user), aria: { hidden: "true" }, **options
+    if user.avatar.attached? || user.avatar_url.present? || user.bot?
+      options[:loading] ||= :lazy
+      image_tag user_image_path(user), aria: { hidden: "true" }, **options
+    else
+      avatar_monogram_tag(user)
+    end
+  end
+
+  def avatar_monogram_tag(user)
+    initials = user.name.split.map(&:first).first(2).join.upcase
+    color_index = Zlib.crc32(user.to_param) % AVATAR_COLORS.size
+
+    tag.div(
+      initials,
+      class: "avatar-monogram avatar-monogram--#{color_index}",
+      "aria-label": user.name,
+      title: user.title,
+    )
   end
 
   def user_image_path(user)

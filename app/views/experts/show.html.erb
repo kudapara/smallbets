@@ -25,7 +25,7 @@
         <div class="card-header hover-darker">
           <%= link_to user_path(@expert_users[expert[:id]], from: "/experts"), class: "card-header-link", style: "display: block; margin: -0.75rem;" do %>
             <div class="align-center" style="display: flex; gap: 0.5rem; padding: 0.75rem;">
-              <%= avatar_tag @expert_users[expert[:id]] %>
+              <%= avatar_tag @expert_users[expert[:id]], loading: :lazy %>
               <h3 class="txt-h3"><%= expert[:name] %></h3>
             </div>
           <% end %>

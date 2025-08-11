@@ -123,7 +123,7 @@
       <%= render "users/sidebars/bell" %>
       
       <%= link_to user_profile_path, class: "btn avatar sidebar__tool" do %>
-        <%= avatar_image_tag(Current.user, size: 40, style: "view-transition-name: avatar-#{Current.user.id}") %>
+        <%= avatar_image_tag(Current.user, size: 40, style: "view-transition-name: avatar-#{Current.user.id}", loading: :lazy) %>
         <span class="for-screen-reader"><%= Current.user.name %></span>
       <% end %>
     </div>
