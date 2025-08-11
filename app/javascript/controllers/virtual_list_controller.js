@@ -5,21 +5,54 @@ export default class extends Controller {
     static values = { 
         itemHeight: { type: Number, default: 32 },
         batchSize: { type: Number, default: 20 },
-        rootMargin: { type: String, default: "100px" }
+        rootMargin: { type: String, default: "0px 0px 20px 0px" }  // Only 20px bottom margin
     }
     
     connect() {
+        this.isLoading = false
         this.renderedCount = this.element.querySelectorAll('[data-type="list_node"]').length
-        
-        // Only set up virtual scrolling if we have a template with more items
-        if (this.hasTemplateTarget && this.templateTarget.content.children.length > 0) {
-            this.setupIntersectionObserver()
-        }
+    }
+
+    templateTargetConnected() {
+        this.templateElement = this.templateTarget
+        this.setupIntersectionObserver()
     }
     
     disconnect() {
         if (this.observer) {
             this.observer.disconnect()
+        }
+        if (this.scrollContainer && this.scrollHandler) {
+            this.scrollContainer.removeEventListener('scroll', this.scrollHandler)
+        }
+    }
+    
+    handleScroll() {
+        if (this.isLoading || !this.sentinel || !this.scrollContainer) return
+        
+        const scrollTop = this.scrollContainer.scrollTop
+        const scrollHeight = this.scrollContainer.scrollHeight
+        const clientHeight = this.scrollContainer.clientHeight
+        const scrollBottom = scrollTop + clientHeight
+        const threshold = 20 // pixels from bottom
+        
+        if (scrollHeight - scrollBottom < threshold && !this.isLoading) {
+            this.loadMoreRooms()
+        }
+    }
+    
+    checkSentinelVisibility() {
+        if (!this.sentinel) return
+        
+        const scrollContainer = this.element.closest('.sidebar__container')
+        if (!scrollContainer) return
+        
+        const containerRect = scrollContainer.getBoundingClientRect()
+        const sentinelRect = this.sentinel.getBoundingClientRect()
+        
+        // If sentinel is visible and we have items to load, trigger loading
+        if (sentinelRect.top <= containerRect.bottom && !this.isLoading) {
+            this.loadMoreRooms()
         }
     }
     
@@ -31,16 +64,28 @@ export default class extends Controller {
         this.sentinel.setAttribute('aria-hidden', 'true')
         this.element.appendChild(this.sentinel)
         
+        // Find the scrolling container (sidebar__container)
+        this.scrollContainer = this.element.closest('.sidebar__container') || 
+                               this.element.closest('.overflow-y') ||
+                               this.element.closest('[data-controller*="maintain-scroll"]')
+        
+        // Set up intersection observer
         this.observer = new IntersectionObserver(
             entries => this.handleIntersection(entries),
             { 
-                root: null,
+                root: this.scrollContainer,
                 rootMargin: this.rootMarginValue,
-                threshold: 0
+                threshold: [0, 0.1, 0.5, 1.0]
             }
         )
         
         this.observer.observe(this.sentinel)
+        
+        // Also add scroll listener as fallback
+        if (this.scrollContainer) {
+            this.scrollHandler = this.handleScroll.bind(this)
+            this.scrollContainer.addEventListener('scroll', this.scrollHandler, { passive: true })
+        }
     }
     
     handleIntersection(entries) {
@@ -52,13 +97,13 @@ export default class extends Controller {
     }
     
     async loadMoreRooms() {
-        if (!this.hasTemplateTarget || this.isLoading) return
+        if (!this.templateElement || this.isLoading) return
         
         this.isLoading = true
         
         try {
             // Get next batch of rooms from template
-            const templateChildren = Array.from(this.templateTarget.content.children)
+            const templateChildren = Array.from(this.templateElement.content.children)
             const nextBatch = templateChildren.slice(0, this.batchSizeValue)
             
             if (nextBatch.length === 0) {
