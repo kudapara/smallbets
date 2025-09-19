@@ -2,6 +2,7 @@
 
 We modified Campfire extensive to serve the needs of the Small Bets community. Below are some of the changes that may be interesting to anyone running a customized Campfire instance. Feel free to take any of our changes.
 
+
 ## Mentions tab
 Members can see the list of mentions easily from a new view in the sidebar.
 
@@ -9,6 +10,7 @@ Members can see the list of mentions easily from a new view in the sidebar.
 
 - https://github.com/antiwork/small-bets/compare/f9b7ba3f98a7ea575e115c45bcfdb47cd46e48ae...53d8b1e742935800ee33cdf380e18571634909fa
 - https://github.com/antiwork/small-bets/commit/d57db1930272978b36355aff8d28f56f9dfdd389
+
 
 ## Email notifications
 Members get an email notification if they have an unread mention or direct message.
@@ -123,6 +125,7 @@ Members can block users from sending them direct messages. Admins can monitor wh
 
 - https://github.com/antiwork/small-bets/commit/a4687e1bb9ad40871423d88323573e345ba68df4
 
+
 ## Stats page
 General stats and various activity leaderboards.
 
@@ -136,6 +139,14 @@ This change enables rich-text options on mobile.
 <img width="400" src="https://github.com/user-attachments/assets/7cd890c8-7180-4fdf-b392-80cfd820c0dc" />
 
 - https://github.com/antiwork/small-bets/commit/d7ef9c9cded2a5eb547c8142707015961f817c5a
+
+
+## Soft deletion
+Moved to soft deletion for accounts, bookmarks, boosts, memberships, messages, and rooms. This prevents destructive actions from untrusted members.
+
+- https://github.com/antiwork/small-bets/commit/cd4fb3c71729e630018a636e94819e1a0ded6ad3
+- https://github.com/antiwork/small-bets/commit/bda3f96f7fa9f7ad1cdc82add617851dcf95a26c
+
 
 ## Bot API Extras
 Each bot offers an additional webhook that receives all message/boost/user events in Campfire, including DMs. This everything webhook has been useful to build an AI chatbot that knows everything that's going on, not just when it's mentioned. We also use the everything webhook for moderation, to check that nobody is spamming in pings or doing other suspicious things.
