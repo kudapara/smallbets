@@ -62,7 +62,7 @@ gem "dotenv", groups: [ :development, :test ]
 gem "letter_opener", group: :development
 gem "stringex"
 
-gem "aws-sdk-rails", "~> 4"
+gem "resend"
 
 gem "heapy", group: :development
 
