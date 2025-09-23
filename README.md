@@ -17,4 +17,4 @@ And if you're a new or aspiring entrepreneur and you're not part of the [Small B
 
 ## Running in production
 
-Details coming soon: https://github.com/antiwork/smallbets/issues/26
+_Details coming soon: https://github.com/antiwork/smallbets/issues/26_
