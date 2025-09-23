@@ -1,6 +1,6 @@
-# Major Campfire Changes
+# Major Campfire Modifications
 
-We modified Campfire extensive to serve the needs of the Small Bets community. Below are some of the changes that may be interesting to anyone running a customized Campfire instance. Feel free to take any of our changes.
+We modified Campfire extensively to serve the needs of the [Small Bets](https://smallbets.com) community. Below are some of the changes that may be interesting to anyone running a customized Campfire instance. Feel free to take any of our changes.
 
 
 ## Mentions tab
@@ -148,7 +148,7 @@ Moved to soft deletion for accounts, bookmarks, boosts, memberships, messages, a
 - https://github.com/antiwork/small-bets/commit/bda3f96f7fa9f7ad1cdc82add617851dcf95a26c
 
 
-## Bot API Extras
+## Bot API extras
 Each bot offers an additional webhook that receives all message/boost/user events in Campfire, including DMs. This everything webhook has been useful to build an AI chatbot that knows everything that's going on, not just when it's mentioned. We also use the everything webhook for moderation, to check that nobody is spamming in pings or doing other suspicious things.
 
 Bots can also properly mention users with a special notation @{user_id}. And bots can now also initiate a ping with anyone by POSTing to /rooms/<key>/directs with the user_ids in the payload. This is handy for welcome messages when a new person joins Campfire. The everything webhook already sends an event when a new user is created, and the bot can react to that with a ping.
