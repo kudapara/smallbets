@@ -1,8 +1,8 @@
 # Small Bets
 
-The [Small Bets](https://smallbets.com) community runs on a heavily customized version of [Campfire](https://github.com/basecamp/once-campfire/), a Ruby on Rails web-based chat application built by [37signals](https://37signals.com).
+[Small Bets](https://smallbets.com) is an online community to support new and aspiring entrepreneurs. This repository contains the source code for the Small Bets web application, which is based on a modified version of [Campfire](https://github.com/basecamp/once-campfire/), a Ruby on Rails chat application built by [37signals](https://once.com/campfire).
 
-We have a list of [some of the major changes](campfire-changes.md) we made to Campfire, along with references to the source code. If you like any of our changes, feel free to incorporate them into your own Campfire instance.
+We modified Campfire extensively to serve the needs of the Small Bets community. We have a list of [some of the major modifications](campfire-mods.md), along with references to the source code. If you like any of our changes, feel free to incorporate them into your own Campfire instance.
 
 <img width="1297" height="867" src="https://github.com/user-attachments/assets/a615c6df-1952-49af-872a-793743e6ad6e" />
 
