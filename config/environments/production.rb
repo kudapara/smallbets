@@ -74,9 +74,7 @@ Rails.application.configure do
 
   config.active_job.queue_adapter = :resque
 
-  config.action_mailer.delivery_method = :resend
-  config.action_mailer.resend_settings = {
-    api_key: ENV['RESEND_API_KEY']
-  }
-  config.action_mailer.default_url_options = { host: "smallbets.com", protocol: "https" }
+  config.action_mailer.default_options = {from: 'Muchiround Intelligence Alliance <mia@muchiround.com>'}
+  config.action_mailer.default_url_options = { host: 'muchiround.com', protocol: 'https' }
+  config.action_mailer.perform_deliveries = true
 end
